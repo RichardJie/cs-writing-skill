@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plain Explain"
+  short_description: "Locate the stuck concept, then explain with a small domain-native worked example"
+  default_prompt: "Use $plain to explain this with one concrete, fully worked example and no unexplained jargon."

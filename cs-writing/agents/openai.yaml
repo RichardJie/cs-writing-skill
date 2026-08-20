@@ -1,0 +1,4 @@
+interface:
+  display_name: "CS Writing Boundaries"
+  short_description: "Constrain CS paper narrative, experiments, and phrasing with the press-conference principle"
+  default_prompt: "Use $cs-writing to revise this CS paper while enforcing its writing boundaries and evidence-aligned narrative."
