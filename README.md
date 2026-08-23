@@ -5,12 +5,16 @@ Cross-harness Agent Skill pack. Each skill lives in its own directory with a `SK
 ```text
 cs-writing-skill/
 ├── README.md
-├── cs-writing/          # Writing boundaries: press-conference principle
+├── cs-writing/            # Writing boundaries: press-conference principle
 │   ├── SKILL.md
 │   └── agents/openai.yaml
-└── plain/               # Explanation technique: make hard ideas click
+├── plain/                 # Explanation technique: make hard ideas click
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+└── humanize-writing/      # Strip AI voice; make prose sound human
     ├── SKILL.md
-    └── agents/openai.yaml
+    ├── agents/openai.yaml
+    └── examples/
 ```
 
 ## Skills
@@ -19,8 +23,9 @@ cs-writing-skill/
 |-------|------|-------------|
 | `cs-writing` | Constrain paper narrative and writing boundaries | Revise abstracts, restructure experiments, catch self-undermining phrasing |
 | `plain` | Explain difficult concepts clearly | Walk through a paper/model with a small worked example, fix misconceptions |
+| `humanize-writing` | Remove AI tone from prose | Rewrite text that sounds robotic, lecturing, or over-polished |
 
-The two skills are independent: `cs-writing` governs *how to write and organize evidence*; `plain` governs *how to explain and repair understanding*.
+The three skills are independent: `cs-writing` governs *how to write and organize evidence*; `plain` governs *how to explain and repair understanding*; `humanize-writing` governs *how to strip AI voice from finished prose*.
 
 ---
 
@@ -46,11 +51,13 @@ Use **slash commands** in the MIRASIM chat input:
 |---------|--------------|
 | `/cs-writing` | Revise, compress, or restructure narrative under the press-conference principle |
 | `/plain` | Explain a concept with a small, domain-native numerical walkthrough |
+| `/humanize-writing` | Strip AI tone and rewrite so the prose sounds human |
 
 Natural-language triggers also work, for example:
 
 - "Use cs-writing to revise this abstract"
 - "Use plain to explain what attention is actually computing"
+- "去 AI 味 / humanize this paragraph"
 
 ### Note on descriptions
 
@@ -67,13 +74,14 @@ git clone https://github.com/RichardJie/cs-writing-skill.git /tmp/cs-writing-ski
 mkdir -p ~/.claude/skills
 cp -R /tmp/cs-writing-skill/cs-writing ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/plain ~/.claude/skills/
+cp -R /tmp/cs-writing-skill/humanize-writing ~/.claude/skills/
 ```
 
 Project-scoped install: copy skill directories to `<project>/.claude/skills/`.
 
 ### Usage
 
-Mention the skill by name or describe a matching task; explicit invocation: `$cs-writing` / `$plain`.
+Mention the skill by name or describe a matching task; explicit invocation: `$cs-writing` / `$plain` / `$humanize-writing`.
 
 ---
 
