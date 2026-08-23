@@ -5,7 +5,7 @@ Cross-harness Agent Skill pack. Each skill lives in its own directory with a `SK
 ```text
 cs-writing-skill/
 ├── README.md
-├── cs-writing/            # Writing boundaries: press-conference principle
+├── paper-boundaries/      # Prevent defensive writing: press-conference principle
 │   ├── SKILL.md
 │   └── agents/openai.yaml
 ├── plain/                 # Explanation technique: make hard ideas click
@@ -22,11 +22,11 @@ cs-writing-skill/
 
 | Skill | Role | Typical use |
 |-------|------|-------------|
-| `cs-writing` | Constrain paper narrative and writing boundaries | Revise abstracts, restructure experiments, catch self-undermining phrasing |
+| `paper-boundaries` | Prevent defensive paper writing and narrative self-undermining | Revise abstracts, restructure experiments, catch self-undermining phrasing |
 | `plain` | Explain difficult concepts clearly | Walk through a paper/model with a small worked example, fix misconceptions |
 | `humanize` | Remove AI tone from prose | `:chinese` for 去AI味; `:english` for humanize / remove AI tells |
 
-The three skills are independent: `cs-writing` governs *how to write and organize evidence*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*.
+The three skills are independent: `paper-boundaries` governs *how to write and organize evidence without defensive self-undermining*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*.
 
 ---
 
@@ -50,14 +50,14 @@ Use **slash commands** in the MIRASIM chat input:
 
 | Command | What it does |
 |---------|--------------|
-| `/cs-writing` | Revise, compress, or restructure narrative under the press-conference principle |
+| `/paper-boundaries` | Revise, compress, or restructure narrative under the press-conference principle |
 | `/plain` | Explain a concept with a small, domain-native numerical walkthrough |
 | `/humanize :chinese` | 去 AI 味 — 七步手术法，中文模式扫描 |
 | `/humanize :english` | Humanize English — pattern catalog, em-dash ban, direct-statement rules |
 
 Natural-language triggers also work, for example:
 
-- "Use cs-writing to revise this abstract"
+- "Use paper-boundaries to revise this abstract"
 - "Use plain to explain what attention is actually computing"
 - "去 AI 味 / humanize :chinese this paragraph"
 - "humanize :english — remove AI tells from this README"
@@ -86,7 +86,7 @@ MIRASIM reads the `description` field from each `SKILL.md` frontmatter using a *
 ```bash
 git clone https://github.com/RichardJie/cs-writing-skill.git /tmp/cs-writing-skill
 mkdir -p ~/.claude/skills
-cp -R /tmp/cs-writing-skill/cs-writing ~/.claude/skills/
+cp -R /tmp/cs-writing-skill/paper-boundaries ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/plain ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/humanize ~/.claude/skills/
 ```
@@ -95,7 +95,7 @@ Project-scoped install: copy skill directories to `<project>/.claude/skills/`.
 
 ### Usage
 
-Mention the skill by name or describe a matching task; explicit invocation: `$cs-writing` / `$plain` / `$humanize :english` / `$humanize :chinese`.
+Mention the skill by name or describe a matching task; explicit invocation: `$paper-boundaries` / `$plain` / `$humanize :english` / `$humanize :chinese`.
 
 ---
 

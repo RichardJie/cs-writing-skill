@@ -9,7 +9,7 @@ One installable skill, two language tracks. **Read the matching file in full bef
 
 | Invocation | Read | Use when |
 |------------|------|----------|
-| `:chinese` or Chinese input / 去AI味 | [chinese.md](chinese.md) | Chinese prose, WeChat posts, CN blogs, 中文论文润色（非 cs-writing 边界） |
+| `:chinese` or Chinese input / 去AI味 | [chinese.md](chinese.md) | Chinese prose, WeChat posts, CN blogs, 中文论文润色（非 paper-boundaries 边界） |
 | `:english` or English input / humanize | [english.md](english.md) | English prose, READMEs, essays, LinkedIn, technical docs |
 
 ## Router
@@ -46,5 +46,5 @@ One installable skill, two language tracks. **Read the matching file in full bef
 
 ## Related skills
 
-- **`cs-writing`** — CS paper *narrative boundaries* (press-conference principle, no self-undermining). Does not strip AI voice; pair with `:english` or `:chinese` on finished prose.
+- **`paper-boundaries`** — CS paper *narrative boundaries* (press-conference principle, no self-undermining). Does not strip AI voice; pair with `:english` or `:chinese` on finished prose.
 - **`plain`** — Explain hard ideas clearly; orthogonal to de-slopping.

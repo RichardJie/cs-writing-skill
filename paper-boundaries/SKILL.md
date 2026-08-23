@@ -1,6 +1,6 @@
 ---
-name: cs-writing
-description: "Organize CS/academic paper writing, revision, compression, and experiments around strengths only—press-conference narrative, not lab logs or self-undermining prose."
+name: paper-boundaries
+description: "Prevent defensive CS paper writing—press-conference principle, no self-undermining phrasing, strengths-only narrative and experiments."
 ---
 
 # 发布会原则

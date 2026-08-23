@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Boundaries"
+  short_description: "Prevent defensive CS paper writing with press-conference narrative and no self-undermining phrasing"
+  default_prompt: "Use $paper-boundaries to revise this CS paper while enforcing its writing boundaries and evidence-aligned narrative."
