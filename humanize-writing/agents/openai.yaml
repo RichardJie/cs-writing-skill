@@ -1,4 +1,0 @@
-interface:
-  display_name: "Humanize Writing"
-  short_description: "Strip AI tone and rewrite so the prose sounds like a specific human wrote it"
-  default_prompt: "Use $humanize-writing to remove AI voice and make this text sound natural."

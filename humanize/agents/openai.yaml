@@ -1,0 +1,4 @@
+interface:
+  display_name: "Humanize"
+  short_description: "Remove AI voice — use :chinese or :english in your prompt to pick the language track"
+  default_prompt: "Use $humanize :english to remove AI tells and rewrite this text."

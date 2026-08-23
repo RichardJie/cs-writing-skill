@@ -11,10 +11,11 @@ cs-writing-skill/
 ├── plain/                 # Explanation technique: make hard ideas click
 │   ├── SKILL.md
 │   └── agents/openai.yaml
-└── humanize-writing/      # Strip AI voice; make prose sound human
-    ├── SKILL.md
-    ├── agents/openai.yaml
-    └── examples/
+└── humanize/              # Remove AI voice (:chinese / :english tracks)
+    ├── SKILL.md           # Hub router
+    ├── chinese.md         # 去 AI 味 — 七步手术法 + 中文模式
+    ├── english.md         # Pattern catalog + direct-statement rules
+    └── agents/openai.yaml
 ```
 
 ## Skills
@@ -23,9 +24,9 @@ cs-writing-skill/
 |-------|------|-------------|
 | `cs-writing` | Constrain paper narrative and writing boundaries | Revise abstracts, restructure experiments, catch self-undermining phrasing |
 | `plain` | Explain difficult concepts clearly | Walk through a paper/model with a small worked example, fix misconceptions |
-| `humanize-writing` | Remove AI tone from prose | Rewrite text that sounds robotic, lecturing, or over-polished |
+| `humanize` | Remove AI tone from prose | `:chinese` for 去AI味; `:english` for humanize / remove AI tells |
 
-The three skills are independent: `cs-writing` governs *how to write and organize evidence*; `plain` governs *how to explain and repair understanding*; `humanize-writing` governs *how to strip AI voice from finished prose*.
+The three skills are independent: `cs-writing` governs *how to write and organize evidence*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*.
 
 ---
 
@@ -35,7 +36,7 @@ The three skills are independent: `cs-writing` governs *how to write and organiz
 
 1. Open **Plugins → Skill Pack → Install from GitHub**
 2. Enter the repo URL: `https://github.com/RichardJie/cs-writing-skill`
-3. MIRASIM discovers every subdirectory that contains a `SKILL.md` and installs each as a separate skill
+3. MIRASIM discovers every top-level subdirectory that contains a `SKILL.md` and installs each as a separate skill
 
 Install location: `~/.mirasim/skills/<skill-name>/`
 
@@ -51,13 +52,26 @@ Use **slash commands** in the MIRASIM chat input:
 |---------|--------------|
 | `/cs-writing` | Revise, compress, or restructure narrative under the press-conference principle |
 | `/plain` | Explain a concept with a small, domain-native numerical walkthrough |
-| `/humanize-writing` | Strip AI tone and rewrite so the prose sounds human |
+| `/humanize :chinese` | 去 AI 味 — 七步手术法，中文模式扫描 |
+| `/humanize :english` | Humanize English — pattern catalog, em-dash ban, direct-statement rules |
 
 Natural-language triggers also work, for example:
 
 - "Use cs-writing to revise this abstract"
 - "Use plain to explain what attention is actually computing"
-- "去 AI 味 / humanize this paragraph"
+- "去 AI 味 / humanize :chinese this paragraph"
+- "humanize :english — remove AI tells from this README"
+
+### Humanize language tracks
+
+One installable skill (`humanize/`), two tracks via prompt tag:
+
+| Tag | Reads | Best for |
+|-----|-------|----------|
+| `:chinese` | `humanize/chinese.md` | Chinese prose, 公众号, CN blogs |
+| `:english` | `humanize/english.md` | English essays, READMEs, LinkedIn, docs |
+
+If no tag is given, infer from input language; ask once when unclear.
 
 ### Note on descriptions
 
@@ -74,14 +88,14 @@ git clone https://github.com/RichardJie/cs-writing-skill.git /tmp/cs-writing-ski
 mkdir -p ~/.claude/skills
 cp -R /tmp/cs-writing-skill/cs-writing ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/plain ~/.claude/skills/
-cp -R /tmp/cs-writing-skill/humanize-writing ~/.claude/skills/
+cp -R /tmp/cs-writing-skill/humanize ~/.claude/skills/
 ```
 
 Project-scoped install: copy skill directories to `<project>/.claude/skills/`.
 
 ### Usage
 
-Mention the skill by name or describe a matching task; explicit invocation: `$cs-writing` / `$plain` / `$humanize-writing`.
+Mention the skill by name or describe a matching task; explicit invocation: `$cs-writing` / `$plain` / `$humanize :english` / `$humanize :chinese`.
 
 ---
 
@@ -106,3 +120,4 @@ description: "Single-line description; parses correctly in MIRASIM and other har
 - Always use a single quoted `description` line (MIRASIM-compatible)
 - `agents/openai.yaml` is optional metadata; MIRASIM skill cards do not read it
 - Keep each skill focused; do not merge unrelated responsibilities
+- Long sub-skills use progressive disclosure (`humanize/chinese.md`, `humanize/english.md`) referenced from the hub `SKILL.md`
