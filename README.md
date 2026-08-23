@@ -13,7 +13,7 @@ cs-writing-skill/
 │   └── agents/openai.yaml
 └── humanize/              # Remove AI voice (:chinese / :english tracks)
     ├── SKILL.md           # Hub router
-    ├── chinese.md         # 去 AI 味 — 七步手术法 + 中文模式
+    ├── chinese.md         # :chinese track — 7-step surgery + Chinese patterns
     ├── english.md         # Pattern catalog + direct-statement rules
     └── agents/openai.yaml
 ```
@@ -24,7 +24,7 @@ cs-writing-skill/
 |-------|------|-------------|
 | `paper-boundaries` | Prevent defensive paper writing and narrative self-undermining | Revise abstracts, restructure experiments, catch self-undermining phrasing |
 | `plain` | Explain difficult concepts clearly | Walk through a paper/model with a small worked example, fix misconceptions |
-| `humanize` | Remove AI tone from prose | `:chinese` for 去AI味; `:english` for humanize / remove AI tells |
+| `humanize` | Remove AI tone from prose | `:chinese` for Chinese de-AI-ing; `:english` for humanize / remove AI tells |
 
 The three skills are independent: `paper-boundaries` governs *how to write and organize evidence without defensive self-undermining*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*.
 
@@ -52,14 +52,14 @@ Use **slash commands** in the MIRASIM chat input:
 |---------|--------------|
 | `/paper-boundaries` | Revise, compress, or restructure narrative under the press-conference principle |
 | `/plain` | Explain a concept with a small, domain-native numerical walkthrough |
-| `/humanize :chinese` | 去 AI 味 — 七步手术法，中文模式扫描 |
+| `/humanize :chinese` | Chinese de-AI-ing — 7-step surgery, Chinese pattern scan |
 | `/humanize :english` | Humanize English — pattern catalog, em-dash ban, direct-statement rules |
 
 Natural-language triggers also work, for example:
 
 - "Use paper-boundaries to revise this abstract"
 - "Use plain to explain what attention is actually computing"
-- "去 AI 味 / humanize :chinese this paragraph"
+- "humanize :chinese — remove AI voice from this Chinese paragraph"
 - "humanize :english — remove AI tells from this README"
 
 ### Humanize language tracks
@@ -68,7 +68,7 @@ One installable skill (`humanize/`), two tracks via prompt tag:
 
 | Tag | Reads | Best for |
 |-----|-------|----------|
-| `:chinese` | `humanize/chinese.md` | Chinese prose, 公众号, CN blogs |
+| `:chinese` | `humanize/chinese.md` | Chinese prose, WeChat posts, CN blogs |
 | `:english` | `humanize/english.md` | English essays, READMEs, LinkedIn, docs |
 
 If no tag is given, infer from input language; ask once when unclear.

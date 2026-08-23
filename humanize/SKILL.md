@@ -1,6 +1,6 @@
 ---
 name: humanize
-description: "Remove AI voice from prose. Invoke with :chinese for 去AI味/中文重构 (7-step surgery, Chinese patterns) or :english for humanize/English rewrite (pattern catalog, direct-statement rules, em-dash ban). Triggers: 去AI味, humanize, remove AI tells, make it sound natural, 让文字更像人写的."
+description: "Remove AI voice from prose. Invoke with :chinese for Chinese de-AI-ing (7-step surgery, Chinese patterns) or :english for humanize/English rewrite (pattern catalog, direct-statement rules, em-dash ban). Triggers: humanize, remove AI tells, make it sound natural."
 ---
 
 # Humanize — Remove AI Voice
@@ -9,7 +9,7 @@ One installable skill, two language tracks. **Read the matching file in full bef
 
 | Invocation | Read | Use when |
 |------------|------|----------|
-| `:chinese` or Chinese input / 去AI味 | [chinese.md](chinese.md) | Chinese prose, WeChat posts, CN blogs, 中文论文润色（非 paper-boundaries 边界） |
+| `:chinese` or Chinese input | [chinese.md](chinese.md) | Chinese prose, WeChat posts, CN blogs, CN academic polish (not paper-boundaries scope) |
 | `:english` or English input / humanize | [english.md](english.md) | English prose, READMEs, essays, LinkedIn, technical docs |
 
 ## Router
@@ -38,8 +38,8 @@ One installable skill, two language tracks. **Read the matching file in full bef
 
 ## Examples
 
-**`:chinese`** — Input: "综上所述，人工智能为各行各业带来前所未有的机遇和挑战。"  
-→ Apply [chinese.md](chinese.md) 7-step surgery; cut 综上所述/机遇挑战; add concrete scene.
+**`:chinese`** — Input: typical AI Chinese boilerplate (summarize-and-challenges opener).  
+→ Apply [chinese.md](chinese.md) 7-step surgery; cut stock transitions and opportunity-challenge cliches; add concrete scene.
 
 **`:english`** — Input: "Additionally, this pivotal initiative underscores our commitment to fostering innovation in today's evolving landscape."  
 → Apply [english.md](english.md); kill AI vocabulary; ban em dashes; state what the initiative *is*.
