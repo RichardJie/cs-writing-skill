@@ -1,42 +1,41 @@
 ---
 name: cs-report-ppt
-description: "Create conference-level academic paper presentation PPT decks from paper PDFs with 14-slide figure-dominant spine, native paper figures/tables, OMML formulas, and rigorous visual self-inspection."
+description: "Create conference-level academic paper presentation PPT decks from paper PDFs with 14-slide figure-dominant spine, native OMML formulas, and pure vision-in-the-loop self-inspection."
 ---
 
 # CS Report PPT Skill (`cs-report-ppt`)
 
-Transform scientific research papers (PDF) into conference-grade (NeurIPS, ICML, CVPR, ICLR, KDD, ACL), 16:9 widescreen PowerPoint presentation decks that combine **dense, informative academic rigor** with **clean, minimalist visual aesthetics**.
+Transform scientific research papers (PDF) into conference-grade (NeurIPS, ICML, CVPR, ICLR, KDD, ACL), 16:9 widescreen PowerPoint presentation decks combining **dense, informative academic rigor** with **clean, minimalist visual aesthetics**.
 
 ---
 
 ## 1. Core Philosophy & Quality Standards
 
-A premier academic conference presentation is **not a wall of abstract text**, nor is it a sparse generic template. Every generated deck must embody four core principles:
+A premier academic presentation is **neither a wall of bullet points nor a rigid cookie-cutter template**. It is an adaptive, publication-grade visual narrative governed by five principles:
 
 1. **Figure & Table Dominance ($\ge 80\%$ Visual Asset Coverage)**:
-   - **Visuals are first-class citizens**: At least **11 out of 14 slides** must feature authentic high-resolution figures, system architecture diagrams, qualitative visual comparisons, or benchmark tables extracted directly from the paper PDF.
-   - Slides should never be filled with purely speculative text when authentic visual evidence exists in the paper. Pure-text cards are strictly reserved for synthesis slides (e.g., Critical Assessment and Discussion Roadmap).
-2. **Semantic Visual-Text Anchoring (图文深度互文)**:
-   - Do not merely embed an image beside generic text. Card bullet points must **actively dissect the visual asset**:
-     - *Point to the evidence*: Call out specific curves, sub-figures (`Fig. 2b`), columns, or inflection points.
-     - *Quantify the delta*: Highlight key performance jumps ($\Delta +4.8\%$, $-21\%\text{ Latency}$).
-     - *Deliver the verdict*: State the precise empirical takeaway derived from the visual.
-3. **Academic Minimalist Black & White Palette (极简学术黑白灰)**:
-   - **Default Aesthetic**: Clean, distraction-free monochrome / grayscale (`academic_mono`).
-   - Pure white background (`#FFFFFF`), pure black headers (`#000000`), deep slate body text (`#1F2937`), subtle light gray borders (`#D1D5DB`), and low-saturation neutral callout boxes (`#F9FAFB`).
-   - Eliminates loud colored banners, heavy blue blocks, and decorative clutter that detract from academic credibility.
-4. **Flawless Spatial & Formula Execution (零排版瑕疵，原生数学表达)**:
-   - **Zero Collision / Overlap**: Headers, subtitles, equations, card boundaries, and bullet runs must maintain strictly non-zero positive vertical margins ($\ge 0.15''$).
-   - **Dynamic Math Sizing**: Multi-line display formulas ($\mathcal{L}_{\text{total}}$, complex fractions, summations) must receive dynamic vertical bounding boxes ($\ge 0.65''\text{--}1.20''$) with separate vertical offsets for physical intuition commentary.
-   - **Native DrawingML OMML**: Formulas are rendered as editable, vector Office Math (OMML)—never rasterized screen captures or raw LaTeX placeholders.
-   - **Aspect-Ratio Locking**: All cropped figures and tables maintain their true physical proportions (`contain` scaling) with zero geometric stretching.
+   - **Visuals take center stage**: At least **11 out of 14 slides** must be anchored by authentic high-resolution figures, system architectures, benchmark tables, or qualitative comparisons harvested directly from the paper PDF.
+   - Never substitute speculative text where empirical visual evidence exists. Pure-text cards are strictly reserved for synthesis slides (Critical Assessment and Seminar Roadmap).
+2. **Vision-Driven Adaptive Layout (量体裁衣，摒弃死板网格)**:
+   - Real research figures come in diverse aspect ratios: wide panorama architectures, vertical multi-stage flowcharts, paired ablation subfigures, or dense master benchmark tables.
+   - **Do not force-fit figures into rigid, hardcoded layout boxes**. The AI must inspect each harvested asset's visual geometry and tailor the slide layout dynamically (e.g., top-hero banner, asymmetric 60/40 split, side-by-side comparison, or full-width matrix).
+3. **Pure Vision-in-the-Loop Feedback (以眼为准，视觉闭环自检)**:
+   - **Scripts are blind; vision sees ground truth**. Layout defects, text collisions, awkward line wraps, and unbalanced white space cannot be judged by counting text characters or checking XML tags.
+   - Every generated presentation must be rendered to high-DPI images and **visually audited by the AI's own multimodal vision system**. The AI inspects the rendered pixels like an expert designer, catches flaws with its own eyes, and iterates until visual perfection is reached.
+4. **Semantic Visual-Text Anchoring (图文深度互文)**:
+   - Text must actively dissect and interpret the visual asset rather than sitting passively beside it.
+   - Bullet points must explicitly reference subfigures (e.g. `Fig. 2b`), curve inflection points, key matrix rows, and quantified deltas ($\Delta +4.8\%$, $-21\%\text{ Latency}$), delivering crisp empirical verdicts.
+5. **Academic Minimalist Monochrome (`academic_mono`)**:
+   - **Default Aesthetic**: High-contrast, distraction-free monochrome / grayscale.
+   - Pure white background (`#FFFFFF`), pure black headers (`#000000`), deep slate body text (`#1F2937`), subtle light gray borders (`#D1D5DB`), and low-saturation neutral callouts (`#F9FAFB`).
+   - Saturated banners and heavy color blocks are banned to maintain serious scholarly authority.
 
 ---
 
 ## 2. Language & Interaction Policy
 
 - **Interactive Dialogue & Progress Reporting**: **100% 简体中文 (Chinese)**.
-  - All communication, extraction summaries, architectural rationale, and quality check reports must be presented in clear, professional Chinese.
+  - All communication, extraction summaries, architectural rationale, and visual inspection feedback must be presented in clear, professional Chinese.
 - **Generated Slide Deck Content**: **100% Academic English (专业学术英文)**.
   - All slide titles, subtitles, card headers, bullet points, table text, diagram labels, and footnotes must be written in formal, publication-grade academic English.
 
@@ -46,22 +45,22 @@ A premier academic conference presentation is **not a wall of abstract text**, n
 
 The presentation strictly adheres to the **14-slide Session Note Spine**. Over **80% of slides** are organically paired with authentic paper visual assets:
 
-| Slide # | Section | Category Badge | Standard Slide Title | Recommended Layout | Key Visual Asset & Empirical Focus | Marginal Callout Slot |
+| Slide # | Section | Category Badge | Standard Slide Title | Adaptive Visual Composition | Key Visual Asset & Empirical Focus | Marginal Callout Slot |
 |:---|:---|:---|:---|:---|:---|:---|
-| **1** | Header | `PAPER OVERVIEW` | `[Paper Title in Title Case]` | `split_equal_2col` / `hero_1col` | **Teaser / Core Trade-off Figure**: Full citation, authors, affiliations, venue/year, alongside teaser tradeoff curve or dilemma diagram. | None (Metadata Grid) |
-| **2** | Background (1/4) | `BACKGROUND & MOTIVATION` | `Motivation & Problem Context` | `split_65_35` | **Qualitative Failure Samples (Fig. 1/2)**: Real-world failure modes of prior art paired with challenge breakdown. | `[State Memory Inertia]` / `[Model Adaptivity]` |
-| **3** | Background (2/4) | `LITERATURE LANDSCAPE` | `Paper Classification & Taxonomy` | `split_65_35` / `grid_3col` | **Taxonomy / Capacity Scaling Chart**: Methodological taxonomy, parameter bounds, or capacity trade-off plot. | None (Taxonomy Matrix) |
-| **4** | Background (3/4) | `RESEARCH OBJECTIVE` | `Core Objective & Target Gap` | `split_equal_2col` | **Empirical Gap Visualization**: Central hypothesis vs. 2–3 unresolved theoretical / computational bottlenecks. | None (Hypothesis Hero) |
-| **5** | Background (4/4) | `HISTORICAL LINEAGE` | `Historical Evolution & Baselines` | `split_65_35` | **Lineage / Downsampling Comparison Table**: Evolutionary timeline (Origin $\rightarrow$ Transition $\rightarrow$ Current) + author lab background. | `[Own Lab Synergy]` |
-| **6** | Methods (1/4) | `METHODOLOGY: FOUNDATIONS` | `Inputs, Assumptions & Prerequisites` | `split_65_35` / `split_equal_2col` | **Latent Space / Spectral Analysis Plot (Fig. 4)**: Input spaces ($\mathbf{x} \in \mathbb{R}^{B \times L \times D}$), tokenization, stationarity invariants. | None (Foundational Invariants) |
-| **7** | Methods (2/4) | `METHODOLOGY: FORMULATION` | `Mathematical Formulation & Objectives` | `split_equal_2col` / `asymmetric_2row` | **Native OMML Master Loss Equations**: Multi-objective formulation ($\mathcal{L}_{\text{total}}$), adaptive gradient weights, parameter glossary. | None (Native OMML Formulation) |
-| **8** | Methods (3/4) | `METHODOLOGY: ARCHITECTURE`| `Technical Mechanism & Architecture` | `split_65_35` | **Main System Architecture Diagram (Fig. 3)**: High-DPI pipeline figure paired with 3-phase execution breakdown. | `[Mechanistic Interpretability]` |
-| **9** | Methods (4/4) | `EXPERIMENTAL PROTOCOL` | `Experimental Design & Setup` | `split_65_35` / `grid_3col` | **Benchmark Configuration Table**: Datasets, evaluation protocols, baseline suites, GPU compute budget. | None (Protocol Specs) |
-| **10** | Results (1/3) | `BENCHMARK RESULTS` | `Primary Quantitative Benchmarks` | `split_65_35` / `split_equal_2col` | **Primary SOTA Benchmark Table (Table 1)**: Authentic benchmark table with bolded best metrics and percentage deltas ($\Delta$). | None (Benchmark SOTA Table) |
-| **11** | Results (2/3) | `COMPARATIVE ANALYSIS` | `Comparative Evaluation & Trade-offs`| `split_65_35` | **Scaling Curves / Qualitative Visuals (Fig. 5)**: Multi-paradigm breakdown, Pareto throughput/quality frontier. | `[Computational & Hardware Efficiency]` |
-| **12** | Results (3/3) | `ABLATION & SENSITIVITY` | `Ablation Studies & Scaling Curves` | `split_65_35` / `quadrant_2x2` | **Component Ablation Table (Table 2)**: Stepwise contribution ablations, hyperparameter sensitivity, channel scaling. | None (Ablation Table/Curves) |
-| **13** | Conclusion (1/2) | `CRITICAL ASSESSMENT` | `Core Contributions vs. Critique` | `split_equal_2col` | **Balanced Synthesis Cards**: Author-claimed breakthroughs vs. independent critique (hidden compute, generalization bounds). | None (Balanced Critique) |
-| **14** | Conclusion (2/2) | `SEMINAR DISCUSSION` | `Discussion Prompts & Lab Roadmap` | `split_65_35` | **Forward Roadmap Cards**: 3 forward-looking seminar discussion questions paired with actionable 3-phase lab milestones. | `[Own Lab Synergy]` (Action Roadmap) |
+| **1** | Header | `PAPER OVERVIEW` | `[Paper Title in Title Case]` | Dynamic Split / Hero | **Teaser / Core Trade-off Figure**: Full citation, authors, affiliations, venue/year alongside teaser dilemma diagram. | None (Metadata Grid) |
+| **2** | Background (1/4) | `BACKGROUND & MOTIVATION` | `Motivation & Problem Context` | Visual Comparison Split | **Qualitative Failure Samples (Fig. 1/2)**: Visual failure modes of prior art paired with challenge breakdown. | `[State Memory Inertia]` / `[Model Adaptivity]` |
+| **3** | Background (2/4) | `LITERATURE LANDSCAPE` | `Paper Classification & Taxonomy` | Multi-Column / Chart | **Taxonomy / Capacity Scaling Chart**: Methodological taxonomy, parameter bounds, or capacity trade-off plot. | None (Taxonomy Matrix) |
+| **4** | Background (3/4) | `RESEARCH OBJECTIVE` | `Core Objective & Target Gap` | Asymmetric Split | **Empirical Gap Visualization**: Central hypothesis vs. 2–3 unresolved theoretical / computational bottlenecks. | None (Hypothesis Hero) |
+| **5** | Background (4/4) | `HISTORICAL LINEAGE` | `Historical Evolution & Baselines` | Timeline / Table Split | **Lineage / Downsampling Comparison Table**: Evolutionary timeline (Origin $\rightarrow$ Transition $\rightarrow$ Current) + author lab background. | `[Own Lab Synergy]` |
+| **6** | Methods (1/4) | `METHODOLOGY: FOUNDATIONS` | `Inputs, Assumptions & Prerequisites` | Distribution Split | **Latent Space / Spectral Analysis Plot (Fig. 4)**: Input spaces ($\mathbf{x} \in \mathbb{R}^{B \times L \times D}$), tokenization, stationarity invariants. | None (Foundational Invariants) |
+| **7** | Methods (2/4) | `METHODOLOGY: FORMULATION` | `Mathematical Formulation & Objectives` | Dedicated Formula Grid | **Native OMML Master Loss Equations**: Multi-objective formulation ($\mathcal{L}_{\text{total}}$), adaptive gradient weights, parameter glossary. | None (Native OMML Formulation) |
+| **8** | Methods (3/4) | `METHODOLOGY: ARCHITECTURE`| `Technical Mechanism & Architecture` | Full Architecture Split | **Main System Architecture Diagram (Fig. 3)**: High-DPI pipeline figure paired with 3-phase execution breakdown. | `[Mechanistic Interpretability]` |
+| **9** | Methods (4/4) | `EXPERIMENTAL PROTOCOL` | `Experimental Design & Setup` | Protocol Grid / Table | **Benchmark Configuration Table**: Datasets, evaluation protocols, baseline suites, GPU compute budget. | None (Protocol Specs) |
+| **10** | Results (1/3) | `BENCHMARK RESULTS` | `Primary Quantitative Benchmarks` | Full Benchmark Table | **Primary SOTA Benchmark Table (Table 1)**: Authentic benchmark table with bolded best metrics and percentage deltas ($\Delta$). | None (Benchmark SOTA Table) |
+| **11** | Results (2/3) | `COMPARATIVE ANALYSIS` | `Comparative Evaluation & Trade-offs`| Curve / Sample Split | **Scaling Curves / Qualitative Visuals (Fig. 5)**: Multi-paradigm breakdown, Pareto throughput/quality frontier. | `[Computational & Hardware Efficiency]` |
+| **12** | Results (3/3) | `ABLATION & SENSITIVITY` | `Ablation Studies & Scaling Curves` | Ablation Matrix / Table | **Component Ablation Table (Table 2)**: Stepwise contribution ablations, hyperparameter sensitivity, channel scaling. | None (Ablation Table/Curves) |
+| **13** | Conclusion (1/2) | `CRITICAL ASSESSMENT` | `Core Contributions vs. Critique` | Balanced Dual Cards | **Balanced Synthesis Cards**: Author-claimed breakthroughs vs. independent critique (hidden compute, generalization bounds). | None (Balanced Critique) |
+| **14** | Conclusion (2/2) | `SEMINAR DISCUSSION` | `Discussion Prompts & Lab Roadmap` | Discussion & Roadmap | **Forward Roadmap Cards**: 3 forward-looking seminar discussion questions paired with actionable 3-phase lab milestones. | `[Own Lab Synergy]` (Action Roadmap) |
 
 ---
 
@@ -87,119 +86,103 @@ Academic paper presentations must actively bridge to internal laboratory researc
 
 ---
 
-## 5. End-to-End 5-Stage Execution Methodology
+## 5. End-to-End Vision-First Execution Loop
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│ Stage 1: Paper Deep Reading & Visual Asset Harvesting  │
-│ • Extract core theory, equations, baselines & findings │
-│ • Harvest 8-12 high-DPI figures & tables directly      │
+│ Stage 1: Multi-Modal Harvesting & Geometry Inspection  │
+│ • Extract figures, tables & diagrams at 300+ DPI       │
+│ • AI visually inspects aspect ratios & visual features │
 └──────────────────────────┬─────────────────────────────┘
                            │
                            ▼
 ┌────────────────────────────────────────────────────────┐
-│ Stage 2: Semantic Visual-Text Information Architecture │
+│ Stage 2: Adaptive Information Architecture & Anchoring │
 │ • Structure into 14-slide figure-dominant spine        │
-│ • Anchor analytical bullet points to visual evidence   │
-│ • Formulate LaTeX math ($...$ / $$...$$) & lab callouts│
+│ • Craft analytical bullets actively dissecting visuals │
+│ • Write display LaTeX math ($...$ / $$...$$)           │
 └──────────────────────────┬─────────────────────────────┘
                            │
                            ▼
 ┌────────────────────────────────────────────────────────┐
-│ Stage 3: Deck Layout & Spatial Assembly                │
-│ • Assemble 16:9 widescreen presentation (.pptx)        │
-│ • Apply Academic Minimalist Black & White palette      │
-│ • Enforce dynamic math vertical sizing & aspect ratio  │
+│ Stage 3: Adaptive Code-Driven Slide Generation         │
+│ • AI dynamically codes layout tailored to figure shapes│
+│ • Academic Minimalist Monochrome (pure black & white)  │
+│ • Inject editable DrawingML OMML vector formulas       │
 └──────────────────────────┬─────────────────────────────┘
                            │
                            ▼
 ┌────────────────────────────────────────────────────────┐
-│ Stage 4: Visual Self-Inspection & Iterative Tuning     │
-│ • Render deck to 150+ DPI PNG slide previews           │
-│ • Perform multi-modal audit (overlap, overflow, voids) │
-│ • Auto-correct coordinates/spacing on any defect       │
+│ Stage 4: High-DPI Rendering & Pure Vision Inspection   │
+│ • Export deck to 150+ DPI PNG slide images             │
+│ • AI calls view_file on EVERY slide to SEE the layout  │
+│ • Visually verify: zero collision, balance, sharpness  │
 └──────────────────────────┬─────────────────────────────┘
                            │
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│ Stage 5: Structural Verification & Final Delivery      │
-│ • Programmatic OpenXML and OMML math validation        │
-│ • Deliver clean .pptx, rendered .pdf, and PNG gallery  │
-└────────────────────────────────────────────────────────┘
+               ┌───────────┴───────────┐
+            Visual Defect Seen     Visually Flawless
+               │                       │
+               ▼                       ▼
+┌─────────────────────────────┐   ┌───────────────────────┐
+│ Stage 5: Vision-Guided Fix  │   │ Final Delivery        │
+│ • Adjust code coordinates   │   │ • Deliver PPTX + PDF  │
+│ • Re-render & visually audit│   │ • Embed image gallery │
+└─────────────────────────────┘   └───────────────────────┘
 ```
 
-### Stage 1: Paper Deep Reading & Visual Asset Harvesting
-1. Read the paper PDF thoroughly to extract metadata, core claims, theoretical formulation, architecture, baseline deltas, and open questions.
-2. **Harvest authentic visual assets at 300+ DPI**:
-   - Extract **at least 6–10 figures and tables** from the PDF: Teaser diagrams, Failure sample comparisons, System architecture diagrams, Master benchmark tables, Ablation tables, Scaling law plots.
-   - Record exact bounding boxes, pixel dimensions, and physical aspect ratios ($W/H$).
-   - The AI agent has full autonomy over extraction techniques: PyMuPDF (`fitz`), pdfplumber, pdftoppm, or custom Python scripts.
+### Stage 1: Multi-Modal Harvesting & Geometry Inspection
+1. Read the paper PDF to understand theory, contributions, baselines, and findings.
+2. **Extract 8–12 authentic figures and tables directly from the PDF at 300+ DPI** (using PyMuPDF, pdfplumber, or custom scripts).
+3. **Inspect visual geometry**: Note whether each asset is wide (e.g., $W/H > 2.0$), square, tall ($W/H < 0.8$), or multi-panel. This geometry dictates the slide layout.
 
-### Stage 2: Semantic Visual-Text Information Architecture
-1. Organize the presentation into the 14-slide spine JSON or structured data model.
-2. **Anchor every visual asset with semantic dissection**:
-   - Pair each visual with 2–3 structured bullet points that directly interpret its visual data.
-   - Formulate mathematical expressions using standard LaTeX (`$x_t$` for inline, `$$\mathcal{L}$$` for display).
-   - Inject the 5 laboratory research synergy callouts into their designated slots.
+### Stage 2: Adaptive Information Architecture & Anchoring
+1. Map harvested visual assets to the 14-slide spine.
+2. For every visual slide, compose 2–3 concise bullet points that directly explain what the visual demonstrates.
+3. Formulate equations in standard LaTeX (`$x_t$` for inline, `$$\mathcal{L}$$` for display).
+4. Assign the 5 research connection marginal callouts.
 
-### Stage 3: Deck Layout & Spatial Assembly
-1. Construct the 16:9 widescreen presentation ($13.333'' \times 7.500''$ canvas, $12,192,000 \times 6,858,000\text{ EMU}$).
-2. Apply the **Academic Minimalist Black & White (`academic_mono`)** palette:
-   - Primary: `#000000` | Body: `#1F2937` | Background: `#FFFFFF`
-   - Card Borders: `#D1D5DB` | Side-notes: `#F9FAFB` | Accents: `#111827`
-3. Enforce dynamic math bounding boxes:
-   - Formula box height: dynamically allocated from $0.65''$ to $1.20''$ based on operator density (`\frac`, `\sum`, `\int`, `\matrix`).
-   - Maintain vertical clearance $\ge 0.12''$ between formula and explanatory text.
-4. Embed figures and tables with `contain` aspect-ratio scaling to preserve true physical geometry.
+### Stage 3: Adaptive Code-Driven Slide Generation
+1. Write clean, direct presentation generation code (e.g., using `python-pptx`, `pptxgenjs`, or helper tools):
+   - Canvas: Standard 16:9 widescreen ($13.333'' \times 7.500''$).
+   - Colors: Pure white canvas (`#FFFFFF`), pure black headers (`#000000`), deep slate text (`#1F2937`), subtle gray card strokes (`#D1D5DB`).
+   - Layout: Dynamically allocate card boundaries based on the figure's physical aspect ratio (never squeeze or distort images).
+2. Inject native vector DrawingML OMML math (using `latex_to_omml.py` or native OpenXML tools) to guarantee sharp, editable typography.
 
-### Stage 4: Visual Self-Inspection & Iterative Refinement (Mandatory Loop)
-1. Convert the generated `.pptx` to PDF and rasterize all 14 slides to **150+ DPI PNG images**.
-2. **Execute visual multi-modal self-inspection across every slide**:
-   - [ ] **Zero Overlap**: Slide title, tracker badge, formulas, and body text never collide.
-   - [ ] **Zero Overflow**: Content remains strictly within cards; cards terminate comfortably above footer ($Y < 6.85''$).
-   - [ ] **Figure & Table Dominance**: Confirm $\ge 80\%$ of slides embed authentic visual figures/tables.
-   - [ ] **Aspect Ratio**: Visual assets are crisp, sharp, and physically undistorted.
-   - [ ] **Math Quality**: Formulas render cleanly as native OMML without unparsed `<<MATH_` leaks or broken symbols.
-3. If any defect is detected, immediately tune the layout offsets, font sizes, or card dimensions and re-render.
+### Stage 4: High-DPI Rendering & Pure Vision Self-Inspection (Mandatory)
+1. Convert the generated presentation to PDF and rasterize all 14 slides to **150+ DPI PNG images** (using `soffice` and `pdftoppm` or `pymupdf`).
+2. **The AI must call `view_file` to visually inspect every slide image with its own multimodal eyes**:
+   - [ ] **Spatial Collision**: Look for overlapping text, equations colliding with explanation lines, or slide titles touching tracker badges.
+   - [ ] **Visual Balance & Dead Space**: Check for awkward empty patches, unbalanced weight distribution, or text drowning in blank space.
+   - [ ] **Aspect Ratio Integrity**: Check that figures and tables look crisp, natural, and unstretched.
+   - [ ] **Legibility & Hierarchy**: Confirm that titles (22–26pt), headers (15–17pt), and body bullets (12–14pt) have crisp contrast against the white background.
+3. **If any visual flaw is seen**: Modify the code coordinates, font sizes, or card boundaries, re-render, and visually inspect again. Do not stop until all 14 slides pass visual inspection.
 
-### Stage 5: Structural Verification & Delivery
-1. Verify OpenXML integrity: exactly 14 slides, native DrawingML OMML math nodes, and valid XML schema.
-2. Deliver the final presentation `.pptx`, rendered `.pdf`, and slide gallery previews.
+### Stage 5: Final Delivery
+1. Provide clickable links to the final `.pptx` and `.pdf` files.
+2. Present the full 14-slide rendered image gallery in the conversation walkthrough for instant visual review.
 
 ---
 
-## 6. Objective Quality Gate Rubric
+## 6. Vision-First Inspection Rubric (What the AI's Eyes Check)
 
-| Pillar | Criterion | Pass Threshold |
+| Visual Dimension | How to Judge with AI Vision (`view_file`) | Standard for Passing |
 |:---|:---|:---|
-| **1. Visual Coverage** | Presentation is figure and table-dominant. | $\ge 11$ of 14 slides feature authentic paper figures, diagrams, or tables. |
-| **2. Zero Collision** | No overlapping text boxes, equations, or borders. | Vertical gap $\ge 0.15''$ between headers, formulas, and body bullets. |
-| **3. Zero Overflow** | Content stays inside card boundaries. | Card content terminates at $Y < 6.85''$; footer clear at $Y = 7.00''$; `shrinkText` enabled. |
-| **4. Minimalist Aesthetics** | Clean academic monochrome / grayscale. | Default `academic_mono`; zero bright neon blocks or heavy saturated color strips. |
-| **5. Math Integrity** | Native vector DrawingML OMML math. | OMML math nodes $\ge 4$; zero raw LaTeX leaks (`<<MATH_` or `{{MATH:`); no missing glyphs. |
+| **1. Text & Element Collision** | Scan vertical lines of sight between header, badge, formula, bullets, and footer. | **Zero collision**: Every text block, formula, and visual asset breathes with clear positive white space around it. |
+| **2. Figure & Table Dominance** | Glance across the 14 slide thumbnails. | **$\ge 11$ slides feature real graphics**: At a glance, the presentation is visibly visual-first, not a wall of text. |
+| **3. Asset Fidelity & Geometry** | Inspect the embedded paper figures and benchmark tables. | **Undistorted**: Circles remain circular, text in tables is crisp, aspect ratios match the original paper exactly. |
+| **4. Visual Weight & Balance** | Evaluate the distribution of dark ink and white space across the 16:9 canvas. | **Harmonious density**: No giant vacant voids; cards feel purposefully filled without visual cramping. |
+| **5. Scholarly Monochrome** | Check slide color distribution. | **Clean grayscale**: Distraction-free black and white palette; zero loud or neon decorative strips. |
 
 ---
 
-## 7. Modular Tooling Accelerators & Agent Autonomy
+## 7. Modular Accelerators & Agent Autonomy
 
-The skill package provides modular scripts as optional accelerators:
+The repository provides low-level utility scripts as accelerators:
 
-- **`scripts/crop_figures.py`**: High-DPI PyMuPDF extractor with automatic whitespace snapping and aspect-ratio preservation.
-- **`scripts/latex_to_omml.py`**: LaTeX-to-OMML DrawingML converter and in-place PPTX OpenXML injector.
-- **`scripts/build_deck.js`**: Node.js + PptxGenJS 16:9 layout generator supporting responsive grids, vector diagrams, and native tables.
-- **`scripts/verify_deck.py`**: Programmatic OpenXML validator for slide count, OMML math, and figure metadata.
-- **`resources/template_config.json`**: Canvas coordinates, font ladders, and `academic_mono` palette definitions.
+- **`scripts/crop_figures.py`**: High-DPI PyMuPDF asset harvesting helper.
+- **`scripts/latex_to_omml.py`**: LaTeX to Office Math (OMML) OpenXML vector converter and injector.
+- **`scripts/build_deck.js`**: Node.js slide builder reference accelerator.
+- **`resources/template_config.json`**: Palette specifications and canvas standard metrics.
 
 > [!IMPORTANT]
-> **Full Implementation Autonomy**: The scripts in `scripts/` are **modular accelerators**, not rigid constraints. Capable AI agents have complete autonomy to adapt, write custom Python/Node scripts, or use any suitable library (`python-pptx`, `pptxgenjs`, `pymupdf`, `PIL`, `matplotlib`, etc.) to achieve the highest quality outcome.
-
----
-
-## 8. Progressive Disclosure References
-
-For deep structural and typographic specifications, consult:
-- **[references/spine_template.md](references/spine_template.md)**: Slide-by-slide 14-section specifications with Figure/Table pairing guidelines.
-- **[references/typography_rules.md](references/typography_rules.md)**: 16:9 canvas coordinates, grid formulas, and font scale ladders.
-- **[references/marginal_annotations.md](references/marginal_annotations.md)**: 5 taxonomy classes for laboratory research synergy side-notes.
-- **[references/omml_syntax_guide.md](references/omml_syntax_guide.md)**: DrawingML 2010 OpenXML math structure and element mappings.
-- **[references/architecture_diagrams.md](references/architecture_diagrams.md)**: Vector flowchart nodes, connectors, and multi-branch layout primitives.
+> **Full Agent Autonomy**: These scripts are modular accelerators. Capable AI agents have full freedom to adapt, write custom Python/Node scripts, or use any suitable library (`python-pptx`, `pptxgenjs`, `pymupdf`, `PIL`, `matplotlib`, etc.) to achieve the highest visual standard. The sole ground truth is **what the presentation looks like in the rendered images**.
