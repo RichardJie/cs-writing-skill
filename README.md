@@ -11,10 +11,16 @@ cs-writing-skill/
 ├── plain/                 # Explanation technique: make hard ideas click
 │   ├── SKILL.md
 │   └── agents/openai.yaml
-└── humanize/              # Remove AI voice (:chinese / :english tracks)
-    ├── SKILL.md           # Hub router
-    ├── chinese.md         # :chinese track — 7-step surgery + Chinese patterns
-    ├── english.md         # Pattern catalog + direct-statement rules
+├── humanize/              # Remove AI voice (:chinese / :english tracks)
+│   ├── SKILL.md           # Hub router
+│   ├── chinese.md         # :chinese track — 7-step surgery + Chinese patterns
+│   ├── english.md         # Pattern catalog + direct-statement rules
+│   └── agents/openai.yaml
+└── cs-report-ppt/         # Conference presentation PPT generator from paper PDFs
+    ├── SKILL.md           # 14-slide figure-dominant spine & quality rubric
+    ├── references/        # Spine template, typography rules, OMML guide
+    ├── scripts/           # Modular build, cropping & OMML injection scripts
+    ├── resources/         # Academic monochrome theme and sample templates
     └── agents/openai.yaml
 ```
 
@@ -25,8 +31,9 @@ cs-writing-skill/
 | `paper-boundaries` | Prevent defensive paper writing and narrative self-undermining | Revise abstracts, restructure experiments, catch self-undermining phrasing |
 | `plain` | Explain difficult concepts clearly | Walk through a paper/model with a small worked example, fix misconceptions |
 | `humanize` | Remove AI tone from prose | `:chinese` for Chinese de-AI-ing; `:english` for humanize / remove AI tells |
+| `cs-report-ppt` | Conference paper presentation deck generator | Transform paper PDFs into 14-slide figure-dominant 16:9 widescreen PPT decks with native OMML math |
 
-The three skills are independent: `paper-boundaries` governs *how to write and organize evidence without defensive self-undermining*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*.
+The skills are independent: `paper-boundaries` governs *how to write and organize evidence without defensive self-undermining*; `plain` governs *how to explain and repair understanding*; `humanize` governs *how to strip AI voice from finished prose*; `cs-report-ppt` governs *how to transform published papers into conference-grade slide decks*.
 
 ---
 
@@ -54,6 +61,7 @@ Use **slash commands** in the MIRASIM chat input:
 | `/plain` | Explain a concept with a small, domain-native numerical walkthrough |
 | `/humanize :chinese` | Chinese de-AI-ing — 7-step surgery, Chinese pattern scan |
 | `/humanize :english` | Humanize English — pattern catalog, em-dash ban, direct-statement rules |
+| `/cs-report-ppt` | Create a 14-slide figure-dominant academic presentation deck from a paper PDF |
 
 Natural-language triggers also work, for example:
 
@@ -89,6 +97,7 @@ mkdir -p ~/.claude/skills
 cp -R /tmp/cs-writing-skill/paper-boundaries ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/plain ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/humanize ~/.claude/skills/
+cp -R /tmp/cs-writing-skill/cs-report-ppt ~/.claude/skills/
 ```
 
 Project-scoped install: copy skill directories to `<project>/.claude/skills/`.

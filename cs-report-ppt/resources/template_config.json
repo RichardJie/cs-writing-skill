@@ -1,0 +1,464 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "meta": {
+    "name": "academic-paper-presentation-template-config",
+    "version": "1.1.0",
+    "description": "Standardized 16:9 layout coordinates, typography scales, card geometry, and conference theme presets for academic presentations."
+  },
+  "canvas": {
+    "width": 13.333,
+    "height": 7.500,
+    "unit": "inches",
+    "aspectRatio": "16:9",
+    "dpi": 96,
+    "pixelWidth": 1280,
+    "pixelHeight": 720,
+    "emuWidth": 12192000,
+    "emuHeight": 6858000
+  },
+  "layout": {
+    "margins": {
+      "left": 0.600,
+      "right": 0.600,
+      "top": 0.350,
+      "bottom": 0.150
+    },
+    "zones": {
+      "header": {
+        "x": 0.600,
+        "y": 0.350,
+        "width": 12.133,
+        "height": 1.200,
+        "tracker": {
+          "x": 0.600,
+          "y": 0.350,
+          "width": 8.000,
+          "height": 0.250,
+          "fontSize": 10,
+          "bold": true
+        },
+        "title": {
+          "x": 0.600,
+          "y": 0.600,
+          "width": 12.133,
+          "height": 0.480,
+          "fontSize": 26,
+          "bold": true
+        },
+        "subtitle": {
+          "x": 0.600,
+          "y": 1.080,
+          "width": 12.133,
+          "height": 0.350,
+          "fontSize": 15,
+          "italic": true,
+          "bold": false
+        },
+        "divider": {
+          "x": 0.600,
+          "y": 1.500,
+          "width": 12.133,
+          "height": 0.010
+        }
+      },
+      "content": {
+        "x": 0.600,
+        "y": 1.650,
+        "width": 12.133,
+        "height": 5.200,
+        "defaultGap": 0.300
+      },
+      "footer": {
+        "x": 0.600,
+        "y": 7.000,
+        "width": 12.133,
+        "height": 0.350,
+        "fontSize": 10
+      }
+    },
+    "gridModels": {
+      "hero_1col": {
+        "description": "Single wide hero card for high-impact diagrams or master benchmark tables",
+        "columns": 1,
+        "cards": [
+          {
+            "id": "card_0",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 12.133,
+            "h": 5.200
+          }
+        ]
+      },
+      "split_equal_2col": {
+        "description": "Two balanced 50/50 cards for problem vs bottleneck, author claims vs critique",
+        "columns": 2,
+        "gap": 0.300,
+        "cards": [
+          {
+            "id": "card_0",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 5.916,
+            "h": 5.200
+          },
+          {
+            "id": "card_1",
+            "x": 6.816,
+            "y": 1.650,
+            "w": 5.916,
+            "h": 5.200
+          }
+        ]
+      },
+      "split_65_35": {
+        "description": "Asymmetric 65/35 split: 65% primary technical card and 35% marginal research connection side-note",
+        "columns": 2,
+        "gap": 0.300,
+        "cards": [
+          {
+            "id": "main_card",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 7.700,
+            "h": 5.200
+          },
+          {
+            "id": "side_note_card",
+            "x": 8.600,
+            "y": 1.650,
+            "w": 4.133,
+            "h": 5.200
+          }
+        ]
+      },
+      "grid_3col": {
+        "description": "Three equal columns for 3-stage workflows, baseline flaw analysis, or 3 takeaway badges",
+        "columns": 3,
+        "gap": 0.250,
+        "cards": [
+          {
+            "id": "card_0",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 3.877,
+            "h": 5.200
+          },
+          {
+            "id": "card_1",
+            "x": 4.727,
+            "y": 1.650,
+            "w": 3.877,
+            "h": 5.200
+          },
+          {
+            "id": "card_2",
+            "x": 8.854,
+            "y": 1.650,
+            "w": 3.877,
+            "h": 5.200
+          }
+        ]
+      },
+      "grid_4col": {
+        "description": "Four equal columns for 4-phase pipelines, 4 benchmark datasets, or discussion prompts",
+        "columns": 4,
+        "gap": 0.200,
+        "cards": [
+          {
+            "id": "card_0",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 2.883,
+            "h": 5.200
+          },
+          {
+            "id": "card_1",
+            "x": 3.683,
+            "y": 1.650,
+            "w": 2.883,
+            "h": 5.200
+          },
+          {
+            "id": "card_2",
+            "x": 6.766,
+            "y": 1.650,
+            "w": 2.883,
+            "h": 5.200
+          },
+          {
+            "id": "card_3",
+            "x": 9.849,
+            "y": 1.650,
+            "w": 2.883,
+            "h": 5.200
+          }
+        ]
+      },
+      "quadrant_2x2": {
+        "description": "2x2 four quadrant grid for SWOT analysis, 4 ablation dimensions, or 4-modality matrix",
+        "rows": 2,
+        "columns": 2,
+        "gapX": 0.300,
+        "gapY": 0.250,
+        "cards": [
+          {
+            "id": "quad_top_left",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 5.916,
+            "h": 2.475
+          },
+          {
+            "id": "quad_top_right",
+            "x": 6.816,
+            "y": 1.650,
+            "w": 5.916,
+            "h": 2.475
+          },
+          {
+            "id": "quad_bottom_left",
+            "x": 0.600,
+            "y": 4.375,
+            "w": 5.916,
+            "h": 2.475
+          },
+          {
+            "id": "quad_bottom_right",
+            "x": 6.816,
+            "y": 4.375,
+            "w": 5.916,
+            "h": 2.475
+          }
+        ]
+      },
+      "asymmetric_2row": {
+        "description": "Top hero section with bottom 2 supporting cards",
+        "rows": 2,
+        "gapY": 0.200,
+        "gapX": 0.300,
+        "cards": [
+          {
+            "id": "hero_top",
+            "x": 0.600,
+            "y": 1.650,
+            "w": 12.133,
+            "h": 2.300
+          },
+          {
+            "id": "bottom_left",
+            "x": 0.600,
+            "y": 4.150,
+            "w": 5.916,
+            "h": 2.700
+          },
+          {
+            "id": "bottom_right",
+            "x": 6.816,
+            "y": 4.150,
+            "w": 5.916,
+            "h": 2.700
+          }
+        ]
+      }
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Arial",
+      "body": "Arial",
+      "mono": "Courier New",
+      "math": "Cambria Math"
+    },
+    "scales": {
+      "slideTitle": {
+        "fontSize": 26,
+        "lineSpacing": 1.1,
+        "bold": true
+      },
+      "subtitle": {
+        "fontSize": 15,
+        "lineSpacing": 1.2,
+        "italic": true,
+        "bold": false
+      },
+      "cardTitle": {
+        "fontSize": 17,
+        "lineSpacing": 1.2,
+        "bold": true
+      },
+      "cardBody": {
+        "fontSize": 13,
+        "lineSpacing": 1.20,
+        "bold": false
+      },
+      "cardBodyDense": {
+        "fontSize": 12,
+        "lineSpacing": 1.20,
+        "bold": false
+      },
+      "noteAnnotation": {
+        "fontSize": 12,
+        "lineSpacing": 1.20,
+        "bold": false,
+        "italic": false
+      },
+      "tracker": {
+        "fontSize": 10,
+        "lineSpacing": 1.0,
+        "bold": true,
+        "caps": true
+      },
+      "footer": {
+        "fontSize": 10,
+        "lineSpacing": 1.0,
+        "bold": false
+      },
+      "mathDisplay": {
+        "fontSize": 14,
+        "lineSpacing": 1.20
+      },
+      "mathInline": {
+        "fontSize": 13,
+        "lineSpacing": 1.20
+      }
+    }
+  },
+  "cardStyling": {
+    "cornerRadius": 0.08,
+    "borderWidthPt": 1.5,
+    "accentStripHeight": 0.08,
+    "sideNoteBarWidth": 0.08,
+    "padding": {
+      "top": 0.20,
+      "bottom": 0.20,
+      "left": 0.25,
+      "right": 0.25
+    },
+    "shadow": {
+      "type": "outer",
+      "color": "000000",
+      "opacity": 0.05,
+      "blur": 5,
+      "offset": 2,
+      "angle": 45
+    }
+  },
+  "themes": {
+    "neurips": {
+      "id": "neurips",
+      "name": "NeurIPS (Midnight Navy)",
+      "conference": "Conference on Neural Information Processing Systems",
+      "primary": "0F2042",
+      "accent": "2563EB",
+      "secondary": "475569",
+      "background": "F8FAFC",
+      "cardBg": "FFFFFF",
+      "cardBorder": "E2E8F0",
+      "cardHeaderBg": "F1F5F9",
+      "sideNoteBg": "EFF6FF",
+      "sideNoteBorder": "1D4ED8",
+      "sideNoteAccent": "2563EB",
+      "sideNoteText": "1E3A8A",
+      "textPrimary": "0F172A",
+      "textSecondary": "475569",
+      "textMuted": "94A3B8",
+      "highlightBg": "DBEAFE",
+      "highlightText": "1E40AF",
+      "badgeBg": "E0E7FF",
+      "badgeText": "3730A3"
+    },
+    "icml": {
+      "id": "icml",
+      "name": "ICML (Emerald Teal)",
+      "conference": "International Conference on Machine Learning",
+      "primary": "004D40",
+      "accent": "0D9488",
+      "secondary": "334155",
+      "background": "F0FDFA",
+      "cardBg": "FFFFFF",
+      "cardBorder": "CCFBF1",
+      "cardHeaderBg": "E6FFFA",
+      "sideNoteBg": "F0FDFA",
+      "sideNoteBorder": "0F766E",
+      "sideNoteAccent": "0D9488",
+      "sideNoteText": "134E4A",
+      "textPrimary": "064E3B",
+      "textSecondary": "334155",
+      "textMuted": "64748B",
+      "highlightBg": "CCFBF1",
+      "highlightText": "115E59",
+      "badgeBg": "D1FAE5",
+      "badgeText": "065F46"
+    },
+    "cvpr": {
+      "id": "cvpr",
+      "name": "CVPR (Crimson Rose)",
+      "conference": "IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+      "primary": "881337",
+      "accent": "E11D48",
+      "secondary": "334155",
+      "background": "FFF1F2",
+      "cardBg": "FFFFFF",
+      "cardBorder": "FFE4E6",
+      "cardHeaderBg": "FFE4E6",
+      "sideNoteBg": "FFF1F2",
+      "sideNoteBorder": "BE123C",
+      "sideNoteAccent": "E11D48",
+      "sideNoteText": "881337",
+      "textPrimary": "4C0519",
+      "textSecondary": "334155",
+      "textMuted": "64748B",
+      "highlightBg": "FFE4E6",
+      "highlightText": "9F1239",
+      "badgeBg": "FCE7F3",
+      "badgeText": "9D174D"
+    },
+    "iclr": {
+      "id": "iclr",
+      "name": "ICLR (Amethyst Violet)",
+      "conference": "International Conference on Learning Representations",
+      "primary": "4C1D95",
+      "accent": "7C3AED",
+      "secondary": "334155",
+      "background": "FAF5FF",
+      "cardBg": "FFFFFF",
+      "cardBorder": "EDE9FE",
+      "cardHeaderBg": "F3E8FF",
+      "sideNoteBg": "FAF5FF",
+      "sideNoteBorder": "6D28D9",
+      "sideNoteAccent": "7C3AED",
+      "sideNoteText": "4C1D95",
+      "textPrimary": "2E1065",
+      "textSecondary": "334155",
+      "textMuted": "64748B",
+      "highlightBg": "EDE9FE",
+      "highlightText": "5B21B6",
+      "badgeBg": "F5F3FF",
+      "badgeText": "5B21B6"
+    },
+    "kdd": {
+      "id": "kdd",
+      "name": "KDD (Bronze Amber)",
+      "conference": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+      "primary": "78350F",
+      "accent": "D97706",
+      "secondary": "334155",
+      "background": "FFFBEB",
+      "cardBg": "FFFFFF",
+      "cardBorder": "FEF3C7",
+      "cardHeaderBg": "FEF3C7",
+      "sideNoteBg": "FEF3C7",
+      "sideNoteBorder": "B45309",
+      "sideNoteAccent": "D97706",
+      "sideNoteText": "78350F",
+      "textPrimary": "451A03",
+      "textSecondary": "334155",
+      "textMuted": "64748B",
+      "highlightBg": "FEF3C7",
+      "highlightText": "92400E",
+      "badgeBg": "FEF9C3",
+      "badgeText": "854D0E"
+    }
+  }
+}

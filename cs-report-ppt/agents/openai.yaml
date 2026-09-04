@@ -1,0 +1,4 @@
+interface:
+  display_name: "CS Report PPT"
+  short_description: "Create conference-level academic paper presentation PPT decks from paper PDFs with 14-slide figure-dominant spine, native paper figures/tables, OMML formulas, and rigorous visual self-inspection."
+  default_prompt: "Use $cs-report-ppt to create a conference-level 14-slide academic presentation deck from this paper PDF."

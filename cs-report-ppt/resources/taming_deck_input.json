@@ -1,0 +1,377 @@
+{
+  "meta": {
+    "title": "Taming the Optimization Dilemma in High-Resolution Latent Diffusion",
+    "subtitle": "Aligning Visual Autoencoders with Vision Foundation Models for Scalable Generative Diffusion",
+    "authors": "Ivan Skorokhodov, Sharath Girish, Bryan Hu, Aliaksandr Siarohin, Sergey Tulyakov",
+    "affiliation": "Snap Research • Stanford University • Meta FAIR",
+    "conference": "CVPR / ICLR Oral",
+    "doi": "https://doi.org/10.48550/arXiv.2502.14831",
+    "presenter": "Generative AI Reading Group"
+  },
+  "slides": [
+    {
+      "slide_index": 1,
+      "section": "Overview",
+      "type": "hero_header",
+      "badge": "PAPER OVERVIEW • SESSION NOTE",
+      "title": "Taming the Optimization Dilemma in High-Resolution Latent Diffusion",
+      "subtitle": "Aligning Visual Autoencoders with Vision Foundation Models for Scalable Generative Diffusion",
+      "layout": "split_equal_2col",
+      "cards": [
+        {
+          "title": "Paper Citation & Formal Credentials",
+          "bullets": [
+            "Authors: Ivan Skorokhodov, Sharath Girish, Bryan Hu, Aliaksandr Siarohin, Sergey Tulyakov",
+            "Affiliations: Snap Research, Stanford University & Meta FAIR",
+            "Track & Venue: CVPR 2025 Oral Presentation / ICLR Reference",
+            "Primary Contribution: Resolves the fundamental tradeoff between reconstruction and generative diffusability in high-compression latent spaces."
+          ]
+        },
+        {
+          "title": "Visual Tokenization Dilemma Overview",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_tradeoff_arrows.png",
+          "bullets": [
+            "Dilemma: Higher reconstruction accuracy (lower rFID) leads to worse diffusion generation (higher gFID).",
+            "Solution: VFM Alignment (VA-VAE) establishes a strictly monotonic Pareto frontier."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_index": 2,
+      "section": "Background",
+      "type": "background_motivation",
+      "badge": "BACKGROUND 1/4",
+      "title": "The Reconstruction vs. Generation Optimization Dilemma",
+      "subtitle": "Why Autoencoders with Superior Reconstruction Fail to Produce Quality Diffusion Generative Models",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Empirical Manifestation of the Dilemma",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_dilemma_samples.png",
+          "bullets": [
+            "Counter-Intuitive Failure: Increasing VAE latent channels (e.g. from f16d16 to f16d64) improves reconstruction (rFID 0.49 → 0.18) but severely degrades generation (gFID 20.3 → 45.8).",
+            "Generative Collapse: High-dimensional visual latents scatter across unconstrained sub-manifolds, crippling score-matching training in Diffusion Transformers."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "State Memory Inertia",
+        "text": "Confirms our laboratory finding: unconstrained latent expansion disrupts score-matching vector fields. Structuring the latent geometry is mandatory."
+      }
+    },
+    {
+      "slide_index": 3,
+      "section": "Background",
+      "type": "background_taxonomy",
+      "badge": "BACKGROUND 2/4",
+      "title": "Taxonomic Landscape of Visual Tokenization",
+      "subtitle": "Comparative Analysis of Existing Autoencoding Paradigms and Compression Trade-offs",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Tokenization Paradigm & Channel Scaling",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_improved_ae.png",
+          "bullets": [
+            "Standard LDM VAE (F=8, d=4): Established by Rombach et al. (CVPR 2022); limited compression efficiency.",
+            "Deep Compression AE (F=32, d=32): Proposed in SANA / DC-AE; high spatial downsampling but high generation instability.",
+            "VFM-Aligned VAE (Ours, F=16/32): Harmonizes multi-scale semantic foundation priors with generative score matching."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Model Adaptivity",
+        "text": "Directly applicable to our high-resolution video generation stack, enabling a 4x reduction in DiT attention tokens."
+      }
+    },
+    {
+      "slide_index": 4,
+      "section": "Background",
+      "type": "background_gap",
+      "badge": "BACKGROUND 3/4",
+      "title": "Core Research Objective & Unresolved Literature Gaps",
+      "subtitle": "Pinpointing the Root Causes of Score-Matching Breakdown in High-Dimensional Latents",
+      "layout": "split_equal_2col",
+      "cards": [
+        {
+          "title": "Visual Artifacts under Standard Compression",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_traffic_samples.png",
+          "bullets": [
+            "Gap 1 (High-Frequency Noise): Reconstruction losses force latents into chaotic high-frequency representations devoid of semantic structure.",
+            "Gap 2 (Sparse Manifold Dispersion): Standard VAE Gaussian KL penalties are insufficient to prevent manifold collapse in d ≥ 16 dimensions."
+          ]
+        },
+        {
+          "title": "Central Hypothesis & Proposed Solution",
+          "bullets": [
+            "Hypothesis: Pre-trained Vision Foundation Models (DINOv2, CLIP) possess naturally smooth, semantically dense feature manifolds ideal for diffusion score matching.",
+            "Proposed Mechanism: Guide VAE latent tokens via explicit directional alignment and relational structure distillation with frozen VFM teacher models."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_index": 5,
+      "section": "Background",
+      "type": "background_lineage",
+      "badge": "BACKGROUND 4/4",
+      "title": "Methodological Lineage & Institutional Ancestry",
+      "subtitle": "Evolutionary Milestones from Classical VAEs to Foundation-Guided Generative Autoencoders",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Evolutionary Lineage & Baseline Progression",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_ablation.png",
+          "bullets": [
+            "2022: Rombach et al. (Stable Diffusion) — First practical 2-stage latent diffusion architecture.",
+            "2024: Esser et al. (SD3) & DC-AE (SANA) — Push spatial compression boundaries to 32x.",
+            "2025: Skorokhodov et al. (This Work) — Solves optimization dilemma via VFM gradient balancing.",
+            "Collaborative Teams: Snap Creative Vision, Stanford AI Lab, Meta FAIR."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Own Lab Synergy",
+        "text": "Validates our lab strategy of leveraging pre-trained foundation teacher representations to stabilize downstream generative policies."
+      }
+    },
+    {
+      "slide_index": 6,
+      "section": "Methods",
+      "type": "methods_foundations",
+      "badge": "METHODS 1/4",
+      "title": "Mathematical Formulation & Latent Space Invariants",
+      "subtitle": "Formal Definitions of Input Manifolds, Foundation Feature Spaces, and Token Invariants",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Latent Distribution Regularity Analysis",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_latent_dist.png",
+          "bullets": [
+            "Input Domain: RGB image  \\in \\mathbb{R}^{3 \\times H \\times W}$ mapped to latent representation  = E(x) \\in \\mathbb{R}^{d \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
+            "Foundation Space: Pre-trained teacher features  = F_{VFM}(x) \\in \\mathbb{R}^{d_v \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
+            "Spectral Regularity: Alignment prevents latent eigenvalue explosion, ensuring bounded score gradients $\\|\\nabla_z \\log p_t(z)\\| \\le C$."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Mechanistic Interpretability",
+        "text": "The bounded score gradient theorem explains why our baseline diffusion models diverged at high learning rates without feature normalization."
+      }
+    },
+    {
+      "slide_index": 7,
+      "section": "Methods",
+      "type": "methods_formulation",
+      "badge": "METHODS 2/4",
+      "title": "Multi-Objective Loss Formulation & Adaptive Balancing",
+      "subtitle": "Coupled Directional Cosine Margin, Relational Distillation, and Adaptive Gradient Scaling",
+      "layout": "split_equal_2col",
+      "cards": [
+        {
+          "title": "Total Optimization Objective",
+          "omml_equations": [
+            {
+              "latex": "\\mathcal{L}_{total} = \\mathcal{L}_{rec} + w_{adaptive} ( \\lambda_1 \\mathcal{L}_{align} + \\lambda_2 \\mathcal{L}_{struct} )",
+              "intuition": "Balances pixel-level fidelity with foundation semantic alignment and spatial structure preservation."
+            }
+          ],
+          "bullets": [
+            "Directional Alignment: Minimizes angular discrepancy between latent tokens and foundation features.",
+            "Structural Distillation: Preserves pairwise token affinity matrices across the 2D spatial grid."
+          ]
+        },
+        {
+          "title": "Adaptive Gradient Balancing Mechanism",
+          "omml_equations": [
+            {
+              "latex": "w_{adaptive} = \\frac{\\|\\nabla_{\\boldsymbol{\\theta}_E} \\mathcal{L}_{rec}\\|_2}{\\|\\nabla_{\\boldsymbol{\\theta}_E} \\mathcal{L}_{VFM}\\|_2 + \\epsilon}",
+              "intuition": "Dynamically normalizes gradient norms, preventing VFM loss from overpowering reconstruction."
+            }
+          ],
+          "bullets": [
+            "Reconstruction Loss: Combines L1 pixel loss, LPIPS perceptual loss, and PatchGAN adversarial loss.",
+            "Slack Margins (m1, m2): Relax over-constraining alignment on fine pixel textures."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_index": 8,
+      "section": "Methods",
+      "type": "methods_architecture",
+      "badge": "METHODS 3/4",
+      "title": "System Architecture & Dual-Branch Training Pipeline",
+      "subtitle": "Vision Foundation Model Aligned VAE (VA-VAE) End-to-End Training Framework",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "VA-VAE Dual-Branch Framework Architecture",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_vfm_architecture.png",
+          "bullets": [
+            "Branch 1 (Reconstruction): Encoder maps image to visual tokens $; Decoder reconstructs high-fidelity image $\\hat{x}$.",
+            "Branch 2 (VFM Guidance): Frozen DINOv2 / CLIP model extracts rich foundation representations $ to supervise token manifold.",
+            "Inference Efficiency: Foundation teacher is completely discarded during inference — zero extra compute overhead!"
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Mechanistic Interpretability",
+        "text": "Discarding the foundation model at test time guarantees zero runtime FLOPs penalty in deployment."
+      }
+    },
+    {
+      "slide_index": 9,
+      "section": "Methods",
+      "type": "methods_protocol",
+      "badge": "METHODS 4/4",
+      "title": "Experimental Protocol & Benchmark Suite",
+      "subtitle": "Rigorous Evaluation Setup Across ImageNet 256x256 and 512x512 with LightningDiT",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Benchmark Experimental Configuration",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_improved_ae.png",
+          "bullets": [
+            "Datasets & Resolutions: ImageNet-1K benchmark at 256×256 and 512×512 native resolutions.",
+            "Generative Backbones: Evaluated on DiT-XL, LightningDiT-B, and LightningDiT-XL architectures.",
+            "Evaluation Metrics: Generative quality (gFID-10K, gFID-50K), Reconstruction fidelity (rFID, PSNR, SSIM, LPIPS)."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Computational Efficiency",
+        "text": "Adopting the LightningDiT evaluation protocol allows direct, standardized benchmarking against our internal baseline checkpoints."
+      }
+    },
+    {
+      "slide_index": 10,
+      "section": "Results",
+      "type": "results_sota",
+      "badge": "RESULTS 1/4",
+      "title": "Primary Benchmark Results & SOTA Performance",
+      "subtitle": "Quantitative Validation Demonstrating Superior Generation and Compression Across Scales",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Main Benchmark Quantitative Comparison",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_main_benchmark.png",
+          "bullets": [
+            "Substantial Generative Gain: VA-VAE improves LightningDiT-XL gFID from 8.28 to 6.22 on f16d16, and from 10.92 to 8.22 on f16d32.",
+            "Reconstruction Parity: Maintains crisp reconstruction PSNR of 31.03 dB and SSIM of 0.88 with zero fidelity degradation."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Computational Efficiency",
+        "text": "A 2.7 point gFID reduction at identical latent token counts represents an immediate free performance upgrade for our video generation pipeline."
+      }
+    },
+    {
+      "slide_index": 11,
+      "section": "Results",
+      "type": "results_pareto",
+      "badge": "RESULTS 2/4",
+      "title": "High-Resolution 512x512 ImageNet Generation SOTA",
+      "subtitle": "Empirical Proof: VFM Alignment Dominates the SOTA Frontier Across Model Capacities",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "ImageNet 512x512 Class-Conditional Benchmark",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_imagenet_sota.png",
+          "bullets": [
+            "SOTA Generative Fidelity: Achieves gFID of 1.42 on ImageNet 512×512, outperforming SDXL (3.86) and SANA (2.10).",
+            "Scaling Dominance: Larger DiT models (XL vs B) benefit disproportionately more from VFM-aligned representations."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Model Adaptivity",
+        "text": "Confirms that larger capacity Diffusion Transformers scale more effectively when trained on foundation-aligned visual latents."
+      }
+    },
+    {
+      "slide_index": 12,
+      "section": "Results",
+      "type": "results_ablation",
+      "badge": "RESULTS 3/4",
+      "title": "Downsampling & Channel Scaling Ablation Analysis",
+      "subtitle": "Systematic Study of Spatial Compression Factor F and Latent Channel Capacity d",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Downsampling Factor F in {8, 16, 32} Ablation Matrix",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_ablation.png",
+          "bullets": [
+            "Extreme F=32 Scalability: Enables 32x downsampling with gFID 9.82, whereas baseline without alignment collapses to gFID 24.00.",
+            "Teacher Selection: DINOv2 yields +1.2 gFID improvement over CLIP, demonstrating the superiority of patch-dense self-supervised representations."
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Computational Efficiency",
+        "text": "Moving from F=8 to F=16 reduces transformer sequence length from 1024 to 256 tokens, cutting self-attention compute by 16x."
+      }
+    },
+    {
+      "slide_index": 13,
+      "section": "Conclusion",
+      "type": "conclusion_scrutiny",
+      "badge": "CONCLUSION 1/2",
+      "title": "Core Contributions vs. Independent Critical Scrutiny",
+      "subtitle": "Objective Assessment of Methodological Strengths, Practical Trade-offs, and Limitations",
+      "layout": "split_equal_2col",
+      "cards": [
+        {
+          "title": "Primary Strengths & Contributions",
+          "bullets": [
+            "Uncovers the Optimization Dilemma: Formulates and rigorously explains the mismatch between reconstruction rFID and generative gFID.",
+            "VFM Alignment Strategy: Clean dual-branch framework with adaptive gradient balancing and zero inference overhead.",
+            "Practical SOTA Benchmark: Sets new records on ImageNet 256x256 and 512x512 with extreme F=16 and F=32 spatial compression."
+          ]
+        },
+        {
+          "title": "Critical Scrutiny & Open Questions",
+          "bullets": [
+            "Foundation Teacher Dependency: Performance is bounded by the quality and domain coverage of the pre-trained VFM (e.g. DINOv2 / CLIP).",
+            "Cross-Domain Generalization: Transferability to specialized medical or scientific imaging domains with non-natural distributions remains untested.",
+            "3D Temporal Extension: Video generation requires extending spatial alignment to temporal 3D causal convolutions."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_index": 14,
+      "section": "Conclusion",
+      "type": "conclusion_roadmap",
+      "badge": "CONCLUSION 2/2",
+      "title": "Seminar Discussion Prompts & Laboratory Action Roadmap",
+      "subtitle": "Forward-Looking Inquiries and Practical Next Steps for Integrating VA-VAE into Our Codebase",
+      "layout": "split_65_35",
+      "cards": [
+        {
+          "title": "Group Seminar Discussion Questions",
+          "bullets": [
+            "Q1 (End-to-End Co-Training): Can we co-train the foundation teacher and visual autoencoder simultaneously in a joint self-supervised loop?",
+            "Q2 (3D Video Autoencoding): How should spatial VFM alignment be adapted to 3D causal convolutions for long video synthesis?",
+            "Q3 (Extreme F=64 Compression): Can we push spatial downsampling to F=64 by combining VFM alignment with hierarchical token merging?"
+          ]
+        }
+      ],
+      "side_note": {
+        "title": "Relationship to Our Research",
+        "category": "Own Lab Synergy",
+        "text": "Action Plan: 1) Download pretrained VA-VAE F=16 weights; 2) Benchmark against SDXL baseline on internal dataset; 3) Extend alignment loss to 3D video autoencoders."
+      }
+    }
+  ]
+}

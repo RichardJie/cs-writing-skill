@@ -1,0 +1,27 @@
+{
+  "name": "academic-paper-presentation",
+  "version": "1.0.0",
+  "description": "Automate creation of top-tier academic paper presentation PPT decks from PDFs with 14-slide spine, native OMML formulas, and high-fidelity figures.",
+  "main": "scripts/build_deck.js",
+  "scripts": {
+    "test": "bash verify_skill.sh"
+  },
+  "keywords": [
+    "academic",
+    "presentation",
+    "powerpoint",
+    "pptxgenjs",
+    "omml",
+    "latex",
+    "neurips",
+    "icml",
+    "cvpr",
+    "iclr"
+  ],
+  "author": "Antigravity Team",
+  "license": "MIT",
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^3.12.0"
+  }
+}
