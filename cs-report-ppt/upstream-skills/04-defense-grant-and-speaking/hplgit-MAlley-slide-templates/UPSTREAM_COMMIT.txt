@@ -1,0 +1,4 @@
+upstream_url: https://github.com/hplgit/MAlley-slide-templates
+commit_sha: 3c3c91811c3c6cffa1e479588e0c588be1f7e7d6
+license: MIT
+note: Heavy binary demo media / test fixtures (344 files, 12455.0 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/hplgit/MAlley-slide-templates

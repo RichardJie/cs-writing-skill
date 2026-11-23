@@ -1,0 +1,3 @@
+﻿https://github.com/ruanyf/document-style-guide.git
+SHA: 571951731efb4b83b1939af1d3dd830441ebef45
+Date: 2025-12-19 19:42:16 +0800

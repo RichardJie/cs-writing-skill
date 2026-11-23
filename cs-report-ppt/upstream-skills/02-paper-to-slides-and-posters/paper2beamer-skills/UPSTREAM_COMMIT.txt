@@ -1,0 +1,3 @@
+upstream_url: https://github.com/Sheng910411/paper2beamer-skills
+commit_sha: 9fb4615d4e4b89b329405a1b188219cd3b5dadec
+license: MIT

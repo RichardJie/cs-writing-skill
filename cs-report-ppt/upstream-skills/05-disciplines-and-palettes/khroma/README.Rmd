@@ -1,0 +1,264 @@
+---
+output: github_document
+bibliography: vignettes/bibliography.bib
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = NULL
+)
+Sys.setenv(LANGUAGE = "en") # Force locale
+```
+
+# khroma <img width=120px src="man/figures/logo.png" align="right" />
+
+<!-- badges: start -->
+[![status-badge](https://ci.codeberg.org/api/badges/14693/status.svg)](https://ci.codeberg.org/repos/14693){.pkgdown-devel}
+[![Code coverage](https://packages.tesselle.org/khroma/coverage/badge.svg)](https://packages.tesselle.org/khroma/coverage/){.pkgdown-devel}
+[![Dependencies](https://tinyverse.netlify.app/badge/khroma)](https://cran.r-project.org/package=khroma){.pkgdown-devel}
+
+[![r-universe](https://tesselle.r-universe.dev/badges/khroma)](https://tesselle.r-universe.dev/khroma){.pkgdown-devel}
+[![CRAN Version](https://www.r-pkg.org/badges/version/khroma)](https://cran.r-project.org/package=khroma){.pkgdown-release}
+[![CRAN checks](https://badges.cranchecks.info/worst/khroma.svg)](https://cran.r-project.org/web/checks/check_results_khroma.html){.pkgdown-release}
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/khroma)](https://cran.r-project.org/package=khroma){.pkgdown-release}
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1472077.svg)](https://doi.org/10.5281/zenodo.1472077)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://codeberg.org/tesselle/khroma/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://codeberg.org/tesselle/khroma)
+<!-- badges: end -->
+
+## Overview
+
+Color blindness affects a large number of individuals. When communicating scientific results color palettes must therefore be carefully chosen to be accessible to all readers.
+
+This R package provides an implementation of @okabe2008, @tol2021 and @crameri2018 color schemes. These schemes are ready for each type of data (qualitative, diverging or sequential), with colors that are distinct for all people, including color-blind readers (see `vignette("tol")` and `vignette("crameri")` for a more complete overview). This package also provides tools to simulate color-blindness and to test how well the colors of any palette are identifiable.
+
+For specific uses, several scientific thematic schemes (geologic timescale, land cover, FAO soils, etc.) are implemented, but these color schemes may not be color-blind safe.
+
+All these color schemes are implemented for use with base R **graphics** or [**ggplot2**](https://cran.r-project.org/package=ggplot2) and [**ggraph**](https://cran.r-project.org/package=ggraph).
+
+---
+
+```{r citation, echo=FALSE, comment='', results='asis'}
+cite <- utils::citation("khroma")
+print(cite, bibtex = FALSE)
+```
+
+## Installation
+
+You can install the released version of **khroma** from [CRAN](https://CRAN.R-project.org):
+
+```{r cran-installation, eval=FALSE}
+install.packages("khroma")
+```
+
+And the development version from [Codeberg](https://codeberg.org/) with:
+
+```{r gh-installation, eval=FALSE}
+# install.packages("remotes")
+remotes::install_git("https://codeberg.org/tesselle/khroma")
+```
+
+## Usage
+
+```{r packages}
+## Install extra packages (if needed)
+# install.packages("ggplot2"))
+
+## Load packages
+library(khroma)
+```
+
+<details>
+<summary><strong>Available palettes</strong> (click to expand)</summary>
+
+```{r info}
+## Get a table of available palettes
+info()
+```
+
+</details>
+
+### Color palettes and scales
+
+`color()` returns a function that when called with a single integer argument returns a vector of colors.
+
+```{r usage}
+## Paul Tol's bright color scheme
+bright <- color("bright")
+bright(7)
+```
+
+```{r usage-show, fig.height=2, fig.width=7, fig.align='center'}
+## Plot the color scheme
+plot_scheme(bright(7), colours = TRUE)
+```
+
+```{r usage-plot, fig.height=3.5, fig.width=5, fig.align='center'}
+data(mpg, package = "ggplot2")
+
+## Use with graphics
+par(mar = c(5, 4, 1, 1) + 0.1)
+plot(
+  x = mpg$displ,
+  y = mpg$hwy,
+  pch = 16,
+  col = palette_color_picker("bright")(mpg$class),
+  xlab = "displ",
+  ylab = "hwy",
+  panel.first = grid(),
+  las = 1
+)
+
+## Use with ggplot2
+ggplot2::ggplot(data = mpg) +
+  ggplot2::aes(x = displ, y = hwy, color = class) +
+  ggplot2::geom_point() +
+  ggplot2::theme_bw() +
+  scale_color_bright()
+```
+
+### Diagnostic tools
+#### Test how well the colors are identifiable
+
+```{r usage-map, fig.height=2, fig.width=7, fig.align='center'}
+## Okabe & Ito's color scheme
+okabe <- color("okabe ito")
+
+set.seed(12345)
+plot_map(okabe(8))
+```
+
+```{r usage-tiles, fig.height=3, fig.width=3, fig.align='center'}
+## BuRd sequential color scheme
+BuRd <- color("BuRd")
+
+plot_tiles(BuRd(128), n = 256)
+```
+
+#### Simulate color-blindness
+
+```{r usage-colorblind1, echo=FALSE, eval=FALSE, fig.height=2, fig.width=7, fig.align='center'}
+## change() returns function
+deuteranopia <- change(okabe, mode = "deuteranopia")
+plot_scheme(deuteranopia(8), colours = TRUE)
+
+protanopia <- change(okabe, mode = "protanopia")
+plot_scheme(protanopia(8), colours = TRUE)
+
+tritanopia <- change(okabe, mode = "tritanopia")
+plot_scheme(tritanopia(8), colours = TRUE)
+
+achromatopsia <- change(okabe, mode = "achromatopsia")
+plot_scheme(achromatopsia(8), colours = TRUE)
+```
+
+```{r usage-colorblind2, fig.height=4, fig.width=7, fig.align='center'}
+plot_scheme_colorblind(okabe(8))
+
+## ggplot2 default color scheme
+## (equally spaced hues around the color wheel)
+x <- scales::hue_pal()(8)
+plot_scheme_colorblind(x)
+```
+
+## Related Works
+
+* [**colorblindr**](https://github.com/clauswilke/colorblindr) allows to simulate color-blindness in production-ready R figures.
+
+## Contributing
+
+Please note that the **khroma** project is released with a [Contributor Code of Conduct](https://www.tesselle.org/conduct.html). By contributing to this project, you agree to abide by its terms.
+
+## References
+
+```{r metadata, include=FALSE}
+## Update codemeta.json
+codemetar::write_codemeta(verbose = FALSE)
+
+## Update CITATION.cff
+cff_keys <- list(
+  identifiers = list(
+    list(description = "The concept DOI.",
+         type = "doi",
+         value = "10.5281/zenodo.1472077"),
+    list(description = "The versioned DOI for version 1.0.0.",
+         type = "doi",
+         value = "10.5281/zenodo.1472078"),
+    list(description = "The versioned DOI for version 1.1.0.",
+         type = "doi",
+         value = "10.5281/zenodo.2577258"),
+    list(description = "The versioned DOI for version 1.1.1.",
+         type = "doi",
+         value = "10.5281/zenodo.2635680"),
+    list(description = "The versioned DOI for version 1.1.2.",
+         type = "doi",
+         value = "10.5281/zenodo.3237015"),
+    list(description = "The versioned DOI for version 1.1.3.",
+         type = "doi",
+         value = "10.5281/zenodo.3239344"),
+    list(description = "The versioned DOI for version 1.2.0.",
+         type = "doi",
+         value = "10.5281/zenodo.3371615"),
+    list(description = "The versioned DOI for version 1.3.0.",
+         type = "doi",
+         value = "10.5281/zenodo.3519838"),
+    list(description = "The versioned DOI for version 1.4.0.",
+         type = "doi",
+         value = "10.5281/zenodo.4067906"),
+    list(description = "The versioned DOI for version 1.4.1.",
+         type = "doi",
+         value = "10.5281/zenodo.4612091"),
+    list(description = "The versioned DOI for version 1.5.0.",
+         type = "doi",
+         value = "10.5281/zenodo.4723613"),
+    list(description = "The versioned DOI for version 1.6.0.",
+         type = "doi",
+         value = "10.5281/zenodo.4947109"),
+    list(description = "The versioned DOI for version 1.7.0.",
+         type = "doi",
+         value = "10.5281/zenodo.5388239"),
+    list(description = "The versioned DOI for version 1.8.0.",
+         type = "doi",
+         value = "10.5281/zenodo.5886699"),
+    list(description = "The versioned DOI for version 1.9.0.",
+         type = "doi",
+         value = "10.5281/zenodo.6659769"),
+    list(description = "The versioned DOI for version 1.10.0.",
+         type = "doi",
+         value = "10.5281/zenodo.7838382"),
+    list(description = "The versioned DOI for version 1.11.0.",
+         type = "doi",
+         value = "10.5281/zenodo.8269306"),
+    list(description = "The versioned DOI for version 1.12.0.",
+         type = "doi",
+         value = "10.5281/zenodo.10470003"),
+    list(description = "The versioned DOI for version 1.13.0.",
+         type = "doi",
+         value = "10.5281/zenodo.12606781"),
+    list(description = "The versioned DOI for version 1.14.0.",
+         type = "doi",
+         value = "10.5281/zenodo.13378711"),
+    list(description = "The versioned DOI for version 1.15.0.",
+         type = "doi",
+         value = "10.5281/zenodo.14629064"),
+    list(description = "The versioned DOI for version 1.16.0.",
+         type = "doi",
+         value = "10.5281/zenodo.14927198"),
+    list(description = "The versioned DOI for version 1.17.0.",
+         type = "doi",
+         value = "10.5281/zenodo.17232742"),
+    list(description = "The CRAN DOI",
+         type = "doi",
+         value = "10.32614/cran.package.khroma")
+  )
+)
+cff <- cffr::cff_create("DESCRIPTION", keys = cff_keys)
+if (cffr::cff_validate(cff)) cffr::cff_write(cff, outfile = "CITATION.cff")
+```

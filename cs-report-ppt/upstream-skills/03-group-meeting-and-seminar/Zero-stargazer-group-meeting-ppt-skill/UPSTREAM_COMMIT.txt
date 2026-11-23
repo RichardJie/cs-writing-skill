@@ -1,0 +1,2 @@
+Repository: https://github.com/Zero-stargazer/group-meeting-ppt-skill
+Commit SHA: b39920c8e9795185f38894bf1c845a64d567e2c2

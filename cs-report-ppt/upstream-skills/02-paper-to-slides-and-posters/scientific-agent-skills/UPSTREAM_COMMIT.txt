@@ -1,0 +1,3 @@
+upstream_url: https://github.com/K-Dense-AI/scientific-agent-skills
+commit_sha: ec59a29a03d5c40f73ab40878df04860bc00e876
+license: MIT

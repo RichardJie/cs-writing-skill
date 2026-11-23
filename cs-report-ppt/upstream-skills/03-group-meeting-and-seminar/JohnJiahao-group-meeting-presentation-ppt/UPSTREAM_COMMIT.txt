@@ -1,0 +1,2 @@
+Repository: https://github.com/JohnJiahao/group-meeting-presentation-ppt
+Commit SHA: cae72303e75c20a1b6512368834450b6b7d9a180

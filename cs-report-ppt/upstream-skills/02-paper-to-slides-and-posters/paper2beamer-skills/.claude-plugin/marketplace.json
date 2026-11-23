@@ -1,0 +1,24 @@
+{
+  "name": "paper2beamer-skills",
+  "owner": {
+    "name": "Haouo",
+    "email": "q18131500@gs.ncku.edu.tw"
+  },
+  "description": "Skills for reading, presenting, and synthesizing academic papers.",
+  "plugins": [
+    {
+      "name": "paper2beamer-skills",
+      "source": ".",
+      "description": "Single-paper Beamer deck generation and multi-paper research-gap analysis (memo + synthesis deck).",
+      "category": "productivity",
+      "keywords": [
+        "beamer",
+        "latex",
+        "literature-review",
+        "academic-writing",
+        "research-gap",
+        "paper-reading"
+      ]
+    }
+  ]
+}

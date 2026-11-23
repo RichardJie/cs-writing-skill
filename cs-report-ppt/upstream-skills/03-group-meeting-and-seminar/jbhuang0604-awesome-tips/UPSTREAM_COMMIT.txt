@@ -1,0 +1,2 @@
+Repository: https://github.com/jbhuang0604/awesome-tips
+Commit SHA: 81b63ea398e561e95a89d511695bd3bbca797e8d

@@ -1,0 +1,2 @@
+Repository: https://github.com/luoming483/BIT_group_meeting_report
+Commit SHA: 2b48f11150eebdb5d2f6b980dd34593401063b5a

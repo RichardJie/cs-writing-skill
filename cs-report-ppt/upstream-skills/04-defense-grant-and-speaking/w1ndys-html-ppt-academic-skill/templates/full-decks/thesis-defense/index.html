@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>论文答辩模板</title>
+  <link rel="stylesheet" href="../../../assets/base.css">
+  <link rel="stylesheet" id="theme-link" href="../../../assets/themes/thesis-defense-blue.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-themes="thesis-defense-blue,thesis-defense-red,thesis-defense-minimal,thesis-defense-serif" data-theme-base="../../../assets/themes/">
+  <main class="deck tpl-thesis-defense">
+    <div class="deck-header">
+      <span>Academic Thesis Defense</span>
+      <span>University / College</span>
+    </div>
+    <div class="deck-footer">
+      <span>论文答辩</span>
+      <span class="slide-number"></span>
+    </div>
+    <div class="progress"></div>
+
+    <section class="slide cover" data-title="封面">
+      <div class="cover-mark">校徽</div>
+      <p class="eyebrow">硕士论文答辩</p>
+      <h1 class="h1" data-anim="rise-in">基于深度学习的遥感图像变化检测研究</h1>
+      <div class="meta-grid">
+        <div><span>答辩人</span><strong>张三</strong></div>
+        <div><span>导师</span><strong>李四 教授</strong></div>
+        <div><span>学院</span><strong>计算机科学与技术学院</strong></div>
+        <div><span>日期</span><strong>2026 年 5 月</strong></div>
+      </div>
+      <aside class="notes">
+        各位老师好，我是张三。我的论文题目是《基于深度学习的遥感图像变化检测研究》。接下来我将从研究背景、国内外研究现状、方法设计、实验结果、创新点和总结展望几个方面进行汇报。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="目录">
+      <p class="eyebrow">Agenda</p>
+      <h2 class="h2">汇报内容</h2>
+      <div class="agenda-grid">
+        <div class="card"><span>01</span><strong>研究背景与意义</strong></div>
+        <div class="card"><span>02</span><strong>国内外研究现状</strong></div>
+        <div class="card"><span>03</span><strong>研究方法与技术路线</strong></div>
+        <div class="card"><span>04</span><strong>实验设计与结果分析</strong></div>
+        <div class="card"><span>05</span><strong>创新点与贡献</strong></div>
+        <div class="card"><span>06</span><strong>总结与展望</strong></div>
+      </div>
+      <aside class="notes">
+        本次汇报分为六个部分。前两部分说明为什么要研究这个问题以及现有方法的不足；第三部分介绍本文的研究思路和模型设计；第四部分展示实验设置和结果；最后总结本文贡献，并说明后续可以继续改进的方向。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="研究背景">
+      <p class="eyebrow">Background</p>
+      <h2 class="h2">研究背景与意义</h2>
+      <div class="grid-3 content-row">
+        <div class="card"><div class="stat">01</div><h3>现实需求</h3><p>城市扩张、灾害评估、土地利用监测需要快速识别地表变化。</p></div>
+        <div class="card"><div class="stat">02</div><h3>技术挑战</h3><p>多时相遥感图像存在光照、季节、配准误差和尺度差异。</p></div>
+        <div class="card"><div class="stat">03</div><h3>研究价值</h3><p>提升变化检测精度和鲁棒性，有助于自动化遥感解译。</p></div>
+      </div>
+      <aside class="notes">
+        遥感图像变化检测的核心任务，是判断同一区域在不同时间是否发生了真实地物变化。这个任务在城市治理、灾害响应和生态监测中都有直接价值。难点在于，两期图像之间的差异并非都来自真实变化，也可能来自光照、季节、传感器和配准误差，因此需要更鲁棒的特征建模方法。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="研究现状">
+      <p class="eyebrow">Literature Review</p>
+      <h2 class="h2">国内外研究现状与问题</h2>
+      <div class="timeline">
+        <div><span>传统方法</span><strong>差值法、比值法、变化向量分析</strong><p>依赖人工特征和阈值选择，泛化能力有限。</p></div>
+        <div><span>深度学习</span><strong>CNN、U-Net、Siamese Network</strong><p>提升了语义表达能力，但细粒度边界仍有损失。</p></div>
+        <div><span>注意力机制</span><strong>Transformer、Cross Attention</strong><p>增强了长距离依赖建模，但计算开销较高。</p></div>
+      </div>
+      <aside class="notes">
+        现有研究大体经历了三个阶段。传统方法主要依赖光谱差异和人工阈值，优点是简单，局限是对复杂场景适应性不足。深度学习方法提升了特征表达能力，但对小目标和边界区域仍然容易漏检。近年来注意力机制被引入变化检测，增强了跨时相交互建模能力，但模型复杂度和部署成本也随之提高。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="技术路线">
+      <p class="eyebrow">Technical Route</p>
+      <h2 class="h2">研究目标与技术路线</h2>
+      <div class="route">
+        <div>双时相图像输入</div>
+        <div>共享编码器特征提取</div>
+        <div>跨时相注意力交互</div>
+        <div>多尺度差异融合</div>
+        <div>变化区域预测</div>
+      </div>
+      <p class="lead">本文目标是在保证计算效率的同时，提高复杂场景下的变化检测精度、边界完整性和小目标识别能力。</p>
+      <aside class="notes">
+        本文的整体技术路线从双时相图像输入开始，先通过共享编码器提取可比较的多层特征，然后引入跨时相注意力模块，让模型显式学习两期图像之间的关联关系。之后通过多尺度差异融合模块整合局部细节和全局上下文，最后输出变化区域预测图。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="方法设计">
+      <p class="eyebrow">Method</p>
+      <h2 class="h2">模型结构设计</h2>
+      <div class="method-grid">
+        <div class="diagram-box">
+          <div>Image T1</div><div>Encoder</div><div>Attention</div><div>Decoder</div><div>Change Map</div>
+          <div>Image T2</div><div>Encoder</div><div>Fusion</div><div>Boundary Head</div><div>Output</div>
+        </div>
+        <div class="card">
+          <h3>核心模块</h3>
+          <ul class="bullets">
+            <li>共享编码器保证双时相特征空间一致。</li>
+            <li>跨时相注意力增强真实变化响应。</li>
+            <li>边界分支改善细粒度区域预测。</li>
+            <li>轻量融合模块控制模型参数量。</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">
+        模型设计围绕两个目标展开：一是让双时相图像在同一特征空间中进行比较，二是让模型关注真实变化区域。共享编码器用于提取基础语义特征，跨时相注意力模块用于建模两期图像之间的差异关系，边界分支则用于提升建筑物、道路等目标边缘区域的预测质量。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="实验设计">
+      <p class="eyebrow">Experiment</p>
+      <h2 class="h2">实验设计</h2>
+      <table class="table experiment-table">
+        <thead><tr><th>项目</th><th>设置</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>数据集</td><td>LEVIR-CD / WHU-CD</td><td>建筑物变化检测公开数据集</td></tr>
+          <tr><td>评价指标</td><td>Precision / Recall / F1 / IoU</td><td>综合衡量准确率和完整性</td></tr>
+          <tr><td>对比方法</td><td>FC-EF / STANet / BIT</td><td>覆盖 CNN 与 Transformer 类方法</td></tr>
+          <tr><td>训练设置</td><td>AdamW, 200 epochs</td><td>统一训练策略保证公平比较</td></tr>
+        </tbody>
+      </table>
+      <aside class="notes">
+        实验部分采用两个公开数据集进行验证，评价指标包括 Precision、Recall、F1 和 IoU。为了保证对比的公平性，所有方法在相同数据划分和相近训练策略下进行实验。对比方法覆盖传统卷积网络和近年来常用的注意力模型。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="结果分析">
+      <p class="eyebrow">Results</p>
+      <h2 class="h2">实验结果与分析</h2>
+      <div class="result-grid">
+        <div class="bar-chart" aria-label="result chart">
+          <div style="height: 62%"><span>FC-EF</span></div>
+          <div style="height: 72%"><span>STANet</span></div>
+          <div style="height: 80%"><span>BIT</span></div>
+          <div style="height: 88%"><span>Ours</span></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="stat">+4.2</div><p>F1 相比最优对比方法提升</p></div>
+          <div class="card"><div class="stat">+3.7</div><p>IoU 在复杂建筑区域提升</p></div>
+          <div class="card"><div class="stat">18%</div><p>参数量相对 Transformer 基线降低</p></div>
+          <div class="card"><div class="stat">2.1x</div><p>推理速度提升</p></div>
+        </div>
+      </div>
+      <aside class="notes">
+        从结果可以看到，本文方法在 F1 和 IoU 指标上均取得了更好的表现。提升主要来自两个方面：跨时相注意力帮助模型过滤光照和季节变化带来的干扰，多尺度融合与边界分支则改善了小目标和边缘区域的识别效果。同时，轻量化设计让模型在参数量和推理速度上保持优势。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="创新点">
+      <p class="eyebrow">Contributions</p>
+      <h2 class="h2">创新点与贡献</h2>
+      <div class="grid-3 content-row">
+        <div class="card contribution"><span>01</span><h3>跨时相交互</h3><p>构建面向双时相图像的注意力交互模块，增强真实变化响应。</p></div>
+        <div class="card contribution"><span>02</span><h3>多尺度融合</h3><p>融合局部细节与全局上下文，提高复杂场景下的检测稳定性。</p></div>
+        <div class="card contribution"><span>03</span><h3>边界优化</h3><p>引入边界分支改善变化区域轮廓，提升结果可解释性。</p></div>
+      </div>
+      <aside class="notes">
+        本文的主要贡献可以概括为三点。第一，提出跨时相注意力交互模块，让模型更有效地比较两期图像。第二，设计多尺度差异融合策略，兼顾小目标细节和全局语义。第三，引入边界优化分支，改善变化区域的轮廓质量，使预测结果更适合实际遥感解译场景。
+      </aside>
+    </section>
+
+    <section class="slide" data-title="总结展望">
+      <p class="eyebrow">Conclusion</p>
+      <h2 class="h2">总结与展望</h2>
+      <div class="grid-2">
+        <div class="card"><h3>研究总结</h3><ul class="bullets"><li>完成变化检测模型设计与实验验证。</li><li>在公开数据集上获得稳定提升。</li><li>证明跨时相注意力和边界优化的有效性。</li></ul></div>
+        <div class="card"><h3>未来工作</h3><ul class="bullets"><li>扩展到多源遥感数据。</li><li>提升弱监督和少样本场景能力。</li><li>探索边缘设备部署与实时推理。</li></ul></div>
+      </div>
+      <aside class="notes">
+        最后对本文工作进行总结。本文围绕遥感图像变化检测任务，提出了一个结合跨时相注意力、多尺度融合和边界优化的模型，并通过公开数据集验证了方法有效性。后续工作将进一步考虑多源数据、少样本学习和实际部署场景，使方法具备更强的应用价值。
+      </aside>
+    </section>
+
+    <section class="slide thanks" data-title="致谢">
+      <p class="eyebrow">Q&A</p>
+      <h2 class="h1">感谢各位老师批评指正</h2>
+      <p class="lead">请各位老师提问。</p>
+      <aside class="notes">
+        我的汇报到此结束，感谢各位老师的聆听。恳请各位老师对论文中的不足之处提出批评和建议，我会认真记录并在后续修改中进一步完善。
+      </aside>
+    </section>
+  </main>
+  <script src="../../../assets/runtime.js"></script>
+</body>
+</html>

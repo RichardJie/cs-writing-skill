@@ -1,0 +1,2 @@
+Repository: https://github.com/xiao634zhang/paper-ppt-skill
+Commit SHA: f7d0142b46f71181f53dc7435490d4a28f832d29

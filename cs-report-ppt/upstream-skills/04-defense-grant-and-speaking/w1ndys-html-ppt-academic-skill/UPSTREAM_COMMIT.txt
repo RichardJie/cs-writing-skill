@@ -1,0 +1,3 @@
+upstream_url: https://github.com/w1ndys/html-ppt-academic-skill
+commit_sha: e25656003c6fd7ee4e3b7953263eda1b1c251970
+license: MIT

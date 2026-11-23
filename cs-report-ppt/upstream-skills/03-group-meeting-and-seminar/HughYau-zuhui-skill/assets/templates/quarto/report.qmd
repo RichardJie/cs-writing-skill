@@ -1,0 +1,46 @@
+---
+title: "Weekly Progress Report"
+author: "Your Name"
+date: "2026-03-25 to 2026-04-01"
+template-id: "classic-report"
+format:
+  html:
+    toc: true
+  pdf:
+    documentclass: article
+    geometry: margin=2.5cm
+# 中文用户加上：
+# lang: zh
+# CJKmainfont: "Noto Sans CJK SC"
+---
+
+## Summary
+
+This week I validated the mixup direction on CIFAR-10, collected evidence from code and result artifacts, and narrowed down the next experiment choices.
+
+## Progress
+
+### Experiment A
+
+Tested mixup on CIFAR-10 after last week's meeting. Accuracy improved from 78.3% to 81.7%. Evidence includes commit `abc1234` and `results/example.png`.
+
+<!-- 插入结果图：-->
+<!-- ![实验结果](results/example.png){width=80%} -->
+
+### Reading and Discussion
+
+Read the CutMix paper, summarized three follow-up ideas, and discussed the detection-task extension with a senior labmate.
+
+## Questions
+
+- Which follow-up direction should go first: adaptive mixup, contrastive learning, or detection?
+- Should we request extra GPU time for the ImageNet run?
+
+## Blockers
+
+- The GPU queue is long, so the ImageNet experiment may be delayed by about a week.
+
+## Next Steps
+
+- Validate the result on an ImageNet subset.
+- Start drafting the related-work section.

@@ -1,0 +1,3 @@
+﻿https://github.com/tesselle/khroma.git
+SHA: 95bfbf6f498d8ff80a8e96fd54fc709f254bc313
+Date: 2025-12-15 14:36:43 +0100

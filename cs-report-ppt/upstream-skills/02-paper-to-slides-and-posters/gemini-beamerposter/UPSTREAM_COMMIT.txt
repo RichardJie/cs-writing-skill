@@ -1,0 +1,3 @@
+upstream_url: https://github.com/anishathalye/gemini
+commit_sha: 8a8d4d40765d60ff2f2a9b98c7d9211b8ac8b46b
+license: MIT

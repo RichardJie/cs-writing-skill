@@ -1,0 +1,134 @@
+% 必要的包引入
+\RequirePackage{graphicx} % 图片
+\RequirePackage{ctex} % 中文支持
+\RequirePackage{xcolor} % 颜色
+\RequirePackage{float} % 浮动
+\RequirePackage{textpos}
+\RequirePackage{algorithm,algorithmic}
+\RequirePackage{booktabs} % 表格
+\RequirePackage{makecell} % 单元格
+\RequirePackage{listings} % 代码高亮
+\usefonttheme[onlymath]{serif} % 数学字体
+
+% 自定义字体设置
+\setbeamerfont{title}{size=\Large}
+\setbeamerfont{section in toc}{size=\large, series=\bfseries}
+\setbeamerfont{subsection in toc}{size=\small}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{normal text}{size=\small}
+
+% 主题颜色设置
+\definecolor{ThemeColorDark}{RGB}{36, 59, 43}
+\definecolor{ThemeColorMedium}{RGB}{67, 110, 80}
+
+% 自定义颜色设置
+\setbeamercolor{title}{fg=ThemeColorDark}
+\setbeamercolor{author}{fg=ThemeColorDark}
+\setbeamercolor{institute}{fg=ThemeColorDark}
+\setbeamercolor{date}{fg=ThemeColorDark}
+\setbeamercolor{structure}{fg=ThemeColorDark}
+\setbeamercolor{navigation symbols}{fg=ThemeColorDark}
+\setbeamercolor{frametitle}{ bg=ThemeColorDark, fg=white}
+
+%  frame中的小标题
+\newcommand{\header}[1]{%
+  \vskip0.2em%
+  \underline{\textcolor{ThemeColorDark}{\textbf{#1}}}
+  \vskip0.2em%
+}
+
+% 自定义标题页面
+\setbeamertemplate{title page}{
+    \vbox{
+    % logo设置在左上角
+    \begin{textblock*}{3em}(-2.4em, -4.4em) % 强行指定右上角坐标
+        \includegraphics[width=3em]{logo.png}\hspace{\paperwidth}
+    \end{textblock*}
+    % 依次居中设置标题、答辩人、指导老师、单位
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.5\paperheight,dp=0pt,center]{title}
+        \begin{center}
+            \usebeamerfont{title}\inserttitle\\
+            % if subtitle is not empty, insert it
+            \ifx\insertsubtitle\empty\else\usebeamerfont{subtitle}\vskip0.5em%
+            \insertsubtitle\fi%
+            \vskip3.5em%
+            \usebeamerfont{author}\insertauthor\\
+            \vskip0.5em%
+            \usebeamerfont{institute}\insertinstitute\\
+            \vskip0.5em%
+            \usebeamerfont{date}\insertdate\hspace{10cm}
+        \end{center}
+    \end{beamercolorbox}
+    }
+}
+
+% 自定义页脚 导航 + 页码
+\setbeamertemplate{footline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{structure}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+    \hfill\makebox[0pt][r]{\insertframenumber/\inserttotalframenumber\hskip0.5em}%
+  }
+}
+
+% 自定义标题栏
+
+% 标题栏颜色渐变样式：ThemeColorMedium -> ThemeColorDark
+\colorlet{titleleft}{ThemeColorMedium}
+\colorlet{titleright}{ThemeColorDark}
+\makeatletter
+\pgfdeclarehorizontalshading[titleleft,titleright]{beamer@frametitleshade}{\paperheight}{%
+  color(0pt)=(titleleft);
+  color(\paperwidth)=(titleright)}
+
+\defbeamertemplate*{frametitle}{horizontal shading}
+{%
+  \nointerlineskip%
+  \hbox{\leavevmode
+    \advance\beamer@leftmargin by -12bp%
+    \advance\beamer@rightmargin by -12bp%
+    \beamer@tempdim=\textwidth%
+    \advance\beamer@tempdim by \beamer@leftmargin%
+    \advance\beamer@tempdim by \beamer@rightmargin%
+    \hskip-\Gm@lmargin\hbox{%
+      \setbox\beamer@tempbox=\hbox{\begin{minipage}[b]{\paperwidth}%
+          \vbox{}\vskip0.5ex%
+          \leftskip0.3cm%
+          \rightskip0.3cm plus1fil\leavevmode
+          \textbf\insertframetitle%
+          \ifx\insertframesubtitle\@empty%
+            \strut\par%
+          \else
+            \par{\usebeamerfont*{framesubtitle}{\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}\strut\par}%
+          \fi%
+          \nointerlineskip
+          \vbox{}\vspace{0.75ex}%
+          \end{minipage}}%
+      \beamer@tempdim=\ht\beamer@tempbox%
+      \advance\beamer@tempdim by 2pt%
+      \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{\beamer@tempdim}
+        \usebeamercolor{frametitle right}
+        \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+        \pgfusepath{clip}
+        \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+      \end{pgfpicture}
+      \hskip-\paperwidth%
+      \box\beamer@tempbox%
+    }%
+    \hskip-\Gm@rmargin%
+  }%
+    \vskip-2pt
+}
+\makeatother
+
+% 当出现frame break时，不显示标题编号
+\setbeamertemplate{frametitle continuation}{}
+
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection \vskip0.5em}
+\setbeamertemplate{subsection in toc}{\leavevmode\leftskip=1.5em\inserttocsubsection\\ \vskip0.5em}
+
+\setbeamertemplate{caption}[numbered]
+
+\AtBeginDocument{\usebeamerfont{normal text}}

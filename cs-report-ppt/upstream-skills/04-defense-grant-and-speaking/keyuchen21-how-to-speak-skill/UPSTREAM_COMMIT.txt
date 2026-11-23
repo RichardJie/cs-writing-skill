@@ -1,0 +1,3 @@
+upstream_url: https://github.com/keyuchen21/how-to-speak-skill
+commit_sha: 222f743a6e1509011bf892d4384b33395d074b02
+license: MIT

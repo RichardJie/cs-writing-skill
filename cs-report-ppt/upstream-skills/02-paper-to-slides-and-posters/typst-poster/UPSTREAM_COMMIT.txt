@@ -1,0 +1,3 @@
+upstream_url: https://github.com/pncnmnp/typst-poster
+commit_sha: ff54bcf9cb303077eea4882b17851ed7d58e6a0f
+license: MIT

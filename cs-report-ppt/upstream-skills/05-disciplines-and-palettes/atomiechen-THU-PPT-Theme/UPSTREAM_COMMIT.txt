@@ -1,0 +1,3 @@
+﻿https://github.com/atomiechen/THU-PPT-Theme.git
+SHA: 8cdb9594a57857329052505f9016dff083c6f522
+License: CC BY-NC-SA 4.0 (Atomie CHEN)

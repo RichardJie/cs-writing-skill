@@ -1,0 +1,4 @@
+upstream_url: https://github.com/touying-typ/seaslides
+commit_sha: dcde5bf6c6875b300e2999fc7766f369a13a67ac
+license: MIT
+note: Heavy binary demo media / test fixtures (509 files, 6548.6 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/touying-typ/seaslides

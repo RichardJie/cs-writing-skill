@@ -1,0 +1,3 @@
+upstream_url: https://github.com/HKUDS/Paper2Slides
+commit_sha: 0785051d1f52814097e94c44751e3f12b83f7c8a
+license: MIT

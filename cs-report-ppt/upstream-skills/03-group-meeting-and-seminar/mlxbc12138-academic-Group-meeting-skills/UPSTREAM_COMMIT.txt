@@ -1,0 +1,2 @@
+Repository: https://github.com/mlxbc12138/academic-Group-meeting-skills
+Commit SHA: efe4c89a3b906cd16d1919a763fe23bb0a11b093

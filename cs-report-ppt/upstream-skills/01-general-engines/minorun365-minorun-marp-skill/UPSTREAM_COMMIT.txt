@@ -1,0 +1,4 @@
+upstream_url: https://github.com/minorun365/minorun-marp-skill
+commit_sha: fa9118e3c9de951aa872cd973cb53d1e99c257fd
+license: Apache-2.0
+note: Heavy binary demo media / test fixtures (2 files, 635.4 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/minorun365/minorun-marp-skill

@@ -1,7 +1,5 @@
 # Marginal Annotations & Research Connection Taxonomy ("旁注" 规范)
 
-> **Module Role**: Canonical specification for the 5-Class Laboratory Research Synergy callouts (`旁注`) in [`cs-report-ppt`](../SKILL.md). For discipline-specific badge adaptations beyond CS/AI, see [`scenarios-group-meeting.md`](scenarios-group-meeting.md), [`disciplines-stem.md`](disciplines-stem.md), and [`disciplines-biomed-econ-humanities.md`](disciplines-biomed-econ-humanities.md).
-
 In academic group seminars and lab presentations, a paper should not be reviewed in isolation. A presentation must bridge external methodological breakthroughs with the laboratory's own research agenda.
 
 This specification defines the **5 Standardized Research Connection Classes**, visual callout styling, slide placement mappings, and concrete integration templates.
@@ -41,14 +39,12 @@ Marginal research side-notes are rendered as dedicated callout cards using the `
 
 ### Visual Styling Invariants:
 1. **Container Dimensions**: Width: `4.133"`, Height: `5.200"`, Top: `1.650"`, Left: `8.600"`.
-2. **Background Tint**: Soft neutral or pastel fill matched to the active scholarly or conference palette (see [`palettes-and-layouts.md`](palettes-and-layouts.md)):
-   - `academic_mono` (Default): Crisp Neutral Tint (`#F9FAFB`, accent bar `#111827`)
-   - `oxford_navy` / NeurIPS: Soft Royal Tint (`#EFF6FF`, accent bar `#002147` / `#2563EB`)
-   - `nature_slate_teal` / ICML: Soft Teal Tint (`#F0FDFA`, accent bar `#0F766E` / `#0D9488`)
-   - `mit_crimson_neutral`: Warm Stone Tint (`#FAFAF9`, accent bar `#A31F34`)
-   - `cvpr_clean_blue` / CVPR: Cool Sky (`#F0F9FF`, `#0284C7`) or Soft Rose (`#FFF1F2`, `#E11D48`)
-   - `keynote_dark_oral`: Deep Slate Navy (`#172554`, accent bar `#38BDF8`)
-   - ICLR / KDD: Soft Purple (`#FAF5FF`) / Soft Amber (`#FEF3C7`)
+2. **Background Tint**: Soft pastel fill matched to conference theme:
+   - NeurIPS: Soft Royal Tint (`#EFF6FF`)
+   - ICML: Soft Teal Tint (`#F0FDFA`)
+   - CVPR: Soft Rose Tint (`#FFF1F2`)
+   - ICLR: Soft Purple Tint (`#FAF5FF`)
+   - KDD: Soft Amber Tint (`#FEF3C7`)
 3. **Left Accent Bar**: Solid `0.08"` thick vertical rectangle spanning the full card height (`h = 5.20"`), colored in theme `accent` (`#2563EB`, `#0D9488`, `#E11D48`, `#7C3AED`, `#D97706`).
 4. **Header Badge**: `[ 🔬 OUR RESEARCH CONNECTION ]` in `11pt Bold Uppercase`.
 5. **Class Pill**: `Class: [ClassName]` in `11pt Semi-bold`.

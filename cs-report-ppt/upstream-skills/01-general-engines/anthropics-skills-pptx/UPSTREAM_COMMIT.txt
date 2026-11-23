@@ -1,0 +1,4 @@
+upstream_url: https://github.com/anthropics/skills/tree/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/pptx
+commit_sha: e4bb5d960d87126ff3b3a8af1a104b7db67560ba
+license: Apache-2.0
+note: Heavy binary demo media / test fixtures (39 files, 973.3 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/anthropics/skills/tree/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/pptx

@@ -1,0 +1,3 @@
+upstream_url: https://github.com/RealZYZhang/paper-reader-heilmeier
+commit_sha: 98568472d35598be422fa70b0da698f33773e0d1
+license: MIT

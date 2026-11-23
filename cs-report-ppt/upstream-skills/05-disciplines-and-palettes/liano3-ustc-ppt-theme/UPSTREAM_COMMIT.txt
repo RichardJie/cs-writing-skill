@@ -1,0 +1,3 @@
+﻿https://github.com/liano3/ustc-ppt-theme.git
+SHA: a966d94fc60a822eb08dbbab28e76bbb788003ef
+License: CC BY-NC-SA 4.0 (patches MIT)

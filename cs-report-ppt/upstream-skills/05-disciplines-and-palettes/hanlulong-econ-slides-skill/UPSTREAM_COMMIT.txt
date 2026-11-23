@@ -1,0 +1,4 @@
+upstream_url: https://github.com/hanlulong/econ-slides-skill
+commit_sha: 82bc4bb81e729076e9ed71c406c0a3712a59c6b0
+license: MIT
+note: Heavy binary demo media / test fixtures (39 files, 118.5 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/hanlulong/econ-slides-skill

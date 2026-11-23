@@ -29,7 +29,7 @@
         },
         {
           "title": "Visual Tokenization Dilemma Overview",
-          "image": "resources/figures/fig_tradeoff_arrows.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_tradeoff_arrows.png",
           "bullets": [
             "Dilemma: Higher reconstruction accuracy (lower rFID) leads to worse diffusion generation (higher gFID).",
             "Solution: VFM Alignment (VA-VAE) establishes a strictly monotonic Pareto frontier."
@@ -48,7 +48,7 @@
       "cards": [
         {
           "title": "Empirical Manifestation of the Dilemma",
-          "image": "resources/figures/fig_dilemma_samples.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_dilemma_samples.png",
           "bullets": [
             "Counter-Intuitive Failure: Increasing VAE latent channels (e.g. from f16d16 to f16d64) improves reconstruction (rFID 0.49 → 0.18) but severely degrades generation (gFID 20.3 → 45.8).",
             "Generative Collapse: High-dimensional visual latents scatter across unconstrained sub-manifolds, crippling score-matching training in Diffusion Transformers."
@@ -72,7 +72,7 @@
       "cards": [
         {
           "title": "Tokenization Paradigm & Channel Scaling",
-          "image": "resources/figures/table_improved_ae.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_improved_ae.png",
           "bullets": [
             "Standard LDM VAE (F=8, d=4): Established by Rombach et al. (CVPR 2022); limited compression efficiency.",
             "Deep Compression AE (F=32, d=32): Proposed in SANA / DC-AE; high spatial downsampling but high generation instability.",
@@ -97,7 +97,7 @@
       "cards": [
         {
           "title": "Visual Artifacts under Standard Compression",
-          "image": "resources/figures/fig_traffic_samples.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_traffic_samples.png",
           "bullets": [
             "Gap 1 (High-Frequency Noise): Reconstruction losses force latents into chaotic high-frequency representations devoid of semantic structure.",
             "Gap 2 (Sparse Manifold Dispersion): Standard VAE Gaussian KL penalties are insufficient to prevent manifold collapse in d ≥ 16 dimensions."
@@ -123,7 +123,7 @@
       "cards": [
         {
           "title": "Evolutionary Lineage & Baseline Progression",
-          "image": "resources/figures/table_ablation.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_ablation.png",
           "bullets": [
             "2022: Rombach et al. (Stable Diffusion) — First practical 2-stage latent diffusion architecture.",
             "2024: Esser et al. (SD3) & DC-AE (SANA) — Push spatial compression boundaries to 32x.",
@@ -149,10 +149,10 @@
       "cards": [
         {
           "title": "Latent Distribution Regularity Analysis",
-          "image": "resources/figures/fig_latent_dist.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_latent_dist.png",
           "bullets": [
-            "Input Domain: RGB image $x \\in \\mathbb{R}^{3 \\times H \\times W}$ mapped to latent representation $z = E(x) \\in \\mathbb{R}^{d \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
-            "Foundation Space: Pre-trained teacher features $f = F_{VFM}(x) \\in \\mathbb{R}^{d_v \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
+            "Input Domain: RGB image  \\in \\mathbb{R}^{3 \\times H \\times W}$ mapped to latent representation  = E(x) \\in \\mathbb{R}^{d \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
+            "Foundation Space: Pre-trained teacher features  = F_{VFM}(x) \\in \\mathbb{R}^{d_v \\times \\frac{H}{F} \\times \\frac{W}{F}}$.",
             "Spectral Regularity: Alignment prevents latent eigenvalue explosion, ensuring bounded score gradients $\\|\\nabla_z \\log p_t(z)\\| \\le C$."
           ]
         }
@@ -211,10 +211,10 @@
       "cards": [
         {
           "title": "VA-VAE Dual-Branch Framework Architecture",
-          "image": "resources/figures/fig_vfm_architecture.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/fig_vfm_architecture.png",
           "bullets": [
-            "Branch 1 (Reconstruction): Encoder maps image to visual tokens $z$; Decoder reconstructs high-fidelity image $\\hat{x}$.",
-            "Branch 2 (VFM Guidance): Frozen DINOv2 / CLIP model extracts rich foundation representations $f$ to supervise token manifold.",
+            "Branch 1 (Reconstruction): Encoder maps image to visual tokens $; Decoder reconstructs high-fidelity image $\\hat{x}$.",
+            "Branch 2 (VFM Guidance): Frozen DINOv2 / CLIP model extracts rich foundation representations $ to supervise token manifold.",
             "Inference Efficiency: Foundation teacher is completely discarded during inference — zero extra compute overhead!"
           ]
         }
@@ -236,7 +236,7 @@
       "cards": [
         {
           "title": "Benchmark Experimental Configuration",
-          "image": "resources/figures/table_improved_ae.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_improved_ae.png",
           "bullets": [
             "Datasets & Resolutions: ImageNet-1K benchmark at 256×256 and 512×512 native resolutions.",
             "Generative Backbones: Evaluated on DiT-XL, LightningDiT-B, and LightningDiT-XL architectures.",
@@ -261,7 +261,7 @@
       "cards": [
         {
           "title": "Main Benchmark Quantitative Comparison",
-          "image": "resources/figures/table_main_benchmark.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_main_benchmark.png",
           "bullets": [
             "Substantial Generative Gain: VA-VAE improves LightningDiT-XL gFID from 8.28 to 6.22 on f16d16, and from 10.92 to 8.22 on f16d32.",
             "Reconstruction Parity: Maintains crisp reconstruction PSNR of 31.03 dB and SSIM of 0.88 with zero fidelity degradation."
@@ -285,7 +285,7 @@
       "cards": [
         {
           "title": "ImageNet 512x512 Class-Conditional Benchmark",
-          "image": "resources/figures/table_imagenet_sota.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_imagenet_sota.png",
           "bullets": [
             "SOTA Generative Fidelity: Achieves gFID of 1.42 on ImageNet 512×512, outperforming SDXL (3.86) and SANA (2.10).",
             "Scaling Dominance: Larger DiT models (XL vs B) benefit disproportionately more from VFM-aligned representations."
@@ -309,7 +309,7 @@
       "cards": [
         {
           "title": "Downsampling Factor F in {8, 16, 32} Ablation Matrix",
-          "image": "resources/figures/table_ablation.png",
+          "image": "/Users/richrd/.gemini/config/skills/academic-paper-presentation/resources/figures/table_ablation.png",
           "bullets": [
             "Extreme F=32 Scalability: Enables 32x downsampling with gFID 9.82, whereas baseline without alignment collapses to gFID 24.00.",
             "Teacher Selection: DINOv2 yields +1.2 gFID improvement over CLIP, demonstrating the superiority of patch-dense self-supervised representations."

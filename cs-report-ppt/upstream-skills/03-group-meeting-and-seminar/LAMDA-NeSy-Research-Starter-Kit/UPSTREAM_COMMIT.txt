@@ -1,0 +1,2 @@
+Repository: https://github.com/LAMDA-NeSy/Research-Starter-Kit
+Commit SHA: 36ba390d153f5289308ec833e2b633c26b304a7b

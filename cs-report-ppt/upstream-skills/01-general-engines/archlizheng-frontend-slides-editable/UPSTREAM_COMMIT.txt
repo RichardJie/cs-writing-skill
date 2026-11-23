@@ -1,0 +1,3 @@
+upstream_url: https://github.com/archlizheng/frontend-slides-editable
+commit_sha: e5663e6a0bdc2c2a673198bab3fb61036a7f20ee
+license: MIT

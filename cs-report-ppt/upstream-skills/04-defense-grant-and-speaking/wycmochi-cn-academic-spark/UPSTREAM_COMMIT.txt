@@ -1,0 +1,4 @@
+upstream_url: https://github.com/wycmochi/cn-academic-spark
+commit_sha: 7fcbec83439374ffd1d636f966987787ffb891bf
+license: MIT
+note: Heavy binary demo media / test fixtures (41 files, 384.1 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/wycmochi/cn-academic-spark

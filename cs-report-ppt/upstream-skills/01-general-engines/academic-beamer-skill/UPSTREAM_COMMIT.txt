@@ -1,0 +1,3 @@
+upstream_url: https://github.com/longdoheun/academic-beamer-skill
+commit_sha: f688b1eb1345bdbf353451fe57a3c68ed41fa036
+license: MIT

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/Gabberflast/academic-pptx-skill
+commit_sha: 9f2b703ffe8d1449851617665ab1ffb3516d54ac
+license: MIT
+note: Heavy binary demo media / test fixtures (1 files, 189.8 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/Gabberflast/academic-pptx-skill

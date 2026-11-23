@@ -1,0 +1,3 @@
+upstream_url: https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/marp-slide
+commit_sha: 3027f20f3181758385a1bb8c022d4041dfb4de84
+license: MIT

@@ -1,0 +1,3 @@
+upstream_url: https://github.com/Arahmane1007/winston-presentations-skill
+commit_sha: ce96a06adc72518ded5fe17780b38bac802744b3
+license: MIT

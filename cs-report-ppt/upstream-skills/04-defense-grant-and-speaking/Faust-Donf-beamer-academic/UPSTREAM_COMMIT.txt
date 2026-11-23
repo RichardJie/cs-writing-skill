@@ -1,0 +1,4 @@
+upstream_url: https://github.com/Faust-Donf/beamer-academic
+commit_sha: 788e125b0eb2e84b01a97819b443f0bd3ceaa836
+license: MIT
+note: Heavy binary demo media / test fixtures (9 files, 960.3 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/Faust-Donf/beamer-academic

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Academic method roadmap slide example</title>
+  <desc id="desc">A research roadmap slide showing problem definition, data processing, model design, experiment evaluation, and thesis contribution.</desc>
+  <rect width="1200" height="675" fill="#fbfcff"/>
+  <text x="76" y="92" font-family="Arial, Helvetica, sans-serif" font-size="38" fill="#1f2d46" font-weight="700">技术路线与研究框架</text>
+  <text x="78" y="134" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#68758a">从问题定义到实验验证，形成可复现的研究闭环</text>
+  <line x1="92" y1="330" x2="1108" y2="330" stroke="#b7c6de" stroke-width="8" stroke-linecap="round"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g transform="translate(92 236)">
+      <circle cx="72" cy="94" r="58" fill="#1f5fbf"/>
+      <text x="72" y="86" text-anchor="middle" font-size="20" fill="#ffffff" font-weight="700">01</text>
+      <text x="72" y="113" text-anchor="middle" font-size="18" fill="#ffffff">问题定义</text>
+      <text x="72" y="190" text-anchor="middle" font-size="19" fill="#26364f">研究问题</text>
+    </g>
+    <g transform="translate(332 236)">
+      <circle cx="72" cy="94" r="58" fill="#2b79d0"/>
+      <text x="72" y="86" text-anchor="middle" font-size="20" fill="#ffffff" font-weight="700">02</text>
+      <text x="72" y="113" text-anchor="middle" font-size="18" fill="#ffffff">数据处理</text>
+      <text x="72" y="190" text-anchor="middle" font-size="19" fill="#26364f">样本构建</text>
+    </g>
+    <g transform="translate(572 236)">
+      <circle cx="72" cy="94" r="58" fill="#4092d6"/>
+      <text x="72" y="86" text-anchor="middle" font-size="20" fill="#ffffff" font-weight="700">03</text>
+      <text x="72" y="113" text-anchor="middle" font-size="18" fill="#ffffff">模型设计</text>
+      <text x="72" y="190" text-anchor="middle" font-size="19" fill="#26364f">方法实现</text>
+    </g>
+    <g transform="translate(812 236)">
+      <circle cx="72" cy="94" r="58" fill="#56a5c9"/>
+      <text x="72" y="86" text-anchor="middle" font-size="20" fill="#ffffff" font-weight="700">04</text>
+      <text x="72" y="113" text-anchor="middle" font-size="18" fill="#ffffff">实验评估</text>
+      <text x="72" y="190" text-anchor="middle" font-size="19" fill="#26364f">指标分析</text>
+    </g>
+    <g transform="translate(1052 236)">
+      <circle cx="72" cy="94" r="58" fill="#6bb7b2"/>
+      <text x="72" y="86" text-anchor="middle" font-size="20" fill="#ffffff" font-weight="700">05</text>
+      <text x="72" y="113" text-anchor="middle" font-size="18" fill="#ffffff">论文贡献</text>
+      <text x="72" y="190" text-anchor="middle" font-size="19" fill="#26364f">总结展望</text>
+    </g>
+  </g>
+  <rect x="78" y="552" width="1044" height="48" rx="24" fill="#eef5ff"/>
+  <text x="600" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#41516a">页面适合放置流程图、实验步骤、研究框架和方法总览</text>
+</svg>

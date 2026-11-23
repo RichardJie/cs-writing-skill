@@ -1,0 +1,4 @@
+upstream_url: https://github.com/zouchenzhen/thesis-defense-pptx-skill
+commit_sha: 7cf83b6fe264410aec39ab73d8cfa48f1c9a73bb
+license: Apache-2.0
+note: Heavy binary demo media / test fixtures (6 files, 866.7 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/zouchenzhen/thesis-defense-pptx-skill

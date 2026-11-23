@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic Meeting Skills"
+  short_description: "Turn paper PDFs into Chinese academic meeting PPT decks."
+  default_prompt: "Use $academic-meeting-skills to turn this paper PDF into a Chinese figure-by-figure academic meeting deck."

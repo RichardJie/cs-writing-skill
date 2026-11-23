@@ -1,0 +1,4 @@
+upstream_url: https://github.com/kbroman/Talk_Graphs
+commit_sha: 6152203a2d6191291f266af5aed8895927554da7
+license: CC0-1.0
+note: Heavy binary demo media / test fixtures (1 files, 704.4 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/kbroman/Talk_Graphs

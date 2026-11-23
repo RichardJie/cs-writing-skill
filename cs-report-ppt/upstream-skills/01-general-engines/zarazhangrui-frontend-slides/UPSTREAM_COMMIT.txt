@@ -1,0 +1,4 @@
+upstream_url: https://github.com/zarazhangrui/frontend-slides
+commit_sha: 9906a34d640d2111f724544cbc50f7f130569ae1
+license: MIT
+note: Heavy binary demo media / test fixtures (104 files, 2332.3 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/zarazhangrui/frontend-slides

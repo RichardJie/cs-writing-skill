@@ -1,0 +1,15 @@
+{
+  "name": "keyuchen21-plugins",
+  "description": "Claude Code plugins by keyuchen21. Currently: how-to-speak, a speaking coach built from Patrick Winston's MIT lecture.",
+  "owner": {
+    "name": "keyuchen21",
+    "url": "https://github.com/keyuchen21"
+  },
+  "plugins": [
+    {
+      "name": "how-to-speak",
+      "source": "./",
+      "description": "A speaking coach built from Patrick Winston's MIT lecture \"How to Speak\". Prepares talks, reviews slides, plays the audience during rehearsal."
+    }
+  ]
+}

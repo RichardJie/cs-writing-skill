@@ -1,0 +1,2679 @@
+#import "../utils.typ"
+#import "../pdfpc.typ"
+#import "../components.typ"
+#import "tree.typ"
+#import "subslides.typ": check-visible, resolve-negative-subslides
+#import "waypoints.typ": (
+  _compute-waypoint-ranges, _last-subslides-of-waypoints,
+  _resolve-waypoint-forest, _resolve-waypoints, _waypoint-kinds,
+  _waypoint-known,
+)
+#import "parser.typ": (
+  _collect-waypoints, _parse-content-into-results-and-repetitions,
+  _resolve-waypoint-to-last, check-current-mode-skip, expand-mode-marks,
+  mark-visible-in-mode,
+)
+#import "animation.typ": touying-slide-wrapper
+#import "article.typ": (
+  _article-linearize, _extract-image, _is-block-content,
+  render-content-as-article,
+)
+
+#let _delayed-wrapper(body) = [#metadata((
+  kind: "touying-delayed-wrapper",
+  body: body,
+))<touying-temporary-mark>]
+
+// Whether content is drawn as nothing, seen through the `styled` node of a set
+// rule and through sequences.
+#let _is-invisible(it) = if tree.is-sequence(it) {
+  it.children.all(_is-invisible)
+} else if tree.is-styled(it) {
+  _is-invisible(it.child)
+} else {
+  tree.is-list-spacer(it)
+}
+
+// Whether a child starts the first slide of a non-deferred config body: what is
+// drawn, and the touying marks, which the parser has to see in the slide.
+#let _starts-slide(it) = not _is-invisible(it) or tree.is-touying-mark(it)
+
+//get-config is in src/config.typ as we need the default-config.
+
+
+/// Recall content by its label.
+///
+/// If the label was registered as a whole-slide recall target — either a
+/// heading that auto-split into its own slide, or an explicit
+/// `#slide(...)[...]<label>` call — the entire slide is replayed. Otherwise,
+/// this falls back to a query-based lookup: it works for any labeled content (a table, image, or
+/// a heading that sits *inside* an explicit slide without itself being a
+/// whole-slide target) and even `touying-reducer`.
+/// For animated content/slide you may pass a subslide index to recall at a specific animation stage.
+///
+/// Note: a whole-slide target must already have been processed (i.e. the
+/// recall must come *after* it in the document) to be found — forward-
+/// referencing a bare heading that hasn't auto-split into its own slide yet
+/// falls through to the query lookup instead (recalling just the
+/// heading) rather than erroring. An explicit `#slide(...)[...]<label>` call has the
+/// same forward-reference limitation.
+///
+/// A recalled whole slide emits its labels again, so each copy names them
+/// `<label-1>`, `<label-2>`, ... (and `<label-1.waypoint>`) in the order of the
+/// recalls, which keeps every label unique. A label after the call names the
+/// copy instead: `#touying-recall(<intro>)<intro-again>` gives `<intro-again>`
+/// and `<intro-again.waypoint>`. Recalled content carries no label unless the
+/// call has one, which then sits on the recalled content itself, so a
+/// reference to a recalled figure works.
+///
+/// Example:
+///
+/// ```typ
+/// // Recall all subslides of a whole-slide target (default)
+/// #touying-recall(<my-slide>)
+///
+/// // Recall only a specific subslide
+/// #touying-recall(<my-slide>, subslides: 2)
+///
+/// // Recall only the last (final) subslide
+/// #touying-recall(<my-slide>, subslides: none)
+///
+/// // Recall the last subslide of every waypoint
+/// #touying-recall(<my-slide>, subslides: "waypoints")
+///
+/// // Recall the subslides covered by a waypoint
+/// #touying-recall(<my-slide>, subslides: <my-waypoint>)
+///
+/// // Recall only the last subslide of a waypoint
+/// #touying-recall(<my-slide>, subslides: get-last(<my-waypoint>))
+///
+/// // Recall a labeled reducer at a specific animation stage
+/// #let my-diagram = touying-reducer.with(
+///   reduce: cetz.canvas, cover: cetz.draw.hide.with(bounds: true), label: <my-diagram>,
+/// )
+/// #touying-recall(<my-diagram>, subslides: 1)
+///
+/// // Recall arbitrary labeled static content (shown as-is)
+/// #touying-recall(<my-table>)
+/// ```
+///
+/// - lbl (str, label): The label to recall. Must be a native label (not a
+///   string) to recall a reducer or other labeled content that isn't a
+///   registered whole-slide target — a string can only match a whole-slide
+///   recall.
+///
+/// - subslides (none, auto, int, str, label, dictionary): Which subslide(s) to recall.
+///
+///   For a whole-slide target:
+///   - `auto` (default): recall only the final animation state of an animated element or all subslides of a whole-slide target.
+///   - `none`: recall only the last subslide.
+///   - `int`: recall a specific subslide by number.
+///   - `"waypoints"`: recall one subslide per waypoint — specifically, the
+///     last subslide of each waypoint. This shows every animation phase at
+///     its final state.
+///   - `label`: recall the subslides covered by a waypoint in the original
+///     slide. E.g. `subslides: <my-waypoint>`.
+///   - Waypoint marker: `get-first(<wp>)`, `get-last(<wp>)`, `prev-wp(<wp>)`,
+///     `next-wp(<wp>)` — resolves to a single subslide or waypoint range
+///     using the recalled slide's waypoint map.
+///
+///   For a reducer/labeled-content fallback target, `none`/`auto`, `int`, a
+///   `label`, and waypoint markers (`get-first(<wp>)`, `get-last(<wp>)`,
+///   etc.) are supported — resolved against the recalled content's *own*
+///   waypoints, not the original slide's. A waypoint range (a bare label,
+///   or one whose marker doesn't pin a single subslide) collapses to its
+///   last subslide, where its content is fully revealed (`get-first(<wp>)`
+///   names the first); there's
+///   no equivalent to `"waypoints"` here since there's only ever one
+///   recalled instance, not a whole slide's worth of subslides to expand
+///   (`touying-render` supports exactly that, for content addressed by
+///   value instead of by label).
+///   The content itself doesn't have to be `touying-reducer` — any labeled
+///   content that is animated can be recalled at specific subslide
+///   positions. Passing an explicit subslides value for content with no
+///   subslide dimension at all panics.
+///
+/// - base (auto, int): Starting repetition counter for pause numbering,
+///   only used by the reducer/labeled-content fallback (a whole-slide
+///   recall replays the original slide's own numbering). When your animated content contains numbered steps you must set this so the animation sequence plays correctly.
+///   - `auto` (default): `1`.
+///   - `int`: explicit offset, e.g. `base: 3` makes the first pause
+///     create subslide 4 instead of 2.
+///
+/// The reducer/labeled-content fallback has no visibility of its own — it's
+/// always shown once the point it's textually placed at is reached (like
+/// ordinary content gated by a `#pause`), never hiding again on its own.
+/// To make it appear and then disappear across a range of subslides, nest
+/// it inside `#uncover(...)`/`#only(...)`/`#alternatives[...]` — this works
+/// anywhere inside their body, not only when the recall is the *entire*
+/// body:
+///
+/// ```typ
+/// #only("2-4")[Some text, #touying-recall(<my-table>, subslides: 2) and more text.]
+/// ```
+///
+/// -> content
+#let touying-recall(lbl, subslides: auto, base: auto) = box[#metadata((
+  kind: "touying-slide-recaller",
+  label: if type(lbl) == label {
+    str(lbl)
+  } else {
+    lbl
+  },
+  raw-label: lbl,
+  subslides: subslides,
+  base: base,
+))<touying-temporary-mark>]
+
+// The labels a slide emits are its own label and the waypoint anchors under it,
+// `<label>` and `<label.waypoint>`. A recalled copy carries them as
+// `<name>` and `<name.waypoint>`.
+#let _rename-slide-labels(slide-content, slide-label, name) = tree.map-tree(
+  slide-content,
+  node => {
+    let lbl = if type(node) == content { node.at("label", default: none) }
+    if lbl == none { return none }
+    let old-name = str(lbl)
+    if (
+      old-name != slide-label and not old-name.starts-with(slide-label + ".")
+    ) {
+      return none
+    }
+    let renamed = label(name + old-name.slice(slide-label.len()))
+    if node.func() == heading {
+      let fields = node.fields()
+      let _ = fields.remove("label")
+      let body = fields.remove("body")
+      [#heading(..fields, body)#renamed]
+    } else if tree.is-metadata(node) {
+      [#metadata(node.value)#renamed]
+    }
+  },
+)
+
+#let _get-last-heading-depth(current-headings) = {
+  if current-headings != () {
+    tree.heading-depth(current-headings.at(-1))
+  } else {
+    0
+  }
+}
+
+#let _get-last-heading-label(current-headings) = {
+  if current-headings != () {
+    if current-headings.at(-1).has("label") {
+      str(current-headings.at(-1).label)
+    }
+  }
+}
+
+// Get the appropriate slide function based on current heading context
+//
+// - self (dictionary): The presentation context
+// - default (function): Default slide function to use if no specific one matches
+//
+// -> function
+#let _get-slide-fn(self, default: auto) = {
+  let last-heading-depth = _get-last-heading-depth(self.headings)
+  let last-heading-label = _get-last-heading-label(self.headings)
+  if last-heading-label in ("touying:hidden", "touying:skip") {
+    return if default == auto {
+      self.slide-fn
+    } else {
+      default
+    }
+  }
+  if last-heading-depth == 1 and self.new-section-slide-fn != none {
+    self.new-section-slide-fn
+  } else if last-heading-depth == 2 and self.new-subsection-slide-fn != none {
+    self.new-subsection-slide-fn
+  } else if (
+    last-heading-depth == 3 and self.new-subsubsection-slide-fn != none
+  ) {
+    self.new-subsubsection-slide-fn
+  } else if (
+    last-heading-depth == 4 and self.new-subsubsubsection-slide-fn != none
+  ) {
+    self.new-subsubsubsection-slide-fn
+  } else {
+    if default == auto {
+      self.slide-fn
+    } else {
+      default
+    }
+  }
+}
+
+// Call the appropriate slide function with the given body content
+//
+// - self (dictionary): The presentation context
+// - fn (function): The slide function to use (auto to determine automatically)
+// - body (content): The slide content to render
+//
+// -> content
+/// Take a `touying-slide-wrapper` out of the block it is emitted in.
+///
+/// The block exists so that a label written on the call (`#slide[..]<intro>`)
+/// has somewhere to live: Typst allows one label per element, so a label on the
+/// metadata node itself would collide with `<touying-temporary-mark>`. Returns
+/// the node unchanged when it is not such a wrapper.
+///
+/// - it (any): The candidate wrapper.
+///
+/// -> any
+#let _unwrap-slide-wrapper(it) = {
+  if (
+    type(it) != content
+      or it.func() != block
+      or not tree.is-kind(it.at("body", default: none), "touying-slide-wrapper")
+  ) {
+    return it
+  }
+  // A label written on the call lives on the block; move it onto the metadata,
+  // which is what every dispatch site reads.
+  let lbl = it.at("label", default: none)
+  if lbl == none { it.body } else { [#metadata(it.body.value)#lbl] }
+}
+
+
+#let _call-slide-fn(self, fn, body) = {
+  let slide-fn = if fn == auto {
+    _get-slide-fn(self)
+  } else {
+    fn
+  }
+  let slide-wrapper = _unwrap-slide-wrapper(slide-fn(body))
+  assert(
+    tree.is-kind(slide-wrapper, "touying-slide-wrapper"),
+    message: "you must use `touying-slide-wrapper` in your slide function",
+  )
+  return ((slide-wrapper.value.fn)(self), slide-wrapper.value.fn)
+}
+
+
+// Use headings to split a content block into slides
+//
+// This function recursively processes content and splits it into individual slides
+// based on heading levels and other slide-breaking elements like pagebreaks.
+//
+// - self (dictionary): The presentation context containing slide configuration
+// - recaller-map (dictionary): Map of slide labels to their content for recall functionality
+// - new-start (bool): Whether this is the start of a new slide section
+// - is-first-slide (bool): Whether this is the first slide of the presentation
+// - is-outer-call (bool): Whether this is the outermost call to the function (used for recursion)
+// - absorb-leading-preamble (bool): Whether to include the preamble content from before the next split
+// - leading-content-starts-slide (bool): With `absorb-leading-preamble`, the content before the first split is the first slide instead of the preamble of the next one, as in the body of a non-deferred config. Only what is drawn nothing, like a counter update, is still absorbed.
+// - body (content): The content to be split into slides
+//
+// -> content
+#let split-content-into-slides(
+  self: none,
+  recaller-map: (:),
+  new-start: true,
+  is-first-slide: false,
+  is-outer-call: false,
+  absorb-leading-preamble: false,
+  leading-content-starts-slide: false,
+  body,
+) = {
+  // Extract arguments
+  assert(type(self) == dictionary, message: "`self` must be a dictionary")
+  assert(
+    "slide-level" in self and type(self.slide-level) == int,
+    message: "`self.slide-level` must be an integer",
+  )
+  assert(
+    "slide-fn" in self and type(self.slide-fn) == function,
+    message: "`self.slide-fn` must be a function",
+  )
+  let slide-level = self.slide-level
+  let slide-fn = auto
+  let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
+  let new-subsection-slide-fn = self.at(
+    "new-subsection-slide-fn",
+    default: none,
+  )
+  let new-subsubsection-slide-fn = self.at(
+    "new-subsubsection-slide-fn",
+    default: none,
+  )
+  let new-subsubsubsection-slide-fn = self.at(
+    "new-subsubsubsection-slide-fn",
+    default: none,
+  )
+  let horizontal-line-to-pagebreak = self.at(
+    "horizontal-line-to-pagebreak",
+    default: true,
+  )
+  let children = if tree.is-sequence(body) {
+    body.children
+  } else {
+    (body,)
+  }
+
+  //recursively flattens the array and checks for X-only content which is inlined when necessary. Merged loop to avoid repeatedly iterating all elements.
+  let _expand-child(child) = {
+    if (
+      tree.is-kind(child, "touying-article-text")
+        or tree.is-kind(child, "touying-article-only")
+    ) {
+      return ()
+    }
+    if tree.is-kind(child, "touying-slides-only") {
+      if not mark-visible-in-mode(self, child.value) { return () }
+      let inner = if tree.is-sequence(child.value.body) {
+        child.value.body.children
+      } else {
+        (child.value.body,)
+      }
+      return inner.map(_expand-child)
+    }
+    if tree.is-sequence(child) {
+      return child.children.map(_expand-child)
+    }
+    tree.unwrap-labelled-mark(
+      _unwrap-slide-wrapper(child),
+      ("touying-slide-recaller",),
+    )
+  }
+  children = children.map(_expand-child).flatten()
+
+  let call-slide-fn-and-reset(
+    self,
+    slide-fn,
+    current-slide-cont,
+    recaller-map,
+    already-slide-wrapper: false,
+  ) = {
+    let last-heading-label = _get-last-heading-label(self.headings)
+
+    // Skip sections with mode-specific labels when not in that mode
+    if check-current-mode-skip(self, last-heading-label) {
+      // Return early without the slide, but keep `current-headings`. Resetting
+      // it here would drop the labelled heading, and every later slide of the
+      // section would then see no label and be emitted after all -- which is
+      // why the filter used to do nothing on any heading level that has a
+      // section-slide fn (level 1 in every bundled theme).
+      return (none, recaller-map, self.headings, (), true, false)
+    }
+    let (slide-content, callable) = if already-slide-wrapper {
+      (slide-fn(self), slide-fn)
+    } else {
+      _call-slide-fn(self, slide-fn, current-slide-cont)
+    }
+
+    if last-heading-label != none {
+      recaller-map.insert(last-heading-label, (
+        content: slide-content,
+        callable: callable,
+        slide-self: self,
+      ))
+    }
+    (slide-content, recaller-map, (), (), true, false)
+  }
+
+  // The empty content list
+  let empty-content-types = ([], [ ], parbreak(), linebreak())
+  // The headings that we currently have
+  let current-headings = ()
+  // Recaller map
+  let recaller-map = recaller-map
+  // The current slide we are building
+  let slide-parts = ()
+  // The current slide content
+  let slide-content = none
+  // is new start
+  let is-new-start = new-start
+  // start part
+  let start-part = ()
+  // result
+  let output-slides = ()
+  // leading preamble to collect content from before the slide break
+  let leading-preamble = ()
+
+  // Buffer for the last slide-wrapper's callable and self, so that
+  // immediately following speaker-notes can be re-attached to it.
+  // Each element is a (callable, slide-self) pair. Empty means no pending wrapper.
+  let last-wrapper-info = ()
+
+  let is-rule-dash = tree.make-rule-dash-test(children)
+
+  // Is we have a horizontal line
+  let horizontal-line = false
+  // Iterate over the children
+  for (child-index, child) in children.enumerate() {
+    // Handle horizontal-line
+    // split content when we have a horizontal line
+    if (
+      horizontal-line-to-pagebreak
+        and horizontal-line
+        and child not in ([—], [---], [–], [--], [-])
+    ) {
+      slide-parts = tree.trim(slide-parts)
+      if slide-parts != () or current-headings != () {
+        let flush-self = (
+          self
+            + (
+              headings: current-headings,
+              is-first-slide: is-first-slide,
+              leading-preamble: leading-preamble,
+            )
+        )
+        leading-preamble = ()
+        (
+          slide-content,
+          recaller-map,
+          current-headings,
+          slide-parts,
+          new-start,
+          is-first-slide,
+        ) = call-slide-fn-and-reset(
+          flush-self,
+          slide-fn,
+          slide-parts.sum(default: none),
+          recaller-map,
+        )
+        if slide-content != none { output-slides.push(slide-content) }
+      }
+      horizontal-line = false
+      absorb-leading-preamble = false
+    }
+    // Clear last-wrapper-info when we encounter anything other than a
+    // speaker-note or whitespace, so that only speaker-notes *immediately*
+    // after a slide-wrapper get attached.
+    if (
+      last-wrapper-info.len() > 0
+        and not tree.is-kind(child, "touying-speaker-note")
+        and child not in ([], [ ], parbreak(), linebreak())
+    ) {
+      while last-wrapper-info.len() > 0 { let _ = last-wrapper-info.pop() }
+    }
+    // Main logic
+    if tree.is-kind(child, "touying-slide-wrapper") {
+      slide-parts = tree.trim(slide-parts)
+      if (
+        slide-parts != ()
+          or _get-slide-fn(self + (headings: current-headings), default: none)
+            != none
+      ) {
+        let flush-self = (
+          self
+            + (
+              headings: current-headings,
+              is-first-slide: is-first-slide,
+              leading-preamble: leading-preamble,
+            )
+        )
+        leading-preamble = ()
+        (
+          slide-content,
+          recaller-map,
+          current-headings,
+          slide-parts,
+          new-start,
+          is-first-slide,
+        ) = call-slide-fn-and-reset(
+          flush-self,
+          slide-fn,
+          slide-parts.sum(default: none),
+          recaller-map,
+        )
+        if slide-content != none { output-slides.push(slide-content) }
+      }
+
+      let slide-self = (
+        self
+          + (
+            headings: current-headings,
+            is-first-slide: is-first-slide,
+            leading-preamble: leading-preamble,
+            slide-label: tree.get-slide-call-label(child),
+          )
+      )
+
+      // honor uses wishes like <touying:handout> etc. by skipping depending on the mode. Same as for the heading-based skipping logic.
+      // we allow multiple: e.g. <touying:handout-presentation>, or even <touying:presentation-article>, you may write <touying:slides> as a short for <touying:presentation-handout>
+      if child.has("label") {
+        let slide_label = str(child.label)
+        if check-current-mode-skip(self, slide_label) {
+          continue
+        }
+      }
+      leading-preamble = ()
+
+      (
+        slide-content,
+        recaller-map,
+        current-headings,
+        slide-parts,
+        new-start,
+        is-first-slide,
+      ) = call-slide-fn-and-reset(
+        slide-self,
+        child.value.fn,
+        none,
+        recaller-map,
+        already-slide-wrapper: true,
+      )
+      if child.has("label") and child.label != <touying-temporary-mark> {
+        recaller-map.insert(str(child.label), (
+          content: slide-content,
+          callable: child.value.fn,
+          slide-self: slide-self,
+        ))
+      }
+      if slide-content != none { output-slides.push(slide-content) }
+      // Clear and set last-wrapper-info for potential speaker-note attachment
+      while last-wrapper-info.len() > 0 { let _ = last-wrapper-info.pop() }
+      last-wrapper-info.push((child.value.fn, slide-self))
+      absorb-leading-preamble = false
+    } else if (
+      tree.is-kind(child, "touying-speaker-note")
+        and last-wrapper-info.len() > 0
+        and tree.trim(slide-parts) == ()
+    ) {
+      // A speaker-note immediately after a slide-wrapper: re-generate the
+      // previous slide with the note injected into self so it gets processed
+      // inside the slide's subslide-preamble (within the page context).
+      let (original-fn, wrapper-self) = last-wrapper-info.last()
+      let existing-notes = wrapper-self.at(
+        "attached-speaker-notes",
+        default: (),
+      )
+      existing-notes.push(child.value)
+      let new-self = wrapper-self + (attached-speaker-notes: existing-notes)
+      // Replace the last output slide with the new one
+      let _ = output-slides.pop()
+      (
+        slide-content,
+        recaller-map,
+        current-headings,
+        slide-parts,
+        new-start,
+        is-first-slide,
+      ) = call-slide-fn-and-reset(
+        new-self,
+        already-slide-wrapper: true,
+        original-fn,
+        none,
+        recaller-map,
+      )
+      if slide-content != none { output-slides.push(slide-content) }
+      // Update last-wrapper-info with the new self
+      while last-wrapper-info.len() > 0 { let _ = last-wrapper-info.pop() }
+      last-wrapper-info.push((original-fn, new-self))
+    } else if (
+      tree.is-kind(child, "touying-slide-recaller")
+        and child.value.label in recaller-map
+    ) {
+      // Whole-slide recall: recall-entry.content is a complete,
+      // already-rendered slide (with its own page setup from when it was
+      // first rendered) — it must land as its own distinct output-slide
+      // entry, so flush whatever came before it first to preserve
+      // ordering. This is the one recall case that's genuinely a slide
+      // boundary; the fallback case below is not (see there for why).
+      slide-parts = tree.trim(slide-parts)
+      if slide-parts != () or current-headings != () {
+        let flush-self = (
+          self
+            + (
+              headings: current-headings,
+              is-first-slide: is-first-slide,
+              leading-preamble: leading-preamble,
+            )
+        )
+        leading-preamble = ()
+        (
+          slide-content,
+          recaller-map,
+          current-headings,
+          slide-parts,
+          new-start,
+          is-first-slide,
+        ) = call-slide-fn-and-reset(
+          flush-self,
+          slide-fn,
+          slide-parts.sum(default: none),
+          recaller-map,
+        )
+        if slide-content != none { output-slides.push(slide-content) }
+      }
+      let recall-entry = recaller-map.at(child.value.label)
+      // A recalled copy names its labels after the label the user wrote after
+      // the call, or else `<label-1>`, `<label-2>`, ... so that a label stays
+      // unique in the document and a `#link` can pick the copy.
+      let copy-name = if child.value.at("new-label", default: none) != none {
+        str(child.value.new-label)
+      } else {
+        let copy = recall-entry.at("copies", default: 0) + 1
+        while child.value.label + "-" + str(copy) in recaller-map { copy += 1 }
+        recaller-map.at(child.value.label).copies = copy
+        child.value.label + "-" + str(copy)
+      }
+      let recall-subslide = child.value.at("subslides", default: auto)
+      if recall-subslide == auto {
+        output-slides.push(_rename-slide-labels(
+          recall-entry.content,
+          child.value.label,
+          copy-name,
+        ))
+      } else {
+        // Pass the raw subslide spec through to touying-slide, which will
+        // resolve it after computing `repeat` and `waypoints`.
+        let recalled-self = (
+          recall-entry.slide-self
+            + (
+              freeze-slide-counter: true,
+              _recall-subslide: recall-subslide,
+              enable-frozen-states-and-counters: false,
+            )
+        )
+        output-slides.push(_rename-slide-labels(
+          (recall-entry.callable)(recalled-self),
+          child.value.label,
+          copy-name,
+        ))
+      }
+      absorb-leading-preamble = false
+    } else if tree.is-kind(child, "touying-slide-recaller") {
+      // Fallback (reducer/labeled-content) recall: not a registered
+      // whole-slide target, so this is ordinary content — a labeled table,
+      // a labeled reducer's animation stage, whatever — not a slide
+      // boundary. Push the still-unresolved metadata node through
+      // untouched, exactly like ordinary content: it's picked up later by
+      // the "touying-slide-recaller" dispatch inside
+      // _parse-content-into-results-and-repetitions, once this slide's body
+      // is actually parsed (the same dispatch already used when
+      // touying-recall is called directly inside an explicit #slide[...]
+      // body). That dispatch has real index/repetitions access, which this
+      // flat pre-slide walk does not — deferring resolution to it, rather
+      // than resolving eagerly here, is what lets touying-recall's fallback
+      // path be gated/nested (e.g. inside #uncover[...]/#only[...]) the same
+      // way regardless of whether the call sits bare at the top level or
+      // inside an explicit #slide[...]. (The raw-label/type check this used
+      // to do here is already duplicated at that dispatch site, so nothing
+      // is lost — it just fires at slide-render time instead of
+      // article-walk time.)
+      if absorb-leading-preamble and current-headings == () {
+        if leading-content-starts-slide and _starts-slide(child) {
+          absorb-leading-preamble = false
+          slide-parts += leading-preamble
+          leading-preamble = ()
+          slide-parts.push(child)
+        } else {
+          leading-preamble.push(child)
+        }
+      } else if new-start {
+        slide-parts.push(child)
+      } else {
+        start-part.push(child)
+      }
+    } else if child in (pagebreak(), pagebreak(weak: true)) {
+      // split content when we have a pagebreak
+      slide-parts = tree.trim(slide-parts)
+      if slide-parts != () or current-headings != () {
+        let flush-self = (
+          self
+            + (
+              headings: current-headings,
+              is-first-slide: is-first-slide,
+              leading-preamble: leading-preamble,
+            )
+        )
+        leading-preamble = ()
+        (
+          slide-content,
+          recaller-map,
+          current-headings,
+          slide-parts,
+          new-start,
+          is-first-slide,
+        ) = call-slide-fn-and-reset(
+          flush-self,
+          slide-fn,
+          slide-parts.sum(default: none),
+          recaller-map,
+        )
+        if slide-content != none { output-slides.push(slide-content) }
+      }
+      // The probe of a config body (`new-start: false`) has to see the part
+      // after the break as the next slide.
+      new-start = true
+      absorb-leading-preamble = false
+    } else if (
+      horizontal-line-to-pagebreak
+        and tree.is-em-dash(child)
+        and is-rule-dash(child-index)
+    ) {
+      horizontal-line = true
+      continue
+    } else if (
+      horizontal-line-to-pagebreak
+        and horizontal-line
+        and child in ([–], [--], [-])
+    ) {
+      continue
+    } else if child.func() == hide {
+      // needs to be taken out preemptively so that hidden headings don't get weird
+      // (they should not be traversed into for heading-detection purposes), but still
+      // respect new-start like the generic content case below, otherwise this content
+      // can end up in start-part and be silently dropped if nothing later reconciles it.
+      if new-start {
+        slide-parts.push(child)
+      } else {
+        start-part.push(child)
+      }
+    } else if tree.is-heading(child, depth: slide-level) {
+      let last-heading-depth = _get-last-heading-depth(current-headings)
+      slide-parts = tree.trim(slide-parts)
+      if (
+        _get-slide-fn(
+          self + (headings: current-headings),
+          default: none,
+        )
+          != none
+          or tree.heading-depth(child) <= last-heading-depth
+          or slide-parts != ()
+          or (tree.heading-depth(child) == 1 and new-section-slide-fn != none)
+          or (
+            tree.heading-depth(child) == 2 and new-subsection-slide-fn != none
+          )
+          or (
+            tree.heading-depth(child) == 3
+              and new-subsubsection-slide-fn != none
+          )
+          or (
+            tree.heading-depth(child) == 4
+              and new-subsubsubsection-slide-fn != none
+          )
+      ) {
+        slide-parts = tree.trim(slide-parts)
+        if slide-parts != () or current-headings != () {
+          let flush-self = (
+            self
+              + (
+                headings: current-headings,
+                is-first-slide: is-first-slide,
+                leading-preamble: leading-preamble,
+              )
+          )
+          leading-preamble = ()
+          (
+            slide-content,
+            recaller-map,
+            current-headings,
+            slide-parts,
+            new-start,
+            is-first-slide,
+          ) = call-slide-fn-and-reset(
+            flush-self,
+            slide-fn,
+            slide-parts.sum(default: none),
+            recaller-map,
+          )
+          if slide-content != none { output-slides.push(slide-content) }
+        }
+      }
+
+      current-headings.push(child)
+      new-start = true
+      absorb-leading-preamble = false
+
+      if (
+        not child.has("label")
+          or str(child.label) not in ("touying:hidden", "touying:skip")
+      ) {
+        // Helper to set last-wrapper-info after a heading-triggered slide.
+        // We extract the wrapper fn by calling the slide function with none
+        // body, which returns a touying-slide-wrapper metadata.
+        let heading-slide-self = (
+          self + (headings: current-headings, is-first-slide: is-first-slide)
+        )
+        if (
+          tree.heading-depth(child) == 1
+            and new-section-slide-fn != none
+            and not self.receive-body-for-new-section-slide-fn
+        ) {
+          (
+            slide-content,
+            recaller-map,
+            current-headings,
+            slide-parts,
+            new-start,
+            is-first-slide,
+          ) = call-slide-fn-and-reset(
+            heading-slide-self,
+            new-section-slide-fn,
+            none,
+            recaller-map,
+          )
+          if slide-content != none {
+            output-slides.push(slide-content)
+            // Track for speaker-note attachment
+            let wrapper = new-section-slide-fn(none)
+            while last-wrapper-info.len() > 0 {
+              let _ = last-wrapper-info.pop()
+            }
+            last-wrapper-info.push((
+              _unwrap-slide-wrapper(wrapper).value.fn,
+              heading-slide-self,
+            ))
+          }
+        } else if (
+          tree.heading-depth(child) == 2
+            and new-subsection-slide-fn != none
+            and not self.receive-body-for-new-subsection-slide-fn
+        ) {
+          (
+            slide-content,
+            recaller-map,
+            current-headings,
+            slide-parts,
+            new-start,
+            is-first-slide,
+          ) = call-slide-fn-and-reset(
+            heading-slide-self,
+            new-subsection-slide-fn,
+            none,
+            recaller-map,
+          )
+          if slide-content != none {
+            output-slides.push(slide-content)
+            let wrapper = new-subsection-slide-fn(none)
+            while last-wrapper-info.len() > 0 {
+              let _ = last-wrapper-info.pop()
+            }
+            last-wrapper-info.push((
+              _unwrap-slide-wrapper(wrapper).value.fn,
+              heading-slide-self,
+            ))
+          }
+        } else if (
+          tree.heading-depth(child) == 3
+            and new-subsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsection-slide-fn
+        ) {
+          (
+            slide-content,
+            recaller-map,
+            current-headings,
+            slide-parts,
+            new-start,
+            is-first-slide,
+          ) = call-slide-fn-and-reset(
+            heading-slide-self,
+            new-subsubsection-slide-fn,
+            none,
+            recaller-map,
+          )
+          if slide-content != none {
+            output-slides.push(slide-content)
+            let wrapper = new-subsubsection-slide-fn(none)
+            while last-wrapper-info.len() > 0 {
+              let _ = last-wrapper-info.pop()
+            }
+            last-wrapper-info.push((
+              _unwrap-slide-wrapper(wrapper).value.fn,
+              heading-slide-self,
+            ))
+          }
+        } else if (
+          tree.heading-depth(child) == 4
+            and new-subsubsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsubsection-slide-fn
+        ) {
+          (
+            slide-content,
+            recaller-map,
+            current-headings,
+            slide-parts,
+            new-start,
+            is-first-slide,
+          ) = call-slide-fn-and-reset(
+            heading-slide-self,
+            new-subsubsubsection-slide-fn,
+            none,
+            recaller-map,
+          )
+          if slide-content != none {
+            output-slides.push(slide-content)
+            let wrapper = new-subsubsubsection-slide-fn(none)
+            while last-wrapper-info.len() > 0 {
+              let _ = last-wrapper-info.pop()
+            }
+            last-wrapper-info.push((
+              _unwrap-slide-wrapper(wrapper).value.fn,
+              heading-slide-self,
+            ))
+          }
+        }
+      }
+    } else if (
+      self.at("auto-offset-for-heading", default: true)
+        and tree.is-heading(child)
+    ) {
+      let new-heading = tree.reconstruct-heading(child, child.body, offset: 0)
+      if new-start {
+        slide-parts.push(new-heading)
+      } else {
+        start-part.push(new-heading)
+      }
+    } else if tree.is-kind(child, "touying-set-config") {
+      // When absorbing leading preamble and no heading seen yet, recurse with
+      // the merged config applied to self and the leading preamble prepended.
+      // Unlike styled nodes, config nodes have no .child — use .value.body.
+      // There is also nothing to reconstruct-styled: the config cascades via self.
+      if absorb-leading-preamble and current-headings == () {
+        let inner-body = if leading-preamble != () {
+          leading-preamble.sum(default: none) + child.value.body
+        } else {
+          child.value.body
+        }
+        leading-preamble = ()
+        let config-slides = split-content-into-slides(
+          self: utils.merge-dicts(self, child.value.config),
+          recaller-map: recaller-map,
+          new-start: true,
+          is-first-slide: is-first-slide,
+          absorb-leading-preamble: true,
+          leading-content-starts-slide: not child.value.at(
+            "defer",
+            default: false,
+          ),
+          inner-body,
+        )
+        // The first slide, which the document preamble belongs to, is made.
+        if config-slides != none { is-first-slide = false }
+        output-slides.push(config-slides)
+      } else {
+        // now the big complicated logic ...
+        slide-parts = tree.trim(slide-parts)
+        let is-deferred = child.value.at("defer", default: false)
+        // In probe mode (is-new-start=false), slide-parts starts empty by
+        // design — that alone must not trigger deferred. Only explicit
+        // defer:true, or actual-split mode (is-new-start) with no accumulated
+        // content, goes through the deferred path.
+        if is-deferred or (is-new-start and slide-parts == ()) {
+          // Deferred path: flush current slide (if any body content), then
+          // recursively process the config body as a fresh start with
+          // absorb-leading-preamble so counter-updates/metadata before the
+          // first heading are deferred, not ghost-flushed.
+          // For explicitly-deferred configs (e.g. appendix), also flush when
+          // current-headings is non-empty so the heading becomes a regular
+          // slide instead of leaking into the appendix body.
+          // For non-deferred configs that fire because slide-parts=(), do NOT
+          // flush the heading — it belongs to the config body and goes into
+          // pending-headings below.
+          if slide-parts != () or (is-deferred and current-headings != ()) {
+            let flush-self = (
+              self
+                + (
+                  headings: current-headings,
+                  is-first-slide: is-first-slide,
+                  leading-preamble: leading-preamble,
+                )
+            )
+            leading-preamble = ()
+            (
+              slide-content,
+              recaller-map,
+              current-headings,
+              slide-parts,
+              new-start,
+              is-first-slide,
+            ) = call-slide-fn-and-reset(
+              flush-self,
+              slide-fn,
+              slide-parts.sum(default: none),
+              recaller-map,
+            )
+            if slide-content != none { output-slides.push(slide-content) }
+          }
+          // Forward any pending headings and any accumulated leading-preamble
+          // into the recursive body so counter-updates and state changes that
+          // arrived before the first heading are not silently dropped.
+          // (When slide-parts was non-empty the flush above already cleared
+          // leading-preamble; when slide-parts was empty it was not cleared.)
+          let pending-headings = current-headings
+          current-headings = ()
+          slide-parts = ()
+          let recursive-body = {
+            let parts = ()
+            if leading-preamble != () {
+              parts.push(leading-preamble.sum(default: none))
+            }
+            if pending-headings != () {
+              parts.push(pending-headings.sum(default: none))
+            }
+            parts.push(child.value.body)
+            parts.sum(default: none)
+          }
+          leading-preamble = ()
+          let config-slides = split-content-into-slides(
+            self: utils.merge-dicts(self, child.value.config),
+            recaller-map: recaller-map,
+            new-start: true,
+            is-first-slide: is-first-slide,
+            absorb-leading-preamble: true,
+            leading-content-starts-slide: not is-deferred,
+            recursive-body,
+          )
+          if config-slides != none { is-first-slide = false }
+          output-slides.push(config-slides)
+        } else {
+          // Immediate path: slide-parts is non-empty and defer is false.
+          // Handle like styled content — split the config body, recombine
+          // pre-break content with the current slide, and emit the rest.
+          // This keeps mid-slide config changes (e.g. cover method) on the
+          // current slide so that #pause / #meanwhile still work.
+          let merged-self = utils.merge-dicts(self, child.value.config)
+          // Do NOT forward pending headings — they belong to the current
+          // slide and will be used when flushing.  Only use the raw config
+          // body for the probe so that start-part captures pre-break content.
+          // Probe the body for slide breaks.
+          let (
+            inner-start-part,
+            slide-content-part,
+          ) = split-content-into-slides(
+            self: merged-self,
+            recaller-map: recaller-map,
+            new-start: false,
+            child.value.body,
+          )
+          if slide-content-part != none {
+            // The config body contains slide-breaking content.
+            // Recombine pre-break content (inner-start-part) with the current
+            // slide, flush, then emit the remaining slides.
+            // In probe mode (new-start=false) push to start-part so the
+            // caller can collect it; in actual-split push to slide-parts.
+            // no is-first-slide branch needed here, unlike style nodes. is-first-slide already there from outside.
+            if inner-start-part != none {
+              if new-start {
+                slide-parts.push(inner-start-part)
+              } else {
+                start-part.push(inner-start-part)
+              }
+            }
+            slide-parts = tree.trim(slide-parts)
+            if slide-parts != () or current-headings != () {
+              let flush-self = (
+                merged-self
+                  + (
+                    headings: current-headings,
+                    is-first-slide: is-first-slide,
+                    leading-preamble: leading-preamble,
+                  )
+              )
+              (
+                slide-content,
+                recaller-map,
+                current-headings,
+                slide-parts,
+                new-start,
+                is-first-slide,
+              ) = call-slide-fn-and-reset(
+                flush-self,
+                slide-fn,
+                slide-parts.sum(default: none),
+                recaller-map,
+              )
+              if slide-content != none { output-slides.push(slide-content) }
+            }
+            current-headings = ()
+            slide-parts = ()
+            output-slides.push(slide-content-part)
+          } else {
+            // No slide breaks in the config body — all content stays on the
+            // current slide.  Flush immediately with the merged config since
+            // the config body wraps all remaining content (show-rule
+            // semantics) and the for-loop has no more children after this.
+            // In probe mode (new-start=false) push to start-part; in
+            // actual-split push to slide-parts.
+            if inner-start-part != none {
+              if new-start {
+                slide-parts.push(inner-start-part)
+              } else {
+                start-part.push(inner-start-part)
+              }
+            }
+            slide-parts = tree.trim(slide-parts)
+            if slide-parts != () or current-headings != () {
+              let flush-self = (
+                merged-self
+                  + (
+                    headings: current-headings,
+                    is-first-slide: is-first-slide,
+                    leading-preamble: leading-preamble,
+                  )
+              )
+              leading-preamble = ()
+              (
+                slide-content,
+                recaller-map,
+                current-headings,
+                slide-parts,
+                new-start,
+                is-first-slide,
+              ) = call-slide-fn-and-reset(
+                flush-self,
+                slide-fn,
+                slide-parts.sum(default: none),
+                recaller-map,
+              )
+              if slide-content != none { output-slides.push(slide-content) }
+            }
+            current-headings = ()
+            slide-parts = ()
+          }
+        }
+      }
+    } else if tree.is-styled(child) {
+      // When absorbing leading preamble and no heading seen yet, recurse into
+      // the styled node with absorb-leading-preamble: true. The set/show rules
+      // will propagate via reconstruct-styled on the output.
+      if (
+        absorb-leading-preamble
+          and leading-content-starts-slide
+          and current-headings == ()
+          and _starts-slide(child)
+      ) {
+        absorb-leading-preamble = false
+        slide-parts += leading-preamble
+        leading-preamble = ()
+      }
+      if absorb-leading-preamble and current-headings == () {
+        let inner-body = if leading-preamble != () {
+          leading-preamble.sum(default: none) + child.child
+        } else {
+          child.child
+        }
+        leading-preamble = ()
+        let inner-result = split-content-into-slides(
+          self: self,
+          recaller-map: recaller-map,
+          new-start: true,
+          is-first-slide: is-first-slide,
+          absorb-leading-preamble: true,
+          inner-body,
+        )
+        if inner-result != none { is-first-slide = false }
+        output-slides.push(tree.reconstruct-styled(child, inner-result))
+      } else {
+        // Split the content into slides recursively for styled content
+        let (inner-start-part, slide-content-part) = split-content-into-slides(
+          self: self,
+          recaller-map: recaller-map,
+          new-start: false,
+          child.child,
+        )
+        if slide-content-part != none {
+          // The styled node contains slide-breaking content (e.g., headings that
+          // trigger new slides).
+          if is-first-slide {
+            // On the first slide, calling with new-start: false causes
+            // content after headings to land in start-part instead of slide-parts,
+            // resulting in slides with missing bodies. Re-call with new-start: true
+            // to build slides correctly, and flush any accumulated content beforehand.
+            // There is no previous slide to reconcile inner-start-part onto, so we
+            // do NOT attempt to reconcile it here.
+            slide-parts = tree.trim(slide-parts)
+            if slide-parts != () or current-headings != () {
+              let flush-self = (
+                self
+                  + (
+                    headings: current-headings,
+                    is-first-slide: is-first-slide,
+                    leading-preamble: leading-preamble,
+                  )
+              )
+              leading-preamble = ()
+              (
+                slide-content,
+                recaller-map,
+                current-headings,
+                slide-parts,
+                new-start,
+                is-first-slide,
+              ) = call-slide-fn-and-reset(
+                flush-self,
+                slide-fn,
+                slide-parts.sum(default: none),
+                recaller-map,
+              )
+              if slide-content != none { output-slides.push(slide-content) }
+            }
+            let styled-slides = split-content-into-slides(
+              self: self,
+              recaller-map: recaller-map,
+              new-start: true,
+              is-first-slide: is-first-slide,
+              child.child,
+            )
+            if styled-slides != none { is-first-slide = false }
+            output-slides.push(tree.reconstruct-styled(child, styled-slides))
+          } else {
+            // Add the pre-heading content to the current slide, then flush and
+            // emit the new slides directly instead of using _delayed-wrapper,
+            // which would hide them when show-delayed-wrapper is false.
+            if inner-start-part != none {
+              // Trim before reconstructing the style, otherwise a styled
+              // parbreak is no longer recognized as empty content and becomes
+              // a slide of its own (issue #394).
+              let inner-start-children = if tree.is-sequence(inner-start-part) {
+                inner-start-part.children
+              } else {
+                (inner-start-part,)
+              }
+              inner-start-children = tree.trim(inner-start-children)
+              if inner-start-children != () {
+                let styled-start = tree.reconstruct-styled(
+                  child,
+                  inner-start-children.sum(default: none),
+                )
+                if new-start {
+                  slide-parts.push(styled-start)
+                } else {
+                  start-part.push(styled-start)
+                }
+              }
+            }
+            slide-parts = tree.trim(slide-parts)
+            if slide-parts != () or current-headings != () {
+              let flush-self = (
+                self
+                  + (
+                    headings: current-headings,
+                    is-first-slide: is-first-slide,
+                    leading-preamble: leading-preamble,
+                  )
+              )
+              leading-preamble = ()
+              (
+                slide-content,
+                recaller-map,
+                current-headings,
+                slide-parts,
+                new-start,
+                is-first-slide,
+              ) = call-slide-fn-and-reset(
+                flush-self,
+                slide-fn,
+                slide-parts.sum(default: none),
+                recaller-map,
+              )
+              if slide-content != none { output-slides.push(slide-content) }
+            }
+            // Add new slides, wrapped in the same styled node so that the
+            // show/set rules cascade to subsequent slides (matching Typst semantics)
+            output-slides.push(tree.reconstruct-styled(
+              child,
+              slide-content-part,
+            ))
+          }
+        } else {
+          // No slide-breaking content inside; use the original delayed-wrapper
+          // approach so that subslide animations work correctly within the styled scope
+          let styled-child = {
+            if inner-start-part != none {
+              tree.reconstruct-styled(child, inner-start-part)
+            }
+            _delayed-wrapper(tree.reconstruct-styled(child, none))
+          }
+          if new-start {
+            slide-parts.push(styled-child)
+          } else {
+            start-part.push(styled-child)
+          }
+        }
+      }
+    } else {
+      if absorb-leading-preamble and current-headings == () {
+        // Before any heading is seen, accumulate as preamble to inject into
+        // the first real slide's content — avoids ghost slides from counter-updates
+        // and metadata injected by touying-set-config bodies.
+        if leading-content-starts-slide and _starts-slide(child) {
+          absorb-leading-preamble = false
+          slide-parts += leading-preamble
+          leading-preamble = ()
+          slide-parts.push(child)
+        } else {
+          leading-preamble.push(child)
+        }
+      } else if new-start {
+        slide-parts.push(child)
+      } else {
+        start-part.push(child)
+      }
+    }
+  }
+
+  // Handle the last slide. Content a deferred config handed on, with no slide
+  // left to take it, becomes a slide of its own.
+  slide-parts = tree.trim(slide-parts)
+  if (
+    slide-parts != ()
+      or current-headings != ()
+      or leading-preamble.any(it => not _is-invisible(it))
+  ) {
+    let flush-self = (
+      self
+        + (
+          headings: current-headings,
+          is-first-slide: is-first-slide,
+          leading-preamble: leading-preamble,
+        )
+    )
+    leading-preamble = ()
+    (
+      slide-content,
+      recaller-map,
+      current-headings,
+      slide-parts,
+      new-start,
+      is-first-slide,
+    ) = call-slide-fn-and-reset(
+      flush-self,
+      slide-fn,
+      slide-parts.sum(default: none),
+      recaller-map,
+    )
+    if slide-content != none { output-slides.push(slide-content) }
+  }
+
+  // Add last-page metadata to the last physical page when one exists.
+  // Empty documents can legitimately produce no slides, so avoid indexing the
+  // empty output list.
+  if is-outer-call and output-slides.len() > 0 {
+    output-slides.at(-1) += [#metadata(none)#label("touying-last-page")]
+  }
+
+  if is-new-start {
+    return output-slides.sum(default: none)
+  } else {
+    return (start-part.sum(default: none), output-slides.sum(default: none))
+  }
+}
+
+
+// get negative pad for header and footer
+#let _get-negative-pad(self) = {
+  let margin = self.page.margin
+  if (
+    type(margin) != dictionary
+      and type(margin) != length
+      and type(margin) != relative
+      and type(margin) != ratio
+  ) {
+    return it => it
+  }
+
+  let cell = block.with(
+    width: 100%,
+    height: 100%,
+    above: 0pt,
+    below: 0pt,
+    breakable: false,
+  )
+
+  return it => context {
+    let page-width = page.width
+    let to-abs(val) = {
+      if type(val) == ratio {
+        val * page-width
+      } else if type(val) == relative {
+        val.ratio * page-width + val.length
+      } else {
+        val
+      }
+    }
+
+    if type(margin) == length {
+      pad(x: -margin, cell(it))
+    } else if (
+      type(margin) == ratio or type(margin) == relative
+    ) {
+      pad(x: -to-abs(margin), cell(it))
+    } else {
+      let pad-args = (:)
+      if "x" in margin {
+        pad-args.x = -to-abs(margin.x)
+      }
+      if "left" in margin {
+        pad-args.left = -to-abs(margin.left)
+      }
+      if "right" in margin {
+        pad-args.right = -to-abs(margin.right)
+      }
+      if "rest" in margin {
+        pad-args.x = -to-abs(margin.rest)
+      }
+      pad(..pad-args, cell(it))
+    }
+  }
+}
+
+// get bottom pad for footer
+#let _get-bottom-pad(self) = {
+  let cell = block.with(
+    width: 100%,
+    height: 100%,
+    above: 0pt,
+    below: 0pt,
+    breakable: false,
+  )
+  let (_, page-height) = utils.get-page-dimensions(self)
+  it => pad(bottom: page-height, cell(it))
+}
+
+// Scale content down to new-height, preserving aspect ratio.
+// Returns a box of dimensions (width * new-height / height) × new-height
+// containing the original content scaled proportionally.
+#let _margin-of(self, names, fallback: 0pt) = {
+  if type(self.page.margin) != dictionary {
+    self.page.margin
+  } else {
+    let hit = names.find(name => name in self.page.margin)
+    if hit != none { self.page.margin.at(hit) } else { fallback }
+  }
+}
+
+// The half of the doubled page that the slide itself occupies, given which side
+// the speaker notes were sent to. Used to keep the page background/foreground on
+// the slide instead of letting it stretch across both halves (#219).
+#let _slide-half-alignment(notes-side) = {
+  if notes-side == right {
+    top + left
+  } else if notes-side == bottom {
+    top + left
+  } else if notes-side == left {
+    top + right
+  } else if notes-side == top {
+    bottom + left
+  } else {
+    top + left
+  }
+}
+
+// get page extra args for show-notes-on-second-screen
+#let _get-page-extra-args(self) = {
+  let notes-side = self.show-notes-on-second-screen
+  if notes-side in (top, bottom, left, right) {
+    let margin = self.page.margin
+    let (page-width, page-height) = utils.get-page-dimensions(self)
+    if (
+      type(margin) != dictionary
+        and type(margin) != length
+        and type(margin) != relative
+    ) {
+      return (:)
+    }
+    if type(margin) == length or type(margin) == relative {
+      margin = (x: margin, y: margin)
+    }
+    // The page is doubled along one axis and the extra half is pushed into the
+    // margin, so the slide keeps its own dimensions and the notes are placed
+    // into the margin by `_get-header-footer`.
+    let extra = if notes-side in (top, bottom) {
+      let side = if notes-side == bottom { "bottom" } else { "top" }
+      if side not in margin {
+        assert(
+          "y" in margin,
+          message: "The margin should have " + side + " or y",
+        )
+        margin.insert(side, margin.y)
+      }
+      margin.at(side) += page-height
+      (margin: margin, height: 2 * page-height)
+    } else {
+      let side = if notes-side == right { "right" } else { "left" }
+      if side not in margin {
+        assert(
+          "x" in margin,
+          message: "The margin should have " + side + " or x",
+        )
+        margin.insert(side, margin.x)
+      }
+      margin.at(side) += page-width
+      (margin: margin, width: 2 * page-width)
+    }
+    // `page(background: ..)` and `page(foreground: ..)` cover the whole page,
+    // which after the doubling above is the slide *and* the notes half - so a
+    // background sized `100%` gets stretched across both (#219). Confine each
+    // layer to a box the size of one slide, placed on the slide's own half, so
+    // that percentage sized images mean what the user meant.
+    // Styling the notes is done via the notes-fn.
+    let slide-half = _slide-half-alignment(notes-side)
+    for key in ("background", "foreground") {
+      let layer = self.page.at(key, default: none)
+      if layer != none {
+        extra.insert(
+          key,
+          place(slide-half, box(width: page-width, height: page-height, layer)),
+        )
+      }
+    }
+    return extra
+  } else {
+    return (:)
+  }
+}
+
+#let _get-header-footer(self) = {
+  let header = utils.call-or-display(self, self.page.at(
+    "header",
+    default: none,
+  ))
+  let footer = utils.call-or-display(self, self.page.at(
+    "footer",
+    default: none,
+  ))
+  let body-transform = body => body
+  // negative padding
+  if self.at("zero-margin-header", default: true) {
+    let negative-pad = _get-negative-pad(self)
+    header = negative-pad(header)
+  }
+  if self.at("zero-margin-footer", default: true) {
+    let negative-pad = _get-negative-pad(self)
+    footer = negative-pad(footer)
+  }
+  if self.at("show-notes-on-second-screen", default: none) == bottom {
+    let bottom-pad = _get-bottom-pad(self)
+    footer = bottom-pad(footer)
+  }
+  if self.at("show-only-notes", default: false) {
+    let (page-width, page-height) = utils.get-page-dimensions(self)
+    let slide-header = header
+    let slide-footer = footer
+    let margin-left = _margin-of(self, ("left", "x"))
+    let margin-right = _margin-of(self, ("right", "x"))
+    let margin-top = _margin-of(self, ("top", "y"))
+    let margin-bottom = _margin-of(self, ("bottom", "y"))
+    let inset = (left: margin-left, right: margin-right)
+    // Reassemble the slide's own page from its three parts so it can be shrunk
+    // as one piece. Each part is laid out page-sized and inset into its band,
+    // which reproduces the page geometry without re-deriving it.
+    let slide-page(body) = box(width: page-width, height: page-height, {
+      place(top + left, box(
+        width: 100%,
+        height: 100%,
+        inset: (bottom: page-height - margin-top, ..inset),
+        align(horizon, slide-header),
+      ))
+      place(top + left, box(
+        width: 100%,
+        height: 100%,
+        inset: (top: margin-top, bottom: margin-bottom, ..inset),
+        body,
+      ))
+      place(top + left, box(
+        width: 100%,
+        height: 100%,
+        inset: (top: page-height - margin-bottom, ..inset),
+        align(horizon, slide-footer),
+      ))
+    })
+    // The slide's own chrome belongs inside the preview, not around the notes.
+    header = none
+    footer = none
+    body-transform = body => {
+      // `auto` on one side copies the other, so a single ratio keeps the
+      // aspect and passing both stretches the preview on purpose.
+      place(
+        top + left,
+        dx: -margin-left,
+        dy: -margin-top,
+        box(width: page-width, height: page-height, {
+          (self.notes-fn)(
+            self: self,
+            note: utils.current-slide-note,
+            slide-preview: slide-page(body),
+          )
+          utils.slide-note-state.update(none)
+        }),
+      )
+    }
+  } else if self.show-notes-on-second-screen in (top, bottom, left, right) {
+    let notes-side = self.show-notes-on-second-screen
+    let (page-width, page-height) = utils.get-page-dimensions(self)
+    let panel = box(width: page-width, height: page-height, {
+      (self.notes-fn)(
+        self: self,
+        note: utils.current-slide-note,
+        slide-preview: none,
+      )
+      utils.slide-note-state.update(none)
+    })
+    let margin-left = _margin-of(self, ("left", "x"))
+    // The notes are appended to the footer, so the anchor is the bottom-left of
+    // the slide's own half: vertically at that half's bottom page edge, pulled
+    // there by `zero-margin-footer`'s negative padding, horizontally at its
+    // content edge. Offsets move the panel onto the half that
+    // `_get-page-extra-args` opened up in the margin.
+    let (dx, dy) = if notes-side == bottom {
+      (-margin-left, 0pt)
+    } else if notes-side == top {
+      // The slide is the lower half, so the notes half starts a page height up.
+      (-margin-left, -page-height)
+    } else if notes-side == right {
+      (page-width - margin-left, 0pt)
+    } else {
+      (-(page-width + margin-left), 0pt)
+    }
+    footer += place(left + bottom, dx: dx, dy: dy, panel)
+  }
+  (header, footer, body-transform)
+}
+
+// Frozen states and counters.
+
+#let _is-int-array(it) = type(it) == array and it.all(v => type(v) == int)
+
+/// Counter values have one integer per level. The outer levels keep their
+/// value, the first changed level moves by the same amount, and the inner
+/// levels are taken from `after`, because a step resets them: `(7, 1)` follows
+/// `(2, 3)` to `(2, 5)` and becomes `(7, 3)`.
+#let _apply-counter-step(current, before, after) = {
+  let shared-levels = calc.min(before.len(), after.len())
+  let first-changed-level = range(shared-levels + 1).find(level => (
+    level == shared-levels or before.at(level) != after.at(level)
+  ))
+
+  let outer-levels = range(first-changed-level).map(level => current.at(
+    level,
+    default: after.at(level),
+  ))
+  // The step only removed inner levels, or did nothing.
+  if first-changed-level >= after.len() { return outer-levels }
+
+  let moved-by = (
+    after.at(first-changed-level) - before.at(first-changed-level, default: 0)
+  )
+  let moved-level = current.at(first-changed-level, default: 0) + moved-by
+  outer-levels + (moved-level,) + after.slice(first-changed-level + 1)
+}
+
+/// Items were removed from or appended to the end of the array, like in a list
+/// that is added to.
+#let _apply-array-step(current, before, after) = {
+  let removed-count = before.len() - after.len()
+  if removed-count >= 0 {
+    current.slice(0, calc.max(0, current.len() - removed-count))
+  } else {
+    current + after.slice(before.len())
+  }
+}
+
+/// Apply to `current` the step that took `before` to `after`. Swap the two to
+/// undo it. Only the difference between them is used, `current` does not have
+/// to equal `before`. Values of other types become `after`, which for the
+/// frozen states is a read that lags (#447).
+#let _apply-state-step(current, before, after) = {
+  let all-are(check) = (current, before, after).all(check)
+
+  if all-are(v => type(v) == int) {
+    current + after - before
+  } else if all-are(_is-int-array) {
+    _apply-counter-step(current, before, after)
+  } else if all-are(v => type(v) == array) {
+    _apply-array-step(current, before, after)
+  } else if all-are(v => type(v) == dictionary) {
+    let result = (:)
+    for (key, after-value) in after {
+      result.insert(key, if key in current and key in before {
+        _apply-state-step(current.at(key), before.at(key), after-value)
+      } else {
+        after-value
+      })
+    }
+    // Keys that only `current` has stay. Keys that `before` had and `after`
+    // does not were removed by the step.
+    for (key, current-value) in current {
+      if key not in before and key not in after {
+        result.insert(key, current-value)
+      }
+    }
+    result
+  } else {
+    after
+  }
+}
+
+#let _slide-start-copy-key = "touying-frozen-copy"
+
+/// Undo the previous subslide on `value`, for use inside an update function.
+#let _undo-previous-subslide(value, before, after, is-last-subslide) = {
+  let undone = if type(value) == dictionary and _slide-start-copy-key in value {
+    value.at(_slide-start-copy-key) //restore from copy
+  } else {
+    _apply-state-step(value, after, before) //get diff and reverse
+  }
+
+  if type(undone) == dictionary and not is-last-subslide {
+    undone.insert(_slide-start-copy-key, undone)
+  }
+  undone
+}
+
+/// recognize a theorion counter by one of its keys
+#let _is-theorion-counter(item) = (
+  type(item) == dictionary and "get-inherited-levels" in item
+)
+
+/// The value of `item` at `loc`, as of the previous layout pass.
+#let _read-at(item, loc) = if type(item) == dictionary {
+  (item.at)(selector(loc))
+} else {
+  item.at(selector(loc))
+}
+
+/// The state that holds the start-of-slide value of the Theorion counter at
+/// position `index`. It is built from update functions, so unlike a read it is
+/// not behind.
+#let _slide-start-state(index) = state(
+  "touying-frozen-record:" + str(index),
+  none,
+)
+
+/// Remember what the slide starts with. A
+/// dictionary state stores a copy of itself. For a Theorion counter, the
+/// start value of the previous slide is moved along by what happened since
+/// `previous-frozen-subslide-loc`, or taken as it is on the first slide, where
+/// that is `none`. Call in `context`.
+#let _remember-slide-start(frozen-items, previous-frozen-subslide-loc) = {
+  for (index, item) in frozen-items.enumerate() {
+    if _is-theorion-counter(item) {
+      // The previous slide's start value, moved along by what has happened
+      // since the previous frozen subslide began.
+      let value-here = _read-at(item, here())
+      let value-at-previous-frozen-subslide = if (
+        previous-frozen-subslide-loc != none
+      ) {
+        _read-at(item, previous-frozen-subslide-loc)
+      }
+
+      _slide-start-state(index).update(previous-slide-start-value => {
+        if (
+          previous-slide-start-value == none
+            or previous-frozen-subslide-loc == none
+        ) {
+          value-here
+        } else {
+          _apply-state-step(
+            previous-slide-start-value,
+            value-at-previous-frozen-subslide,
+            value-here,
+          )
+        }
+      })
+    } else if type(item) == state {
+      item.update(value => {
+        if type(value) == dictionary {
+          let _ = value.remove(_slide-start-copy-key, default: none)
+          value.insert(_slide-start-copy-key, value)
+        }
+        value
+      })
+    } // Counters, and states that do not hold a dictionary: nothing to remember,
+    // they are rewound by undoing the previous subslide's step.
+  }
+}
+
+/// Rewinds all items to the values at the given previous location, but not if its the last subslide, there we want to keep the change.
+/// Call in `context`.
+///
+/// An item is rewound in one of three ways, depending on what it is:
+/// - Counters, and states holding a number or an array (ctheorems 2.x
+///   `thm-stored`, `thm-qed-done`): undo the previous subslide's step.
+/// - States holding a dictionary (ctheorems 2.x `thm-counters`): restore the
+///   copy stored in the first subslide. ctheorems 1.x rebuilds its dictionary
+///   on every update, which loses the copy, so it is only undone step by step.
+/// - Theorion's counters: set the start value of the slide, because their
+///   update takes no function.
+#let _rewind-to-slide-start(
+  frozen-items,
+  previous-subslide-loc,
+  is-last-subslide,
+) = {
+  for (index, item) in frozen-items.enumerate() {
+    if _is-theorion-counter(item) {
+      (item.update)(_slide-start-state(index).get())
+      continue
+    }
+
+    // The previous subslide turned the first value into the second.
+    let value-at-previous-subslide = _read-at(item, previous-subslide-loc)
+    let value-here = _read-at(item, here())
+
+    if type(item) == state {
+      item.update(value => _undo-previous-subslide(
+        value,
+        value-at-previous-subslide,
+        value-here,
+        is-last-subslide,
+      ))
+    } else {
+      // Counters reject negative numbers, which only early passes produce.
+      let undo-previous-subslide-nn = (..value) => _undo-previous-subslide(
+        value.pos(),
+        value-at-previous-subslide,
+        value-here,
+        is-last-subslide,
+      ).map(level => calc.max(0, level))
+
+      item.update(undo-previous-subslide-nn)
+    }
+  }
+}
+
+#let print-invisible-headings(self) = {
+  if self.at("headings", default: ()) != () {
+    let headings = self
+      .at("headings", default: ())
+      .map(it => {
+        set heading(offset: 0)
+        show heading: none
+        if it.has("label") {
+          if (
+            str(it.label)
+              in (
+                "touying:hidden",
+                "touying:unnumbered",
+                "touying:unoutlined",
+                "touying:unbookmarked",
+              )
+          ) {
+            let overrides = if str(it.label) == "touying:hidden" {
+              (numbering: none, outlined: false, bookmarked: false)
+            } else if str(it.label) == "touying:unnumbered" {
+              (numbering: none)
+            } else if str(it.label) == "touying:unoutlined" {
+              (outlined: false)
+            } else if str(it.label) == "touying:unbookmarked" {
+              (bookmarked: false)
+            } else {
+              (:)
+            }
+            tree.reconstruct-heading(it, it.body, ..overrides)
+          } else {
+            it
+          }
+        } else {
+          it
+        }
+      })
+    headings.sum(default: none)
+  }
+}
+/// Internal slide rendering function. Called by theme slide functions via `touying-slide-wrapper`.
+/// See the public `slide` function for parameter documentation.
+#let touying-slide(
+  self: none,
+  config: (:),
+  repeat: auto,
+  setting: body => body,
+  composer: auto,
+  ..bodies,
+) = {
+  if config != (:) {
+    self = utils.merge-dicts(self, config)
+  }
+  assert(
+    bodies.named().len() == 0,
+    message: "unexpected named arguments:" + repr(bodies.named().keys()),
+  )
+  let setting-fn(body) = {
+    set heading(offset: self.at("slide-level", default: 0)) if self.at(
+      "auto-offset-for-heading",
+      default: true,
+    )
+    show: body => {
+      if self.at("show-strong-with-alert", default: true) {
+        show strong: self.methods.alert.with(self: self)
+        body
+      } else {
+        body
+      }
+    }
+    show: body => {
+      let footnote-style = self.at("footnote-style", default: auto)
+      if footnote-style != auto {
+        show footnote: footnote-style
+        body
+      } else {
+        body
+      }
+    }
+    setting(body)
+    // Weak zero-height spacing that acts as a layout anchor for the current
+    // slide.  When a slide body consists entirely of context (lazily evaluated)
+    // elements, Typst may not commit to the new page in the first layout pass.
+    // This causes hidden headings placed at the start of the *next* slide's
+    // preamble to receive the wrong page number, which in turn makes context
+    // queries like `display-current-heading` return the wrong heading.
+    // Adding `v(0pt, weak: true)` forces Typst to finalize the current page
+    // without adding any visible space (the weak flag suppresses it when
+    // adjacent to other spacing).
+    // See: https://github.com/touying-typ/touying/issues/388
+    v(0pt, weak: true)
+  }
+  let composer-with-cols(..args) = {
+    let effective-composer = if composer != auto {
+      composer
+    } else {
+      self.at("default-composer", default: auto)
+    }
+    if type(effective-composer) == function {
+      effective-composer(..args)
+    } else {
+      components.cols(
+        lazy-layout: false,
+        columns: effective-composer,
+        ..args,
+      )
+    }
+  }
+  // Resolve Mode markers here, so that a `#slide[..]` around the same content behaves the same
+  // way. A callback-style body is expanded when it is called, since only then
+  // is its `self` known.
+  let bodies = bodies
+    .pos()
+    .map(b => if type(b) == function {
+      s => expand-mode-marks(s, b(s))
+    } else {
+      expand-mode-marks(self, b)
+    })
+
+  // Slide and subslide preamble functions for setup and metadata
+  let slide-preamble(self) = {
+    // The document preamble runs once, at the start. The content that a deferred
+    // config change collected in front of this slide is an optional preamble of
+    // the slide, and runs before it, since it can affect it.
+    if self.at("is-first-slide", default: false) {
+      utils.call-or-display(self, self.at("preamble", default: none))
+      utils.call-or-display(self, self.at("default-preamble", default: none))
+    }
+    let leading-preamble = self
+      .at("leading-preamble", default: ())
+      .sum(default: none)
+    utils.call-or-display(self, leading-preamble)
+    utils.call-or-display(self, self.at("slide-preamble", default: none))
+    utils.call-or-display(self, self.at(
+      "default-slide-preamble",
+      default: none,
+    ))
+    [#metadata((kind: "touying-new-slide")) <touying-metadata>]
+    // add headings for the first subslide
+    print-invisible-headings(self)
+    if self.at("slide-label", default: none) != none {
+      [#metadata("touying-slide-label-anchor")#label(str(self.slide-label))]
+    }
+  }
+  // preamble for the subslides
+  let subslide-preamble(self) = {
+    if (
+      (self.handout and not self.at("_handout-secondary", default: false))
+        or self.subslide == 1
+    ) {
+      slide-preamble(self)
+    }
+    [#metadata((kind: "touying-new-subslide")) <touying-metadata>]
+    if (
+      self.at("enable-frozen-states-and-counters", default: true)
+        and not self.handout
+        and self.repeat > 1
+    ) {
+      // An item listed twice is rewound once.
+      let frozen-items = (
+        self.frozen-states
+          + self.default-frozen-states
+          + self.frozen-counters
+          + self.default-frozen-counters
+      ).dedup()
+      for item in frozen-items {
+        if type(item) == dictionary and not _is-theorion-counter(item) {
+          panic(
+            "frozen-states and frozen-counters take Typst counters and states, and Theorion's counters. Got a dictionary with the keys "
+              + repr(item.keys()),
+          )
+        }
+      }
+      // `previous-frozen-subslide-loc` is where the previous frozen subslide
+      // began. A slide with a single subslide freezes nothing and does not
+      // update it, so on a first subslide it can point several slides back.
+      if self.subslide == 1 {
+        context {
+          _remember-slide-start(
+            frozen-items,
+            utils.previous-frozen-subslide-loc.get(),
+          )
+          utils.previous-frozen-subslide-loc.update(here())
+        }
+      } else {
+        context {
+          let previous-subslide-loc = utils.previous-frozen-subslide-loc.get()
+          if previous-subslide-loc != none {
+            _rewind-to-slide-start(
+              frozen-items,
+              previous-subslide-loc,
+              self.subslide == self.repeat,
+            )
+          }
+        }
+        context utils.previous-frozen-subslide-loc.update(here())
+      }
+    }
+    utils.call-or-display(self, self.at("subslide-preamble", default: none))
+    utils.call-or-display(self, self.at(
+      "default-subslide-preamble",
+      default: none,
+    ))
+    // Process speaker-notes that were attached from outside the slide
+    // (e.g. #speaker-note[] immediately after #slide[]).
+    for note in self.at("attached-speaker-notes", default: ()) {
+      utils.speaker-note(
+        self: self,
+        mode: note.mode,
+        setting: note.setting,
+        subslide: if note.subslide == auto { none } else { note.subslide },
+        note.note,
+      )
+    }
+  }
+  // update states for every page
+  let page-preamble(self) = {
+    [#metadata((kind: "touying-new-page")) <touying-metadata>]
+    // 1. slide counter part
+    //    if freeze-slide-counter is false, then update the slide-counter
+    if (
+      (self.handout and not self.at("_handout-secondary", default: false))
+        or self.subslide == 1
+    ) {
+      if not self.at("freeze-slide-counter", default: false) {
+        utils.slide-counter.step()
+        //  if appendix is false, then update the last-slide-counter
+        if not self.at("appendix", default: false) {
+          utils.last-slide-counter.step()
+        }
+      }
+    }
+    utils.call-or-display(self, self.at("page-preamble", default: none))
+    utils.call-or-display(self, self.at("default-page-preamble", default: none))
+  }
+
+  self.subslide = 1
+  // Pre-collect waypoints so label resolution works during the initial parse pass.
+  // If any body is a function (callback-style slide), call it with the current self
+  // to materialise content. The global #waypoint/#uncover/#only functions only emit
+  // metadata and do not rely on self.waypoints, so this is safe.
+  let self-for-prepass = self + (_waypoint-prepass: true)
+  let resolved-bodies = bodies.map(b => if type(b) == function {
+    b(self-for-prepass)
+  } else { b })
+  // Set preliminary single-point ranges (first == last == raw subslide number);
+  // proper ranges are computed after `repeat` is known.
+  let (raw-waypoints, start-overrides, decl-reps) = _collect-waypoints(
+    ..resolved-bodies,
+  )
+  // Resolve explicit `start` overrides (forest resolution) before anything
+  // else, so that every waypoint has its final subslide position.
+  let raw-waypoints = _resolve-waypoint-forest(raw-waypoints, start-overrides)
+  self.waypoints = (:)
+  for (lbl, sub) in raw-waypoints.pairs() {
+    self.waypoints.insert(lbl, (first: sub, last: sub))
+  }
+  // for single page slide, get the repetitions
+  if repeat == auto {
+    let (
+      _,
+      repetitions,
+      last-subslide,
+      ..,
+    ) = _parse-content-into-results-and-repetitions(
+      self: self,
+      base: 1,
+      index: 1,
+      ..bodies,
+    )
+    repeat = calc.max(repetitions, last-subslide)
+  }
+  // Ensure repeat covers all resolved waypoint positions (e.g. start: 5
+  // requires at least 5 subslides even if the content has fewer pauses).
+  if raw-waypoints.len() > 0 {
+    repeat = calc.max(repeat, calc.max(..raw-waypoints.values()))
+  }
+  assert(type(repeat) == int, message: "The repeat should be an integer")
+  self.repeat = repeat
+  // Recompute waypoint ranges with the actual repeat count
+  self.waypoints = _compute-waypoint-ranges(
+    raw-waypoints,
+    repeat,
+    start-overrides,
+    decl-reps,
+  )
+  // page header and footer
+  let (header, footer, body-transform) = _get-header-footer(self)
+  let page-extra-args = _get-page-extra-args(self)
+
+  if self.at("article-mode", default: false) {
+    // Article mode: render last subslide inline, no page breaks, no preambles.
+    self.subslide = repeat
+    // `#article-text[..]` stands in for the slide it is written in, so when a
+    // body carries one, that prose *is* the slide's article content and the
+    // slide's own content is never parsed at all.
+    let prose = tree.find-in-tree(
+      bodies.filter(b => type(b) == content).sum(default: []),
+      c => tree.is-kind(c, "touying-article-text"),
+    )
+    let bodies = if prose == none { bodies } else { (prose.value.body,) }
+    let (conts, ..) = _parse-content-into-results-and-repetitions(
+      self: self,
+      index: repeat,
+      show-delayed-wrapper: true,
+      ..bodies,
+    )
+    // Linearize: returns (content: .., images: .., blocks: ..)
+    let result = _article-linearize(self, composer, conts)
+    // Article-specific setting function: only preserves semantic styling
+    // (strong→alert), drops slide-specific rules (heading offset, layout anchor).
+    let article-setting-fn(body) = {
+      show: body => {
+        if self.at("show-strong-with-alert", default: true) {
+          show strong: self.methods.alert.with(self: self)
+          body
+        } else {
+          body
+        }
+      }
+      show: body => {
+        let footnote-style = self.at("footnote-style", default: auto)
+        if footnote-style != auto {
+          show footnote: footnote-style
+          body
+        } else {
+          body
+        }
+      }
+      body
+    }
+    // Return everything inside a metadata element so theme styling
+    // (set text, set page, etc.) applied by the caller doesn't affect
+    // the content. The article renderer extracts this metadata.
+    // We pack everything (content, images, blocks, maps) into the metadata
+    // value because returning a dictionary gets converted to content
+    // by Typst when set rules are active in the calling scope.
+    let has-extracted = result.images.len() > 0 or result.blocks.len() > 0
+    let content = if result.content != none {
+      article-setting-fn(result.content)
+    } else { none }
+    if content != none and self.at("slide-label", default: none) != none {
+      content = (
+        [#metadata("touying-slide-label-anchor")#label(str(self.slide-label))]
+          + content
+      )
+    }
+    let payload = (
+      kind: "touying-article-raw",
+      content: content,
+    )
+    if self.at("article-extract-content", default: false) and has-extracted {
+      payload.insert("images", result.images)
+      payload.insert("blocks", result.blocks)
+    }
+    return [#metadata(payload) <touying-article-wrapper>]
+  }
+
+  if self.handout {
+    let handout-subslides = self.at("handout-subslides", default: none)
+    if handout-subslides == none {
+      // Original behavior: render only the last subslide
+      self.subslide = repeat
+      // Emit the waypoint link anchors here since they have nowhere else to go
+      self.rendered-subslides = (repeat,)
+      let (conts, ..) = _parse-content-into-results-and-repetitions(
+        self: self,
+        index: repeat,
+        show-delayed-wrapper: true,
+        ..bodies,
+      )
+      header = page-preamble(self) + header
+      let slide-body = body-transform(setting-fn(
+        subslide-preamble(self) + composer-with-cols(..conts),
+      ))
+      return {
+        set page(
+          ..(self.page + page-extra-args + (header: header, footer: footer)),
+        )
+        if self.at("breakable", default: true) {
+          slide-body
+        } else {
+          components.page-container(
+            self: self,
+            clip: self.at("clip", default: false),
+            // Reached only when `breakable` is false, which is the condition
+            // `auto` defers to — so here `auto` and `true` both mean detect.
+            detect-overflow: self.at("detect-overflow", default: auto) != false,
+            slide-body,
+          )
+        }
+      }
+    }
+
+    // `"waypoints"` stands for the last subslide of every waypoint, alone or
+    // as one element of an array. It is expanded to plain integers here, since
+    // the spec parser below only knows ranges.
+    if handout-subslides == "waypoints" {
+      handout-subslides = _last-subslides-of-waypoints(self, repeat)
+    } else if type(handout-subslides) == array {
+      handout-subslides = handout-subslides
+        .map(idx => if idx == "waypoints" {
+          _last-subslides-of-waypoints(self, repeat)
+        } else { (idx,) })
+        .flatten()
+    }
+
+    let is-waypoint(spec) = (
+      type(spec) == label
+        or (
+          type(spec) == dictionary
+            and spec.at("kind", default: "") in _waypoint-kinds
+        )
+    )
+    // Only a range marker spans several subslides, see below.
+    let is-range-marker(spec) = (
+      type(spec) == dictionary
+        and spec.at("kind", default: "")
+          in (
+            "touying-waypoint-from",
+            "touying-waypoint-until",
+            "touying-waypoint-not",
+          )
+    )
+    // A single waypoint is the same as an array that holds it.
+    if is-waypoint(handout-subslides) {
+      handout-subslides = (handout-subslides,)
+    }
+
+    if type(handout-subslides) == array {
+      for (i, subslide-idx) in handout-subslides.enumerate() {
+        if is-waypoint(subslide-idx) {
+          // A handout shows how a waypoint ends: a label (or `prev-wp`,
+          // `next-wp`, `get-first`, `get-last`) is one page, the last subslide
+          // it names. A range marker (`from-wp`, `until-wp`, `not-wp`) keeps
+          // every subslide it spans, which `check-visible` expands below.
+          // `arr[i] = ..` is not index assignment in Typst - it parses as a call
+          // and panics with "expected function, found array".
+          handout-subslides.at(i) = if is-range-marker(subslide-idx) {
+            _resolve-waypoints(self, subslide-idx)
+          } else {
+            _resolve-waypoint-to-last(self, subslide-idx, end: repeat)
+          }
+        } else if type(subslide-idx) == int or type(subslide-idx) == str {
+          // do nothing
+        } else {
+          panic(
+            "touying-slide: if handout-subslides is an array, it must be integers, strings, or waypoint labels/markers, got type "
+              + str(type(subslide-idx))
+              + " for element "
+              + repr(subslide-idx),
+          )
+        }
+      }
+    }
+    //negative indices in string not defined/supported, and they can even have ! for inversion.
+    let handout-subslides = resolve-negative-subslides(
+      self.repeat,
+      handout-subslides,
+    )
+
+    // Render only the subslides that match handout-subslides
+    let handout-subslide-indices = range(1, repeat + 1).filter(
+      i => check-visible(i, handout-subslides),
+    )
+    // Fall back to the last subslide if none match
+    if handout-subslide-indices.len() == 0 {
+      handout-subslide-indices = (repeat,)
+    }
+    let result = ()
+    for (pos, i) in handout-subslide-indices.enumerate() {
+      let is-first = pos == 0
+      let is-last = pos == handout-subslide-indices.len() - 1
+      let subslide-self = self
+      subslide-self.subslide = i
+      // The subslides that actually reach the document, for `waypoint-anchor`.
+      subslide-self.rendered-subslides = handout-subslide-indices
+      // Disable frozen states for handout multi-subslide rendering
+      subslide-self.enable-frozen-states-and-counters = false
+      // For non-first subslides, mark as a secondary handout page so that
+      // slide/page preambles and the slide counter are not repeated, while
+      // keeping handout: true so that handout-only content remains visible.
+      if not is-first {
+        subslide-self._handout-secondary = true
+      }
+      let (header-i, footer-i, body-transform-i) = _get-header-footer(
+        subslide-self,
+      )
+      let (conts, ..) = _parse-content-into-results-and-repetitions(
+        self: subslide-self,
+        index: i,
+        show-delayed-wrapper: is-last,
+        ..bodies,
+      )
+      let new-header = page-preamble(subslide-self) + header-i
+      let slide-body = body-transform-i(setting-fn(
+        subslide-preamble(subslide-self) + composer-with-cols(..conts),
+      ))
+      result.push({
+        set page(
+          ..(
+            subslide-self.page
+              + page-extra-args
+              + (header: new-header, footer: footer-i)
+          ),
+        )
+        if subslide-self.at("breakable", default: true) {
+          slide-body
+        } else {
+          components.page-container(
+            self: subslide-self,
+            clip: subslide-self.at("clip", default: false),
+            detect-overflow: subslide-self.at("detect-overflow", default: auto)
+              != false,
+            slide-body,
+          )
+        }
+      })
+    }
+
+    result.sum(default: none)
+  } else if "_recall-subslide" in self {
+    // Gated on key existence, not `!= none` — `_recall-subslide: none` is
+    // itself a meaningful spec now (recall only the last subslide), so
+    // checking the value against `none` would wrongly skip this branch for
+    // it. The key is only ever inserted by the recall dispatch above,
+    // never present during ordinary (non-recalled) slide rendering.
+    //
+    // Render specific subslide(s) requested by touying-recall.
+    // The spec is resolved here because `repeat` and `self.waypoints`
+    // are only available after the pre-pass above.
+    let recall-spec = self._recall-subslide
+    let recall-indices = if recall-spec == none {
+      // none → last subslide only
+      (repeat,)
+    } else if type(recall-spec) == int {
+      // Explicit single subslide
+      (resolve-negative-subslides(self.repeat, recall-spec),)
+    } else if type(recall-spec) == str and recall-spec == "waypoints" {
+      // "waypoints" → last subslide of every waypoint
+      _last-subslides-of-waypoints(self, repeat)
+    } else if type(recall-spec) == label or type(recall-spec) == dictionary {
+      // Waypoint label or marker — resolve using the slide's waypoint map
+      let resolved = _resolve-waypoints(self, recall-spec)
+      if type(resolved) == int {
+        (resolved,)
+      } else if type(resolved) == dictionary {
+        //waypoints resolve to the whole animation sequence. If specific slides are needed use the waypoint marker functions.
+        let first = resolved.at("beginning", default: resolved.at(
+          "first",
+          default: 1,
+        ))
+        let last = resolved.at("until", default: resolved.at(
+          "last",
+          default: repeat,
+        ))
+        range(first, last + 1)
+      } else {
+        panic(
+          "touying-recall: unexpected resolved waypoint type: "
+            + repr(resolved),
+        )
+      }
+    } else {
+      panic(
+        "touying-recall: subslide must be none, auto, int, \"waypoints\", label, or waypoint marker, got "
+          + str(type(recall-spec)),
+      )
+    }
+    // Validate and render each requested subslide
+    let result = ()
+    for i in recall-indices {
+      assert(
+        i >= 1 and i <= repeat,
+        message: "touying-recall: subslide "
+          + str(i)
+          + " is out of range (1.."
+          + str(repeat)
+          + ")",
+      )
+      self.subslide = i
+      let (header, footer, body-transform) = _get-header-footer(self)
+      let (conts, ..) = _parse-content-into-results-and-repetitions(
+        self: self,
+        index: i,
+        show-delayed-wrapper: i == repeat,
+        ..bodies,
+      )
+      let new-header = page-preamble(self) + header
+      let slide-body = body-transform(setting-fn(
+        subslide-preamble(self) + composer-with-cols(..conts),
+      ))
+      result.push({
+        set page(
+          ..(
+            self.page + page-extra-args + (header: new-header, footer: footer)
+          ),
+        )
+        if self.at("breakable", default: true) {
+          slide-body
+        } else {
+          components.page-container(
+            self: self,
+            clip: self.at("clip", default: false),
+            detect-overflow: self.at("detect-overflow", default: auto) != false,
+            slide-body,
+          )
+        }
+      })
+    }
+    result.sum()
+  } else {
+    // render all the subslides
+    let result = ()
+    for i in range(1, repeat + 1) {
+      self.subslide = i
+      let (header, footer, body-transform) = _get-header-footer(self)
+      let delayed-args = if i == repeat {
+        (show-delayed-wrapper: true)
+      }
+      let (conts, ..) = _parse-content-into-results-and-repetitions(
+        self: self,
+        index: i,
+        ..delayed-args,
+        ..bodies,
+      )
+      let new-header = page-preamble(self) + header
+      // update the counter in the first subslide only
+      let slide-body = body-transform(setting-fn(
+        subslide-preamble(self) + composer-with-cols(..conts),
+      ))
+      result.push({
+        set page(
+          ..(
+            self.page + page-extra-args + (header: new-header, footer: footer)
+          ),
+        )
+        if self.at("breakable", default: true) {
+          slide-body
+        } else {
+          components.page-container(
+            self: self,
+            clip: self.at("clip", default: false),
+            detect-overflow: self.at("detect-overflow", default: auto) != false,
+            slide-body,
+          )
+        }
+      })
+    }
+    // return the result
+    result.sum()
+  }
+}
+
+
+/// Touying slide function.
+///
+/// - config (dictionary): The configuration of the slide. You can use `config-xxx` to set the configuration of the slide. For more configurations, you can use `utils.merge-dicts` to merge them.
+///
+/// - repeat (auto, int): The number of subslides. Default is `auto`, which means touying will automatically calculate the number of subslides.
+///
+///   The `repeat` argument is necessary when you use `#slide(repeat: 3, self => [ .. ])` style code to create a slide. The callback-style `uncover` and `only` cannot be detected by touying automatically.
+///
+/// - setting (function): The setting of the slide. You can use it to add some set/show rules for the slide.
+///
+/// - composer (function, array, int, auto): The composer arranges multiple content bodies side by side.
+///
+///   - `auto`: use the theme default (`cols.with(lazy-layout: false)`)
+///   - array, e.g. `(1fr, 2fr, 1fr)`: column widths for `cols`
+///   - int: equal columns shorthand
+///   - function: fully custom layout, e.g. `grid.with(columns: 2)`
+///
+///   For example, `#slide(composer: (1fr, 2fr, 1fr))[A][B][C]` splits the slide into three columns.
+///
+///   If you want to customize the composer, you can pass a function like `#slide(composer: grid.with(columns: 2))[A][B]`.
+///
+/// - bodies (array): The contents of the slide. You can call the `slide` function with syntax like `#slide[A][B][C]` to create a slide.
+///
+/// -> content
+#let slide(
+  config: (:),
+  repeat: auto,
+  setting: body => body,
+  composer: auto,
+  ..bodies,
+) = touying-slide-wrapper(self => {
+  if self.slide-fn != slide {
+    let wrapper = (self.slide-fn)(
+      config: config,
+      repeat: repeat,
+      setting: setting,
+      composer: composer,
+      ..bodies,
+    )
+    (_unwrap-slide-wrapper(wrapper).value.fn)(self)
+  } else {
+    touying-slide(
+      self: self,
+      config: config,
+      repeat: repeat,
+      setting: setting,
+      composer: composer,
+      ..bodies,
+    )
+  }
+})
+
+/// Render the speaker-note panel. This is to `notes-fn` what `touying-slide` is to
+/// `slide-fn`: themes call it with their own colours and layout instead of
+/// building a panel from scratch, and its defaults are the look touying uses
+/// when no theme sets `notes-fn`.
+///
+/// - self (dictionary): The presentation context.
+///
+/// - header (content, function, none): The panel's header strip, which sizes to its
+///   content - give it a fixed height by wrapping it in a `block(height: ..)`, or pass
+///   `none` to drop the strip entirely. The strip applies no inset of its own, so padding
+///   belongs in here too. Default shows the current section and slide headings, padded.
+///
+/// - header-fill (color, gradient, tiling, none): Fill behind the strip.
+///
+/// - fill (color, gradient, tiling, none): Fill behind the whole panel.
+///
+/// - note-setting (function): How the note body is laid out, as `note => content`.
+///
+/// - preview-setting (function): How the slide preview is placed.
+///
+/// - note (content, none): the notes to be displayed.
+///
+/// - slide-preview (content, none): a preview of the accompanying slide, not none when `show-only-notes` is true.
+///
+/// -> content
+#let touying-notes(
+  self: none,
+  header: self => pad(x: 32pt, y: 16pt, {
+    utils.display-current-heading(level: 1, depth: self.slide-level)
+    linebreak()
+    [ --- ]
+    utils.display-current-heading(level: 2, depth: self.slide-level)
+  }),
+  header-fill: rgb("#CCCCCC"),
+  fill: rgb("#E6E6E6"),
+  note-setting: note => pad(x: 48pt, note),
+  preview-setting: preview => place(
+    top + right,
+    box(stroke: black, fill: white, scale(
+      x: 25%,
+      y: 25%,
+      reflow: true,
+      preview,
+    )),
+  ),
+  note: none,
+  slide-preview: none,
+) = {
+  block(
+    fill: fill,
+    width: 100%,
+    height: 100%,
+    {
+      set align(left + top)
+      set text(
+        size: 24pt,
+        fill: self.colors.neutral-darkest,
+        weight: "regular",
+      )
+      if header != none {
+        block(
+          width: 100%,
+          fill: header-fill,
+          utils.call-or-display(self, header),
+        )
+      }
+      if slide-preview != none {
+        preview-setting(slide-preview)
+      }
+      note-setting(note)
+    },
+  )
+}
+
+/// Empty slide with no default heading or section context.
+///
+/// Unlike `slide`, this function does not look at heading context or trigger `new-section-slide-fn` / `new-subsection-slide-fn`. Use it to create isolated slides outside the normal slide hierarchy (e.g. a standalone title card).
+///
+/// - config (dictionary): The configuration of the slide. You can use `config-xxx` to set the configuration of the slide. For more configurations, you can use `utils.merge-dicts` to merge them.
+///
+/// - repeat (auto, int): The number of subslides. Default is `auto`, which means touying will automatically calculate the number of subslides.
+///
+/// - setting (function): Set/show rules to apply for the slide. Receives the composed body and returns it.
+///
+/// - composer (function, array, int, auto): Arranges multiple body blocks side-by-side. Same semantics as `slide`.
+///
+/// - bodies (arguments): The content blocks of the slide.
+///
+/// -> content
+#let empty-slide(
+  config: (:),
+  repeat: auto,
+  setting: body => body,
+  composer: auto,
+  ..bodies,
+) = touying-slide-wrapper(self => {
+  touying-slide(
+    self: self,
+    config: config,
+    repeat: repeat,
+    setting: setting,
+    composer: composer,
+    ..bodies,
+  )
+})

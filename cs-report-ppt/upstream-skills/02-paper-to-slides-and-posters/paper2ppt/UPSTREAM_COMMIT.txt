@@ -1,0 +1,3 @@
+upstream_url: https://github.com/wp-a/paper2ppt
+commit_sha: bb98ce95ca5942fc6551dddc723cbdfe2d637d59
+license: MIT

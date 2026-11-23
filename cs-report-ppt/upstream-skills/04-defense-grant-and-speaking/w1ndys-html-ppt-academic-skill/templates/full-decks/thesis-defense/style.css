@@ -1,0 +1,217 @@
+.tpl-thesis-defense .cover {
+  display: none;
+  padding-top: 88px;
+}
+
+.tpl-thesis-defense .cover.is-active {
+  display: block;
+}
+
+.cover-mark {
+  position: absolute;
+  top: 56px;
+  right: 68px;
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  color: var(--accent);
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 58px;
+}
+
+.meta-grid div {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.meta-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.meta-grid strong {
+  font-size: 18px;
+}
+
+.agenda-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 42px;
+}
+
+.agenda-grid .card span,
+.contribution span {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.agenda-grid .card strong {
+  display: block;
+  font-size: 24px;
+}
+
+.content-row {
+  margin-top: 42px;
+}
+
+.content-row h3,
+.method-grid h3 {
+  margin: 12px 0 10px;
+  font-size: 24px;
+}
+
+.content-row p,
+.timeline p,
+.contribution p {
+  color: var(--text-2);
+  font-size: 19px;
+  line-height: 1.65;
+}
+
+.timeline {
+  display: grid;
+  gap: 18px;
+  margin-top: 38px;
+}
+
+.timeline div {
+  position: relative;
+  padding: 20px 24px 20px 140px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.timeline span {
+  position: absolute;
+  top: 22px;
+  left: 24px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.timeline strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+
+.route {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin: 42px 0 34px;
+}
+
+.route div {
+  position: relative;
+  min-height: 102px;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-weight: 800;
+  text-align: center;
+}
+
+.route div:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -18px;
+  color: var(--accent);
+  font-size: 26px;
+}
+
+.method-grid,
+.result-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 24px;
+  margin-top: 34px;
+}
+
+.diagram-box {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.diagram-box div {
+  display: grid;
+  min-height: 74px;
+  place-items: center;
+  padding: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  text-align: center;
+}
+
+.experiment-table {
+  margin-top: 38px;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: end;
+  gap: 22px;
+  height: 360px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.bar-chart div {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  flex: 1;
+  min-height: 80px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.bar-chart span {
+  padding-bottom: 12px;
+  font-weight: 800;
+  writing-mode: vertical-rl;
+}
+
+.thanks {
+  display: none;
+  place-items: center;
+  text-align: center;
+}
+
+.thanks.is-active {
+  display: grid;
+}

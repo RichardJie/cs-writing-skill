@@ -1,0 +1,381 @@
+# --------------------------------------------
+# CITATION file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# --------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "khroma" in publications use:'
+type: software
+license: GPL-3.0-or-later
+title: 'khroma: Colour Schemes for Scientific Data Visualization'
+version: 1.17.0
+doi: 10.5281/zenodo.1472077
+identifiers:
+- description: The concept DOI.
+  type: doi
+  value: 10.5281/zenodo.1472077
+- description: The versioned DOI for version 1.0.0.
+  type: doi
+  value: 10.5281/zenodo.1472078
+- description: The versioned DOI for version 1.1.0.
+  type: doi
+  value: 10.5281/zenodo.2577258
+- description: The versioned DOI for version 1.1.1.
+  type: doi
+  value: 10.5281/zenodo.2635680
+- description: The versioned DOI for version 1.1.2.
+  type: doi
+  value: 10.5281/zenodo.3237015
+- description: The versioned DOI for version 1.1.3.
+  type: doi
+  value: 10.5281/zenodo.3239344
+- description: The versioned DOI for version 1.2.0.
+  type: doi
+  value: 10.5281/zenodo.3371615
+- description: The versioned DOI for version 1.3.0.
+  type: doi
+  value: 10.5281/zenodo.3519838
+- description: The versioned DOI for version 1.4.0.
+  type: doi
+  value: 10.5281/zenodo.4067906
+- description: The versioned DOI for version 1.4.1.
+  type: doi
+  value: 10.5281/zenodo.4612091
+- description: The versioned DOI for version 1.5.0.
+  type: doi
+  value: 10.5281/zenodo.4723613
+- description: The versioned DOI for version 1.6.0.
+  type: doi
+  value: 10.5281/zenodo.4947109
+- description: The versioned DOI for version 1.7.0.
+  type: doi
+  value: 10.5281/zenodo.5388239
+- description: The versioned DOI for version 1.8.0.
+  type: doi
+  value: 10.5281/zenodo.5886699
+- description: The versioned DOI for version 1.9.0.
+  type: doi
+  value: 10.5281/zenodo.6659769
+- description: The versioned DOI for version 1.10.0.
+  type: doi
+  value: 10.5281/zenodo.7838382
+- description: The versioned DOI for version 1.11.0.
+  type: doi
+  value: 10.5281/zenodo.8269306
+- description: The versioned DOI for version 1.12.0.
+  type: doi
+  value: 10.5281/zenodo.10470003
+- description: The versioned DOI for version 1.13.0.
+  type: doi
+  value: 10.5281/zenodo.12606781
+- description: The versioned DOI for version 1.14.0.
+  type: doi
+  value: 10.5281/zenodo.13378711
+- description: The versioned DOI for version 1.15.0.
+  type: doi
+  value: 10.5281/zenodo.14629064
+- description: The versioned DOI for version 1.16.0.
+  type: doi
+  value: 10.5281/zenodo.14927198
+- description: The versioned DOI for version 1.17.0.
+  type: doi
+  value: 10.5281/zenodo.17232742
+- description: The CRAN DOI
+  type: doi
+  value: 10.32614/cran.package.khroma
+abstract: Color schemes ready for each type of data (qualitative, diverging or sequential),
+  with colors that are distinct for all people, including color-blind readers. This
+  package provides an implementation of Paul Tol (2018) and Fabio Crameri (2018) <https://doi.org/10.5194/gmd-11-2541-2018>
+  color schemes for use with 'graphics' or 'ggplot2'. It provides tools to simulate
+  color-blindness and to test how well the colors of any palette are identifiable.
+  Several scientific thematic schemes (geologic timescale, land cover, FAO soils,
+  etc.) are also implemented.
+authors:
+- family-names: Frerebeau
+  given-names: Nicolas
+  email: nicolas.frerebeau@u-bordeaux-montaigne.fr
+  orcid: https://orcid.org/0000-0001-5759-4944
+preferred-citation:
+  type: manual
+  title: 'khroma: Colour Schemes for Scientific Data Visualization'
+  authors:
+  - family-names: Frerebeau
+    given-names: Nicolas
+    email: nicolas.frerebeau@u-bordeaux-montaigne.fr
+    orcid: https://orcid.org/0000-0001-5759-4944
+  year: '2025'
+  institution:
+    name: Université Bordeaux Montaigne
+    address: Pessac, France
+  notes: R package version 1.17.0
+  doi: 10.5281/zenodo.1472077
+  url: https://packages.tesselle.org/khroma/
+repository: https://CRAN.R-project.org/package=khroma
+repository-code: https://codeberg.org/tesselle/khroma
+url: https://packages.tesselle.org/khroma/
+contact:
+- family-names: Frerebeau
+  given-names: Nicolas
+  email: nicolas.frerebeau@u-bordeaux-montaigne.fr
+  orcid: https://orcid.org/0000-0001-5759-4944
+keywords:
+- data-visualization
+- colour-schemes
+- accessibility
+- r-package
+references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+  version: '>= 3.5.0'
+- type: software
+  title: graphics
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+- type: software
+  title: grDevices
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+- type: software
+  title: grid
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+- type: software
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+- type: software
+  title: utils
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2025'
+- type: software
+  title: fontquiver
+  abstract: 'fontquiver: Set of Installed Fonts'
+  notes: Suggests
+  repository: https://CRAN.R-project.org/package=fontquiver
+  authors:
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@rstudio.com
+  year: '2025'
+  doi: 10.32614/CRAN.package.fontquiver
+- type: software
+  title: ggplot2
+  abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
+  notes: Suggests
+  url: https://ggplot2.tidyverse.org
+  repository: https://CRAN.R-project.org/package=ggplot2
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Chang
+    given-names: Winston
+    orcid: https://orcid.org/0000-0002-1576-2126
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Takahashi
+    given-names: Kohske
+  - family-names: Wilke
+    given-names: Claus
+    orcid: https://orcid.org/0000-0002-7470-9261
+  - family-names: Woo
+    given-names: Kara
+    orcid: https://orcid.org/0000-0002-5125-4188
+  - family-names: Yutani
+    given-names: Hiroaki
+    orcid: https://orcid.org/0000-0002-3385-7233
+  - family-names: Dunnington
+    given-names: Dewey
+    orcid: https://orcid.org/0000-0002-9415-4582
+  - family-names: Brand
+    given-names: Teun
+    name-particle: van den
+    orcid: https://orcid.org/0000-0002-9335-7468
+  year: '2025'
+  doi: 10.32614/CRAN.package.ggplot2
+- type: software
+  title: ggraph
+  abstract: 'ggraph: An Implementation of Grammar of Graphics for Graphs and Networks'
+  notes: Suggests
+  url: https://ggraph.data-imaginist.com
+  repository: https://CRAN.R-project.org/package=ggraph
+  authors:
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2025'
+  doi: 10.32614/CRAN.package.ggraph
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2025'
+  doi: 10.32614/CRAN.package.knitr
+- type: software
+  title: markdown
+  abstract: 'markdown: Render Markdown with ''commonmark'''
+  notes: Suggests
+  url: https://github.com/rstudio/markdown
+  repository: https://CRAN.R-project.org/package=markdown
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Allaire
+    given-names: JJ
+  - family-names: Horner
+    given-names: Jeffrey
+  year: '2025'
+  doi: 10.32614/CRAN.package.markdown
+- type: software
+  title: rsvg
+  abstract: 'rsvg: Render SVG Images into PDF, PNG, (Encapsulated) PostScript, or
+    Bitmap Arrays'
+  notes: Suggests
+  url: https://docs.ropensci.org/rsvg/
+  repository: https://CRAN.R-project.org/package=rsvg
+  authors:
+  - family-names: Ooms
+    given-names: Jeroen
+    email: jeroenooms@gmail.com
+    orcid: https://orcid.org/0000-0002-4035-0289
+  year: '2025'
+  doi: 10.32614/CRAN.package.rsvg
+- type: software
+  title: scales
+  abstract: 'scales: Scale Functions for Visualization'
+  notes: Suggests
+  url: https://scales.r-lib.org
+  repository: https://CRAN.R-project.org/package=scales
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Seidel
+    given-names: Dana
+  year: '2025'
+  doi: 10.32614/CRAN.package.scales
+- type: software
+  title: spacesXYZ
+  abstract: 'spacesXYZ: CIE XYZ and some of Its Derived Color Spaces'
+  notes: Suggests
+  repository: https://CRAN.R-project.org/package=spacesXYZ
+  authors:
+  - family-names: Davis
+    given-names: Glenn
+    email: gdavis@gluonics.com
+  year: '2025'
+  doi: 10.32614/CRAN.package.spacesXYZ
+- type: software
+  title: svglite
+  abstract: 'svglite: An ''SVG'' Graphics Device'
+  notes: Suggests
+  url: https://svglite.r-lib.org
+  repository: https://CRAN.R-project.org/package=svglite
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Luciani
+    given-names: T Jake
+    email: jake@apache.org
+  - family-names: Decorde
+    given-names: Matthieu
+    email: matthieu.decorde@ens-lyon.fr
+  - family-names: Lise
+    given-names: Vaudor
+    email: lise.vaudor@ens-lyon.fr
+  year: '2025'
+  doi: 10.32614/CRAN.package.svglite
+- type: software
+  title: tinysnapshot
+  abstract: 'tinysnapshot: Snapshots for Unit Tests using the ''tinytest'' Framework'
+  notes: Suggests
+  url: https://github.com/vincentarelbundock/tinysnapshot
+  repository: https://CRAN.R-project.org/package=tinysnapshot
+  authors:
+  - family-names: Arel-Bundock
+    given-names: Vincent
+    email: vincent.arel-bundock@umontreal.ca
+    orcid: https://orcid.org/0000-0003-2042-7063
+  year: '2025'
+  doi: 10.32614/CRAN.package.tinysnapshot
+  version: '>= 0.2.0'
+- type: software
+  title: tinytest
+  abstract: 'tinytest: Lightweight and Feature Complete Unit Testing Framework'
+  notes: Suggests
+  url: https://github.com/markvanderloo/tinytest
+  repository: https://CRAN.R-project.org/package=tinytest
+  authors:
+  - family-names: Loo
+    given-names: Mark
+    name-particle: van der
+    email: mark.vanderloo@gmail.com
+    orcid: https://orcid.org/0000-0002-9807-4686
+  year: '2025'
+  doi: 10.32614/CRAN.package.tinytest
+

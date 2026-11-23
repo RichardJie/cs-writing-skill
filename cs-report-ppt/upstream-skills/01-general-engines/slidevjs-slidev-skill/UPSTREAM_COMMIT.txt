@@ -1,0 +1,3 @@
+upstream_url: https://github.com/slidevjs/slidev/tree/437f139ccd4c8482a193b217922e7800a5b3baec/skills/slidev
+commit_sha: 437f139ccd4c8482a193b217922e7800a5b3baec
+license: MIT

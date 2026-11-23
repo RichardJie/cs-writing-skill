@@ -1,0 +1,4 @@
+upstream_url: https://github.com/Falldio/Kokura-Beamer
+commit_sha: 8f862d42c09c0388f0ca3c442884908121502b28
+license: MIT
+note: Heavy binary demo media / test fixtures (8 files, 2008.3 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/Falldio/Kokura-Beamer

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/hugohe3/ppt-master
+commit_sha: 63a03673d5c3c928e7f52983a2c8ec65bac30002
+license: MIT
+note: Heavy binary demo media / test fixtures (378 files, 9857.0 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/hugohe3/ppt-master

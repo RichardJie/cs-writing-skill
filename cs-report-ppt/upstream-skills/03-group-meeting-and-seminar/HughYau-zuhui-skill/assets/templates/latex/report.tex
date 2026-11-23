@@ -1,0 +1,56 @@
+% Progress Report Template (LaTeX)
+% Template id: classic-report
+% 可直接编译：pdflatex report.tex
+% 将示例文本替换成你的内容即可使用
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+% 中文用户取消下面两行注释
+% \usepackage{ctex}
+% \setCJKmainfont{Noto Sans CJK SC}
+
+\title{Weekly Progress Report \\ \large 2026-03-25 to 2026-04-01}
+\author{Your Name}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Summary}
+This week I validated the mixup direction on CIFAR-10, collected evidence from code and result artifacts, and narrowed down the next experiment choices.
+
+\section{Progress}
+
+\subsection{Experiment A}
+Tested mixup on CIFAR-10 after last week's meeting. Accuracy improved from 78.3\% to 81.7\%. Evidence includes commit \texttt{abc1234} and the result figure in \texttt{results/example.png}.
+
+% 插入结果图（取消注释并替换路径）：
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\textwidth]{results/example.png}
+%   \caption{实验结果}
+% \end{figure}
+
+\subsection{Reading and Discussion}
+Read the CutMix paper, summarized three follow-up ideas, and discussed the detection-task extension with a senior labmate.
+
+\section{Questions}
+\begin{itemize}[leftmargin=2em]
+  \item Which follow-up direction should go first: adaptive mixup, contrastive learning, or detection?
+  \item Should we request extra GPU time for the ImageNet run?
+\end{itemize}
+
+\section{Blockers}
+The GPU queue is long, so the ImageNet experiment may be delayed by about a week.
+
+\section{Next Steps}
+\begin{itemize}[leftmargin=2em]
+  \item Validate the result on an ImageNet subset.
+  \item Start drafting the related-work section.
+\end{itemize}
+
+\end{document}

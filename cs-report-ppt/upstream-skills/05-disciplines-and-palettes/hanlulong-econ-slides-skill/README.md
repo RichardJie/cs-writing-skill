@@ -1,0 +1,377 @@
+# Econ Slides Skill
+
+**Turn your economics paper into a professional Beamer talk — one that would not embarrass you at a top seminar.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-ready-8A2BE2.svg)](#install)
+[![Codex](https://img.shields.io/badge/Codex-ready-brightgreen.svg)](#install)
+[![en](https://img.shields.io/badge/lang-English-red.svg)](./README.md)
+[![中文](https://img.shields.io/badge/语言-中文-yellow.svg)](./README.zh-CN.md)
+
+| The punchline slide | The main result |
+|---|---|
+| ![Punchline slide from an AI-built Beamer talk: the main result, one supporting heterogeneity pattern, and the implication](docs/images/sample-punchline.png) | ![Main-result slide: the paper's cohort-by-cohort comparisons for a staggered rollout, each against municipalities connected later, with a one-line reading that no single wave drives the sign](docs/images/sample-mainresult.png) |
+
+*Two slides the skill built cold from a demonstration paper — see the full [sample deck (PDF)](docs/sample-talk/conference-30min.pdf) and [speaker script (PDF)](docs/sample-talk/script.pdf).*
+
+`econ-slides` is an Agent Skill for Claude Code and Codex. AI-generated slides
+often fail twice: the layout is messy, and the talk has no argument. This
+skill addresses both. It synthesizes professional presentation guidance from
+leading economists, turns the paper's own dependency graph into a talk, and
+verifies the result by compiling, measuring the rendered geometry, and looking
+at every page before delivery.
+
+*Built for economics. Works for any research talk built on evidence, models, and regression tables.*
+
+## What it does
+
+- **Paper → talk.** Give it a manuscript and a total-session clock from 15 to
+  90 minutes. It builds the shortest audience path through the question,
+  answer, necessary empirical or theoretical setup, evidence or proposition,
+  interpretation, and implication. The order and frame structure remain
+  paper-dependent.
+- **Speaker scripts.** Add a printable rehearsal script keyed to exact frame
+  titles, timed from the opening through the main deck, synchronized to real
+  visual builds, and backed by conditional Q\&A blocks. The question reserve
+  follows the genre (20–25% of a conference session, 30–40% of a seminar or job
+  talk), only an overrun fails, and prose is never padded to fill time.
+- **Discussant decks.** A first-class genre, not an afterthought: an
+  audience-calibrated summary and the strongest titled comments, each ending
+  in a concrete suggestion—built to the Dallas Fed / ASHEcon discussant norms.
+- **Modify an existing deck.** Add topic slides, appendices, discussion, or
+  polish while treating the compiled target deck as the design contract. The
+  workflow reverse-engineers and preserves its Beamer style rather than
+  importing a house theme.
+- **Retarget a venue.** The same paper at 15 and 90 minutes is two different
+  talks, not one deck played fast. The skill keeps, compresses, moves, cuts, or
+  deepens whole argumentative units rather than scaling every slide equally.
+
+## What makes the decks trustworthy
+
+1. **Genre fidelity.** A paper-to-talk request stays an author presentation.
+   Evidence review calibrates verbs and one load-bearing limitation; it does
+   not quietly turn the opening, title page, and conclusion into a referee
+   report.
+2. **Claim and number provenance.** Before outlining, the skill checks prose
+   against assignment rules, exhibits, table notes, units, and algebra. Every
+   planned headline is classified as supported, descriptive, conflicted, or
+   excluded; every magnitude is traced to its table and page. The script cannot
+   turn "associated with" into "raises."
+3. **Rendered-line discipline.** Titles and bullets are rewritten to stay on
+   one rendered line whenever the idea permits. A readable irreducible wrap is
+   judged in the PDF rather than rejected mechanically; shrinking a whole
+   slide is never the first fix.
+4. **Source-first exhibits.** Reuse or crop a legible source exhibit first;
+   use a native slide table, equation, or concise text next. Rebuild or create
+   a figure only when necessary, from traceable inputs, with individual visual
+   QA. Regression tables are reduced to the rows and columns the talk needs.
+5. **A real verification loop.** `compile_deck.py` compiles, runs BibTeX or
+   Biber when the deck has a bibliography, and triages errors;
+   `check_deck.py` blocks objective failures such as edge overflow, serious
+   overfull boxes, broken links, undefined citations or references (`[?]`,
+   `??`), and navigation collisions while treating
+   wrapping, density, columns, emphasis, and whitespace as review prompts.
+   For a scoped edit, its baseline mode separates inherited defects from new
+   objective regressions without waiving the visual comparison.
+   `check_script.py` audits title order, total-session timing, Q\&A separation,
+   oral style, and real click synchronization. Both PDFs get a page-by-page
+   visual pass.
+
+## See it
+
+The two slides at the top of this page come from the staggered-rollout
+[sample deck](docs/sample-talk/), built for a 30-minute total session. Its
+prepared script runs about 23 minutes, leaving about one quarter of the
+session for questions.
+
+**[Browse the staggered-rollout benchmark →](docs/sample-talk/)**. It includes
+deck and script PDFs, LaTeX sources, and a structure plan. It uses the
+fictional demonstration paper from
+[econ-paper-review-skill](https://github.com/hanlulong/econ-paper-review-skill);
+see the sample's [provenance notes](docs/sample-talk/README.md).
+
+The framework is also audited locally on substantively different empirical
+and theory papers. Third-party papers and their derived test decks remain
+private rather than being shipped with the skill.
+
+## Install
+
+Requires Python 3.10+ with PyMuPDF, and a TeX distribution with XeLaTeX
+(TeX Live / MacTeX / MiKTeX). If `python3 -c "import pymupdf"` already works,
+there is nothing to install on the Python side. Otherwise, put PyMuPDF in a
+dedicated virtual environment (`pip install --user` is also blocked when your
+Python is externally managed, PEP 668) and run the skill's scripts with that
+environment's `python`; `uv run --with pymupdf python ...` works too. A fresh
+PyMuPDF 2.x install also pulls in onnxruntime and numpy (about 265 MB); the
+scripts work with `pymupdf>=1.26,<2` as well if you want a smaller venv.
+
+Paste this into Claude Code or Codex:
+
+```text
+Help me install the econ-slides skill from
+https://github.com/hanlulong/econ-slides-skill: clone it to a stable location,
+then link its skills/econ-slides folder as an Agent Skill — into
+~/.claude/skills/econ-slides for Claude Code and ~/.agents/skills/econ-slides
+for Codex (whichever of the two I use).
+Verify that xelatex is available, that `python3 --version` is 3.10 or newer,
+and that python3 can import pymupdf (PyMuPDF). If xelatex is missing, tell me
+which TeX distribution to install (MacTeX, TeX Live or MiKTeX). If the Python
+version or the PyMuPDF check fails, create ~/.venvs/econ-slides with a Python
+3.10+ and install the repo's requirements.txt there (for example
+`uv venv -p 3.12 ~/.venvs/econ-slides && uv pip install -p ~/.venvs/econ-slides -r requirements.txt`),
+and tell me to run the skill's scripts with that venv's python. Then confirm
+the skill loads.
+```
+
+Or install it as a plugin from the [OpenEcon.ai marketplace](https://github.com/OpenEconAI/plugins).
+
+Claude Code:
+
+```text
+/plugin marketplace add OpenEconAI/plugins
+/plugin install econ-slides@openeconai
+```
+
+On Claude Code 2.1.275 or later, `/plugin install econ-slides --marketplace OpenEconAI/plugins`
+does both in one step.
+
+Codex:
+
+```bash
+codex plugin marketplace add OpenEconAI/plugins
+codex plugin add econ-slides@openeconai
+```
+
+Use one method per client: remove a manual link before installing the plugin.
+Plugin skills are namespaced, so Claude Code invokes this one as
+`/econ-slides:econ-slides`; it also triggers on ordinary requests.
+
+<details>
+<summary>Upgrading from 0.1.x</summary>
+
+In 0.2.0 the skill moved from the repository root into `skills/econ-slides/`.
+An existing link to the clone root keeps working after `git pull`, but Claude
+Code now loads it as a plugin-style folder (`econ-slides@skills-dir`, invoked as
+`/econ-slides:econ-slides`). To keep the bare `/econ-slides`, re-link
+`~/.claude/skills/econ-slides` to `<clone>/skills/econ-slides`:
+
+```bash
+ln -sfn "<clone>/skills/econ-slides" ~/.claude/skills/econ-slides
+```
+
+Use `-sfn`: a plain `ln -s` over the old link follows it and creates a stray
+`<clone>/econ-slides` link inside the clone instead; delete that link if
+`git status` shows it.
+
+Codex lists a manual link to this clone as `econ-slides:econ-slides` either
+way, because the clone carries plugin manifests. v0.1.x told Codex users to link
+`~/.codex/skills/econ-slides`, which Codex still loads: remove that link (or
+move it to `~/.agents/skills`) before installing the plugin, or Codex lists
+the skill twice.
+
+</details>
+
+<details>
+<summary>Update or uninstall</summary>
+
+Start a new agent session after any of these steps.
+
+Plugin install:
+
+```bash
+# Claude Code (or /plugin in a session)
+claude plugin marketplace update openeconai
+claude plugin update econ-slides@openeconai
+claude plugin uninstall econ-slides@openeconai
+
+# Codex
+codex plugin marketplace upgrade openeconai
+codex plugin remove econ-slides@openeconai
+```
+
+Manual or paste-in install (the links point into your clone, so keep the clone
+where it is):
+
+```bash
+git -C /path/to/econ-slides-skill pull                      # update
+rm -f ~/.claude/skills/econ-slides ~/.agents/skills/econ-slides ~/.codex/skills/econ-slides # uninstall: removes the links only
+rm -rf /path/to/econ-slides-skill ~/.venvs/econ-slides       # optional: the clone and the venv
+```
+
+On Windows, `cmd /c rmdir "$env:USERPROFILE\.claude\skills\econ-slides"` (and the
+same for `.agents\skills\econ-slides` and a v0.1.x `.codex\skills\econ-slides`) removes a junction without touching the
+clone; avoid `Remove-Item -Recurse` on a junction.
+
+</details>
+
+<details>
+<summary>Manual installation</summary>
+
+Clone into a stable location: the links below point at the clone, so
+moving or deleting it breaks the install.
+
+macOS / Linux:
+
+```bash
+git clone https://github.com/hanlulong/econ-slides-skill.git
+
+# PyMuPDF, only if `python3 -c "import pymupdf"` fails: use a dedicated venv
+python3 -m venv ~/.venvs/econ-slides
+~/.venvs/econ-slides/bin/python -m pip install -r econ-slides-skill/requirements.txt
+
+# Claude Code (global skills directory)
+mkdir -p ~/.claude/skills
+ln -s "$(pwd)/econ-slides-skill/skills/econ-slides" ~/.claude/skills/econ-slides
+
+# Codex (shared agent-skills directory)
+mkdir -p ~/.agents/skills
+ln -s "$(pwd)/econ-slides-skill/skills/econ-slides" ~/.agents/skills/econ-slides
+```
+
+Windows (PowerShell — use `python` rather than `python3`):
+
+```powershell
+git clone https://github.com/hanlulong/econ-slides-skill.git
+# PyMuPDF, only if `python -c "import pymupdf"` fails: use a dedicated venv
+python -m venv "$env:USERPROFILE\.venvs\econ-slides"
+& "$env:USERPROFILE\.venvs\econ-slides\Scripts\python.exe" -m pip install -r econ-slides-skill\requirements.txt
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
+New-Item -ItemType Junction -Path "$env:USERPROFILE\.claude\skills\econ-slides" -Target "$PWD\econ-slides-skill\skills\econ-slides"
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills" | Out-Null
+New-Item -ItemType Junction -Path "$env:USERPROFILE\.agents\skills\econ-slides" -Target "$PWD\econ-slides-skill\skills\econ-slides"
+```
+
+With a venv, run the scripts as `~/.venvs/econ-slides/bin/python
+<skill-dir>/scripts/...` (Windows: `...\Scripts\python.exe`), or tell the
+agent which interpreter has PyMuPDF.
+
+On a minimal TeX (BasicTeX, TinyTeX, or another `scheme-basic` install), add
+the packages the bundled themes, templates, and sample use (run with `sudo`
+if your TeX tree is system-owned):
+
+```bash
+tlmgr install xetex beamer translator pgf xcolor appendixnumberbeamer booktabs \
+  multirow threeparttable tcolorbox environ trimspaces needspace setspace \
+  microtype mathpazo palatino fontname sansmathaccent koma-script
+```
+
+Both clients read the same `skills/econ-slides/SKILL.md`; any agent that can
+read it can use the skill. The scripts are plain Python (pathlib throughout,
+`os.pathsep` for TeX paths) and run on macOS, Windows, and Linux;
+`tests/run-tests.sh` needs bash (Git Bash or WSL on Windows).
+
+</details>
+
+## Use it
+
+Put your paper (PDF, plus LaTeX source if you have it) in the working directory and ask:
+
+```text
+Use the econ-slides skill to make a 30-minute total-session conference talk
+from this empirical paper, reserving 20–25% for questions.
+Use the econ-slides skill to prepare exactly 20 minutes of speaking; the
+organizer schedules questions separately.
+Use the econ-slides skill to make a 60-minute pure-theory seminar talk.
+Use the econ-slides skill to make the talk and a printable speaker script.
+Use the econ-slides skill to build my discussion of the attached paper for a
+7-minute discussant slot.
+Use the econ-slides skill to turn my 90-minute seminar deck into a 30-minute
+total-session version for SED while preserving its Beamer style.
+Use the econ-slides skill to add slides on the mechanism and a linked appendix
+to my existing deck without restyling it.
+```
+
+The skill will show you the claim--evidence ledger and slide plan before
+drafting, then deliver the deck `.tex`/PDF, an optional script `.tex`/PDF, and
+a note on where every headline claim and number came from.
+
+## Themes
+
+Three bundled looks plus a stock-theme adapter, one semantic interface — a finished deck switches themes by changing one `\usepackage` line:
+
+| Theme | Look | For |
+|---|---|---|
+| `econ-slides-house` *(default)* | No chrome, centered message-or-object titles, Palatino math, Okabe–Ito palette | Research talks |
+| `econ-slides-clean` | Near-monochrome, left titles over a thin rule | Zero visual signature |
+| `econ-slides-boxed` | Navy title bar, structured blocks | Discussions, policy audiences |
+| `econ-slides-compat` | **Any stock Beamer theme you prefer** | Madrid, metropolis, CambridgeUS, institutional themes |
+
+Starting a new deck with a stock theme? `\usetheme{Madrid}` followed by
+`\usepackage{econ-slides-compat}` keeps that look and adds the semantic
+interface. Editing an institutional or personal deck? Keep its existing
+preamble, engine, macros, spacing, and visual language. See
+[skills/econ-slides/themes/README.md](skills/econ-slides/themes/README.md).
+
+## What's inside
+
+```
+.claude-plugin/plugin.json   Claude Code plugin manifest
+.codex-plugin/plugin.json    Codex plugin manifest
+skills/econ-slides/          the skill itself (link this folder for a manual install)
+  SKILL.md                   the workflow: intake → read → plan → draft → verify → deliver
+  references/
+    talk-structures.md       adaptable audience paths and genre-aware 15–90 minute budgets
+    discussant.md            the discussion genre: skeleton, typical speaking allocations, tone rules
+    slide-rules.md           rendered layout guidance: titles, spacing, math, color
+    beamer-layout-mechanics.md
+                             how source edits reflow the compiled frame
+    existing-deck-workflow.md
+                             add, polish, discuss, or retarget without restyling
+    exhibit-surgery.md       regression table → slide table; figures; number provenance
+    source-integrity.md      claim↔evidence ledger; identification, model, and policy checks
+    design-checks.md         what DiD, RD, IV, shift-share, synthetic control, and RCT slides must show
+    speaker-script.md        timing, oral craft, click sync, Q&A, and printable QA
+    style-guide.md           themes, file engineering, build and delivery conventions
+  themes/                    three bundled looks + stock-theme compatibility adapter
+  templates/                 optional empirical, theory, discussion, and script starters
+  scripts/
+    compile_deck.py          XeLaTeX compile loop: BibTeX/Biber, error triage
+    check_deck.py            rendered geometry audit with hard blockers + score
+    check_script.py          deck/script sync, timing, oral-style, and click audit
+    crop_figure.py           crop a source figure when no standalone asset exists
+tests/                       cross-theme renders + negative deck/script fixtures
+evals/                       trigger cases for claude plugin eval
+docs/sample-talk/            the staggered-rollout benchmark deck and script
+requirements.txt             PyMuPDF for the scripts
+```
+
+## What it does not do
+
+It will not write your paper's content, invent a number that is not in your materials, or promise results your paper does not contain. It also will not put a literature-review section in the main line of a talk: the guides agree on that ("You don't need any literature review or motivation in a seminar", Cochrane), and the skill states the marginal contribution against the closest papers instead (Piazzesi).
+
+## Related projects
+
+- [econ-paper-review-skill](https://github.com/hanlulong/econ-paper-review-skill) — the referee-report sibling: that skill judges the paper, this one presents it
+- [econ-writing-skill](https://github.com/hanlulong/econ-writing-skill) — writing the paper in the first place
+- [awesome-ai-for-economists](https://github.com/hanlulong/awesome-ai-for-economists) — the broader toolbox
+
+## Acknowledgments
+
+The craft rules synthesize public guides by
+[Jesse Shapiro](https://shapiro.scholars.harvard.edu/notes-and-lectures) ("How to Give an Applied Micro Talk"),
+[Rachael Meager](https://sites.google.com/view/rachaelmeager) (public-speaking slides),
+[Paul Goldsmith-Pinkham](https://paulgp.com/beamer_tips.pdf),
+[John Cochrane](https://faculty.wcas.northwestern.edu/mdo738/teaching/cochrane.pdf) ("Writing Tips for Ph.D. Students", §4 Seminar presentations),
+[Dick Startz](https://www.econ.ucsb.edu/~startz/Guide_Job_Market_Presentations.pdf),
+[Marc Bellemare](https://marcfbellemare.com/wordpress/10053),
+[Monika Piazzesi](https://web.stanford.edu/~niederle/piazzesi.pdf),
+[Alex Tabarrok](https://mason.gmu.edu/~atabarro/HowToGiveAGreatSeminar.pptx) ("How to Give a Great Seminar"),
+David Evans, Darren Lubotsky,
+[Donald Davis](https://www.columbia.edu/~drd28/SuccessfulPaperSeminar.pdf) ("What Makes for a Successful Paper and Seminar?"),
+Keith Head, and the
+[Dallas Fed](https://www.dallasfed.org/~/media/documents/educate/events/esp/tipsdiscussant.pdf) (written for its undergraduate Economic Scholars Program) and
+[ASHEcon](https://ashecon.org/activities/news/how-to-be-a-good-discussant) discussant guides. The verification
+approach learns from [beamer-skill](https://github.com/Noi1r/beamer-skill)
+(PDF-render visual auditing) and
+[Pedro Sant'Anna's workflow](https://github.com/pedrohcgs/claude-code-my-workflow)
+(executable quality gates); TikZ placement rules adapt ideas from Scott
+Cunningham's MixtapeTools. The implementation is original; public guides are
+linked for attribution rather than bundled or reproduced.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+If this skill saves you a slide-panic night before a seminar, star the repo so other economists find it — and if it produces an ugly or dishonest slide, open an issue. Bad slides are bugs here.

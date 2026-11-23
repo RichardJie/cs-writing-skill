@@ -1,7 +1,5 @@
 # Office OpenXML Math (OMML) Syntax & DrawingML Integration Guide
 
-> **Module Role**: Authoritative mathematical XML specification for [`cs-report-ppt`](../SKILL.md), implemented directly by [`scripts/latex_to_omml.py`](../scripts/latex_to_omml.py) and integrated with the hybrid engine workflows in [`open-source-skills-and-engines.md`](open-source-skills-and-engines.md).
-
 This guide specifies the mathematical architecture for injecting native, editable **Office Math Markup Language (OMML)** formulas into PowerPoint presentation decks (`.pptx`).
 
 ---

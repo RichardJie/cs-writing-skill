@@ -1,0 +1,17 @@
+{
+  "name": "paper2beamer-skills",
+  "description": "Read, present, and synthesize academic papers: build detailed XeLaTeX Beamer decks for a single paper, or analyze multiple papers into a research-gap memo plus a synthesis slide deck.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Haouo",
+    "email": "q18131500@gs.ncku.edu.tw"
+  },
+  "keywords": [
+    "academic",
+    "papers",
+    "beamer",
+    "slides",
+    "research-gap-analysis",
+    "latex"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "name": "slidev-skills",
+  "owner": {
+    "name": "Yoan Bernabeu",
+    "email": "contact@yoandev.co"
+  },
+  "metadata": {
+    "description": "Comprehensive Claude Code skills for creating stunning presentations with Slidev",
+    "version": "1.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/yoanbernabeu/SlidevSkills",
+    "keywords": ["slidev", "presentation", "slides", "markdown", "vue"]
+  },
+  "plugins": [
+    {
+      "name": "slidev-getting-started",
+      "description": "Get started with Slidev - quick start guide and project structure",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/getting-started/slidev-quick-start",
+        "./skills/getting-started/slidev-project-structure"
+      ]
+    },
+    {
+      "name": "slidev-content",
+      "description": "Content creation skills - syntax, layouts, and components",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/content/slidev-syntax-guide",
+        "./skills/content/slidev-layouts",
+        "./skills/content/slidev-components"
+      ]
+    },
+    {
+      "name": "slidev-code",
+      "description": "Code presentation skills - syntax highlighting, Magic Move, and Monaco Editor",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/code/slidev-code-blocks",
+        "./skills/code/slidev-magic-move",
+        "./skills/code/slidev-monaco-editor"
+      ]
+    },
+    {
+      "name": "slidev-visuals",
+      "description": "Visual content skills - Mermaid diagrams, PlantUML, and LaTeX",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/visuals/slidev-mermaid",
+        "./skills/visuals/slidev-plantuml",
+        "./skills/visuals/slidev-latex"
+      ]
+    },
+    {
+      "name": "slidev-animations",
+      "description": "Animation skills - click animations and slide transitions",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/animations/slidev-click-animations",
+        "./skills/animations/slidev-transitions"
+      ]
+    },
+    {
+      "name": "slidev-presentation",
+      "description": "Presentation skills - presenter mode, drawings, and navigation",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/presentation/slidev-presenter-mode",
+        "./skills/presentation/slidev-drawings",
+        "./skills/presentation/slidev-navigation"
+      ]
+    },
+    {
+      "name": "slidev-customization",
+      "description": "Customization skills - themes and styling with UnoCSS",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/customization/slidev-themes",
+        "./skills/customization/slidev-styling"
+      ]
+    },
+    {
+      "name": "slidev-export",
+      "description": "Export and deployment skills - PDF, PPTX, and web hosting",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/export/slidev-export",
+        "./skills/export/slidev-deployment"
+      ]
+    },
+    {
+      "name": "slidev-complete",
+      "description": "Complete Slidev skills collection - all 20 skills for comprehensive Slidev mastery",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/getting-started/slidev-quick-start",
+        "./skills/getting-started/slidev-project-structure",
+        "./skills/content/slidev-syntax-guide",
+        "./skills/content/slidev-layouts",
+        "./skills/content/slidev-components",
+        "./skills/code/slidev-code-blocks",
+        "./skills/code/slidev-magic-move",
+        "./skills/code/slidev-monaco-editor",
+        "./skills/visuals/slidev-mermaid",
+        "./skills/visuals/slidev-plantuml",
+        "./skills/visuals/slidev-latex",
+        "./skills/animations/slidev-click-animations",
+        "./skills/animations/slidev-transitions",
+        "./skills/presentation/slidev-presenter-mode",
+        "./skills/presentation/slidev-drawings",
+        "./skills/presentation/slidev-navigation",
+        "./skills/customization/slidev-themes",
+        "./skills/customization/slidev-styling",
+        "./skills/export/slidev-export",
+        "./skills/export/slidev-deployment"
+      ]
+    }
+  ]
+}

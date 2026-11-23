@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+
+^\.github$
+^_pkgdown\.yml$
+^pkgdown$
+^docs$
+
+^CONTRIBUTING\.md$
+^CODE_OF_CONDUCT\.md$
+^LICENSE\.md$
+^README\.Rmd$
+
+^tools$

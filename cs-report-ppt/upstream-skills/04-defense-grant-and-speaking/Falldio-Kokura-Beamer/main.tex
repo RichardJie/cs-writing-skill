@@ -1,0 +1,70 @@
+% This file is a template using the "beamer" package to create slides for a talk or presentation
+% - Talk at a conference/colloquium.
+% - Talk length is about 20min.
+% - Style is ornate.
+
+
+% draft包的作用是在编译时不生成目录、图片、超链接等，只处理文字和排版(未显示内容用同等大小的灰色方框替代)
+% 这样可以在编辑文档查看效果时加快编译速度
+% 但是在确定文档内容后，需要删除draft包（使用下一行documentclass），否则目录不会生成。
+% \documentclass[aspectratio=169, UTF8, draft]{beamer}
+\documentclass[aspectratio=169, UTF8]{beamer}
+
+\usepackage{ctex} % 中文支持
+\usepackage{multicol} % 多栏支持
+\usepackage{listings} % 代码高亮
+\usetheme{Kokura}
+
+\usepackage[english]{babel} % 在toc中显示英文
+
+% 在封面页需要展示的信息
+\title{\textbf{基于Cesium的实景三维专题表达方法研究}}
+\subtitle{一份毕业答辩Beamer演示文稿示例} % 可选
+\author{Falldio}
+\institute{武汉大学资源与环境科学学院}
+\date{2021年5月6日}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+% \AtBeginSubsection[]
+% {
+  % \begin{frame}<beamer>{Outline}
+    % \tableofcontents[currentsection,currentsubsection]
+  % \end{frame}
+% }
+
+\begin{document}
+% 默认在title page中加入图片background.png
+{
+  \usebackgroundtemplate{\includegraphics[width=\paperwidth]{background.png}} % 背景图片
+  \begin{frame}[plain, noframenumbering]
+    \titlepage
+  \end{frame}
+}
+
+% 如果不需要背景图片，可以使用下面的命令
+% \begin{frame}[plain, noframenumbering]
+  % \titlepage
+% \end{frame}
+
+% 目录自动生成，显示所有的section和subsection
+\begin{frame}[plain, allowframebreaks, noframenumbering]{目录}
+  % \begin{multicols}{2} % 多栏显示
+  %   \tableofcontents[]%
+  % \end{multicols}
+  % 如果想要单栏显示目录，可以使用下面的命令
+  \tableofcontents
+\end{frame}
+
+% 内容主体
+\include{sections/background}
+\include{sections/methodology}
+\include{sections/experiment}
+\include{sections/conclusion}
+
+% 致谢页面
+\include{sections/thanks}
+
+\end{document}
+
+

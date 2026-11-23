@@ -1,0 +1,25 @@
+:root {
+  --bg: #fffaf8;
+  --bg-soft: #f5ebe8;
+  --surface: #ffffff;
+  --surface-2: #fff1ed;
+  --border: #ead5ce;
+  --text-1: #281614;
+  --text-2: #62443f;
+  --text-3: #8f6f68;
+  --accent: #9b1c31;
+  --accent-2: #c2410c;
+  --accent-3: #7f1d1d;
+  --shadow: 0 22px 56px rgba(155, 28, 49, 0.13);
+  --font-display: "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+}
+
+.slide::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}

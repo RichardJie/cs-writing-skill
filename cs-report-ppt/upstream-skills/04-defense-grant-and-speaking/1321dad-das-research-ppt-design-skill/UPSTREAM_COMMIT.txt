@@ -1,0 +1,3 @@
+upstream_url: https://github.com/1321dad-das/research-ppt-design-skill
+commit_sha: 9f68734fb60e37e5bb0779b669a573f72f18d636
+license: MIT

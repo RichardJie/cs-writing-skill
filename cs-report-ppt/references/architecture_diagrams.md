@@ -1,8 +1,6 @@
 # Native DrawingML Architecture Flowcharts & Vector Diagram Guide
 
-> **Module Role**: Native OpenXML DrawingML vector diagram and multi-branch execution flowchart specification for [`cs-report-ppt`](../SKILL.md). Works alongside [`palettes-and-layouts.md`](palettes-and-layouts.md) (theme tokens & coordinate recipes) and [`disciplines-stem.md`](disciplines-stem.md) (domain-specific pipeline, circuit, and Proof DAG diagrams).
-
-This specification defines the standards for generating high-fidelity, fully editable DrawingML vector architecture diagrams and multi-branch execution flowcharts in PowerPoint presentations (`cs-report-ppt`).
+This specification defines the standards for generating high-fidelity, fully editable DrawingML vector architecture diagrams and multi-branch execution flowcharts in PowerPoint presentations (`academic-paper-presentation`).
 
 ---
 

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/JetBrains/skills/tree/3f53782dec7b5424bf6e8efbb90a46ee26f31798/slides
+commit_sha: 3f53782dec7b5424bf6e8efbb90a46ee26f31798
+license: Apache-2.0
+note: Heavy binary demo media / test fixtures (1 files, 1.8 KB) omitted for lightweight text-first vendoring; full binary assets available at https://github.com/JetBrains/skills/tree/3f53782dec7b5424bf6e8efbb90a46ee26f31798/slides

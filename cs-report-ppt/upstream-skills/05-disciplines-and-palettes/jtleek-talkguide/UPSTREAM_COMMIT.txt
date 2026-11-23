@@ -1,0 +1,3 @@
+upstream_url: https://github.com/jtleek/talkguide
+commit_sha: e8744b0d5bbb27bc9bf9d96dfe59eafbb34187e1
+license: Public Academic Repo (Jeffrey T. Leek)

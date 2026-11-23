@@ -1,0 +1,55 @@
+{
+  "name": "thesis-defense",
+  "label": "论文答辩",
+  "description": "适用于本科、硕士、博士论文答辩、开题报告、中期答辩和研究生组会的学术 PPT 风格配置。",
+  "defaultTheme": "thesis-defense-blue",
+  "themes": [
+    "thesis-defense-blue",
+    "thesis-defense-red",
+    "thesis-defense-minimal",
+    "thesis-defense-serif"
+  ],
+  "audience": [
+    "undergraduate",
+    "master",
+    "phd",
+    "committee",
+    "research-group"
+  ],
+  "scenarios": [
+    "proposal",
+    "midterm",
+    "pre-defense",
+    "final-defense",
+    "group-meeting",
+    "academic-conference"
+  ],
+  "slidePlan": [
+    "cover",
+    "toc",
+    "research-background",
+    "literature-review",
+    "research-gap",
+    "technical-route",
+    "method-framework",
+    "experiment-setup",
+    "result-comparison",
+    "contributions",
+    "limitations-future",
+    "thanks",
+    "defense-qa"
+  ],
+  "styleRules": {
+    "tone": "formal-academic",
+    "animation": "minimal",
+    "maxBulletsPerSlide": 5,
+    "preferCharts": true,
+    "speakerNotes": true,
+    "qaBackupSlides": true
+  },
+  "durationGuidance": {
+    "8min": "8-10 slides",
+    "15min": "11-14 slides",
+    "30min": "18-24 slides"
+  }
+}

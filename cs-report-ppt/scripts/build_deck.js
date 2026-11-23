@@ -70,7 +70,7 @@ if (figuresPath && fs.existsSync(figuresPath)) {
   }
 }
 
-// Color Theme Defaults (6 Curated Scholarly Palettes + Monochrome & Conference Themes)
+// Color Theme Defaults (Harmonized Minimalist Black & White Default + Conference Themes)
 const THEMES = {
   academic_mono: {
     id: 'academic_mono',
@@ -78,7 +78,6 @@ const THEMES = {
     primary: '000000',
     accent: '111827',
     secondary: '374151',
-    focalDelta: '111827',
     bg: 'FFFFFF',
     background: 'FFFFFF',
     cardBg: 'FFFFFF',
@@ -86,8 +85,8 @@ const THEMES = {
     cardHeaderBg: 'F9FAFB',
     headerText: '000000',
     bodyText: '1F2937',
-    textPrimary: '111827',
-    textSecondary: '4B5563',
+    textPrimary: '000000',
+    textSecondary: '374151',
     textMuted: '6B7280',
     calloutBg: 'F9FAFB',
     calloutBorder: '374151',
@@ -95,156 +94,11 @@ const THEMES = {
     sideNoteBg: 'F9FAFB',
     sideNoteBorder: '374151',
     sideNoteAccent: '111827',
-    sideNoteText: '111827',
+    sideNoteText: '000000',
     highlightBg: 'F3F4F6',
     highlightText: '000000',
     badgeBg: 'F3F4F6',
     badgeText: '111827'
-  },
-  oxford_navy: {
-    id: 'oxford_navy',
-    name: 'Oxford Institutional Navy',
-    primary: '002147',
-    accent: '1D4ED8',
-    secondary: '334155',
-    focalDelta: 'B91C1C',
-    bg: 'FFFFFF',
-    background: 'FFFFFF',
-    cardBg: 'FFFFFF',
-    cardBorder: 'CBD5E1',
-    cardHeaderBg: 'F8FAFC',
-    headerText: '002147',
-    bodyText: '0F172A',
-    textPrimary: '0F172A',
-    textSecondary: '334155',
-    textMuted: '64748B',
-    calloutBg: 'EFF6FF',
-    calloutBorder: 'BFDBFE',
-    calloutText: '1E3A8A',
-    sideNoteBg: 'EFF6FF',
-    sideNoteBorder: 'BFDBFE',
-    sideNoteAccent: '002147',
-    sideNoteText: '1E3A8A',
-    highlightBg: 'FEF2F2',
-    highlightText: '991B1B',
-    badgeBg: 'EFF6FF',
-    badgeText: '002147'
-  },
-  nature_slate_teal: {
-    id: 'nature_slate_teal',
-    name: 'Nature Journal Slate & Teal',
-    primary: '0F3D3E',
-    accent: '0F766E',
-    secondary: '475569',
-    focalDelta: 'C2410C',
-    bg: 'FFFFFF',
-    background: 'FFFFFF',
-    cardBg: 'FFFFFF',
-    cardBorder: 'E2E8F0',
-    cardHeaderBg: 'F8FAFC',
-    headerText: '0F3D3E',
-    bodyText: '1E293B',
-    textPrimary: '1E293B',
-    textSecondary: '475569',
-    textMuted: '64748B',
-    calloutBg: 'F0FDFA',
-    calloutBorder: '99F6E4',
-    calloutText: '134E4A',
-    sideNoteBg: 'F0FDFA',
-    sideNoteBorder: '99F6E4',
-    sideNoteAccent: '0F766E',
-    sideNoteText: '134E4A',
-    highlightBg: 'FFF7ED',
-    highlightText: '9A3412',
-    badgeBg: 'CCFBF1',
-    badgeText: '115E59'
-  },
-  mit_crimson_neutral: {
-    id: 'mit_crimson_neutral',
-    name: 'MIT Engineering Crimson & Stone',
-    primary: '18181B',
-    accent: 'A31F34',
-    secondary: '44403C',
-    focalDelta: '0369A1',
-    bg: 'FFFFFF',
-    background: 'FFFFFF',
-    cardBg: 'FFFFFF',
-    cardBorder: 'D6D3D1',
-    cardHeaderBg: 'FAFAF9',
-    headerText: '18181B',
-    bodyText: '18181B',
-    textPrimary: '18181B',
-    textSecondary: '44403C',
-    textMuted: '78716C',
-    calloutBg: 'FAFAF9',
-    calloutBorder: 'E7E5E4',
-    calloutText: '292524',
-    sideNoteBg: 'FAFAF9',
-    sideNoteBorder: 'E7E5E4',
-    sideNoteAccent: 'A31F34',
-    sideNoteText: '292524',
-    highlightBg: 'FEF2F2',
-    highlightText: 'A31F34',
-    badgeBg: 'FEF2F2',
-    badgeText: '991B1B'
-  },
-  cvpr_clean_blue: {
-    id: 'cvpr_clean_blue',
-    name: 'CVPR Clean Cobalt & Slate',
-    primary: '0F172A',
-    accent: '0284C7',
-    secondary: '334155',
-    focalDelta: 'B45309',
-    bg: 'FFFFFF',
-    background: 'FFFFFF',
-    cardBg: 'FFFFFF',
-    cardBorder: 'E2E8F0',
-    cardHeaderBg: 'F8FAFC',
-    headerText: '0F172A',
-    bodyText: '0F172A',
-    textPrimary: '0F172A',
-    textSecondary: '334155',
-    textMuted: '64748B',
-    calloutBg: 'F0F9FF',
-    calloutBorder: 'BAE6FD',
-    calloutText: '0C4A6E',
-    sideNoteBg: 'F0F9FF',
-    sideNoteBorder: 'BAE6FD',
-    sideNoteAccent: '0284C7',
-    sideNoteText: '0C4A6E',
-    highlightBg: 'FEF3C7',
-    highlightText: '92400E',
-    badgeBg: 'E0F2FE',
-    badgeText: '075985'
-  },
-  keynote_dark_oral: {
-    id: 'keynote_dark_oral',
-    name: 'Keynote Dark Stage Oral',
-    primary: 'F8FAFC',
-    accent: '38BDF8',
-    secondary: '94A3B8',
-    focalDelta: 'F59E0B',
-    bg: '0F1117',
-    background: '0F1117',
-    cardBg: '161B26',
-    cardBorder: '334155',
-    cardHeaderBg: '1E293B',
-    headerText: 'F8FAFC',
-    bodyText: 'F1F5F9',
-    textPrimary: 'F1F5F9',
-    textSecondary: '94A3B8',
-    textMuted: '64748B',
-    calloutBg: '172554',
-    calloutBorder: '1E40AF',
-    calloutText: 'E0F2FE',
-    sideNoteBg: '172554',
-    sideNoteBorder: '1E40AF',
-    sideNoteAccent: '38BDF8',
-    sideNoteText: 'E0F2FE',
-    highlightBg: '422006',
-    highlightText: 'FCD34D',
-    badgeBg: '1E293B',
-    badgeText: '38BDF8'
   },
   mono: {
     id: 'mono',
@@ -416,22 +270,6 @@ const THEMES = {
   }
 };
 
-// Merge optional --config themes if provided
-if (configPath && fs.existsSync(configPath)) {
-  try {
-    const parsedConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const customThemes = parsedConfig.themes || parsedConfig.THEMES;
-    if (customThemes && typeof customThemes === 'object') {
-      Object.entries(customThemes).forEach(([k, v]) => {
-        const key = k.toLowerCase();
-        THEMES[key] = Object.assign({}, THEMES[key] || {}, v);
-      });
-    }
-  } catch (e) {
-    console.warn(`[build_deck.js] Warning loading config JSON: ${e.message}`);
-  }
-}
-
 const theme = THEMES[themeName.toLowerCase()] || THEMES.academic_mono;
 
 // Initialize PPTX with custom widescreen 16:9 layout (13.333333 x 7.500 inches)
@@ -545,7 +383,7 @@ function getGridLayout(layoutType, count) {
   const Y = CANVAS.contentY; // 1.650"
   const X = CANVAS.marginL;  // 0.600"
 
-  if (count === 1) {
+  if (layoutType === 'hero_header' || layoutType === 'hero_1col' || count === 1) {
     return [{ x: X, y: Y, w: W, h: H }];
   }
 
@@ -594,14 +432,7 @@ function getGridLayout(layoutType, count) {
     ];
   }
 
-  const isTwoRowHero = (
-    layoutType === 'asymmetric_2row' ||
-    layoutType === 'asymmetric_2_row' ||
-    layoutType === 'hero_and_cards' ||
-    layoutType === 'panorama_arch_top_bottom' ||
-    layoutType === 'benchmark_table_kpi_strip'
-  );
-  if (isTwoRowHero && count >= 2) {
+  if (layoutType === 'asymmetric_2row' || layoutType === 'asymmetric_2_row') {
     const heroH = 2.300;
     const gapY = 0.200;
     const gapX = 0.300;
@@ -694,8 +525,7 @@ function formatBulletText(bullet) {
         }
         j++;
       }
-      const cleanMath = math.replace(/(?<!\\)\$/g, '').trim();
-      result += `<<MATH_${isInline ? 'INLINE' : 'DISPLAY'}:${cleanMath}>>`;
+      result += `<<MATH_${isInline ? 'INLINE' : 'DISPLAY'}:${math.trim()}>>`;
       i = j;
     } else if (text[i] === '$' && text[i+1] !== '$') {
       let j = i + 1;
@@ -747,16 +577,12 @@ function renderTable(slide, box, tableData) {
 
   const tableRows = [];
 
-  const isDarkTheme = theme.id === 'keynote_dark_oral' || String(theme.background || '').toUpperCase() === '0F1117';
-  const headerFill = isDarkTheme ? '172554' : (theme.primary || '0F2042');
-  const headerColor = isDarkTheme ? (theme.headerText || 'F8FAFC') : 'FFFFFF';
-
   // Header Row
   const headerRow = headers.map(h => ({
     text: String(h),
     options: {
-      fill: { color: headerFill },
-      color: headerColor,
+      fill: { color: theme.primary || '0F2042' },
+      color: 'FFFFFF',
       bold: true,
       fontSize: 12,
       fontFace: 'Arial',
@@ -769,7 +595,7 @@ function renderTable(slide, box, tableData) {
   // Data Rows
   rows.forEach((r, rIdx) => {
     const isOdd = rIdx % 2 === 1;
-    const rowFill = isOdd ? (theme.cardHeaderBg || 'F8FAFC') : (theme.cardBg || 'FFFFFF');
+    const rowFill = isOdd ? (theme.cardHeaderBg || 'F8FAFC') : 'FFFFFF';
     const rowCells = r.map(cell => {
       let val = String(cell);
       let isBold = false;
@@ -1006,37 +832,19 @@ function renderCard(slide, box, card, cardIdx) {
     currentY += 0.48;
   }
 
-  // Embedded Image with Aspect Ratio Preservation & Portable Path Resolution
+  // Embedded Image with Aspect Ratio Preservation
   let imgPath = card.image;
   if (!imgPath && card.figure_id && figuresMetadata[card.figure_id]) {
     imgPath = figuresMetadata[card.figure_id].file_path || figuresMetadata[card.figure_id].path;
   } else if (imgPath && figuresMetadata[imgPath]) {
     imgPath = figuresMetadata[imgPath].file_path || figuresMetadata[imgPath].path;
   }
-  if (imgPath && !fs.existsSync(imgPath)) {
-    const relToInput = path.resolve(path.dirname(path.resolve(inputPath)), imgPath);
-    const relToSkillRoot = path.resolve(__dirname, '..', imgPath);
-    if (fs.existsSync(relToInput)) imgPath = relToInput;
-    else if (fs.existsSync(relToSkillRoot)) imgPath = relToSkillRoot;
-  }
   if (imgPath && fs.existsSync(imgPath)) {
     const imgH = card.imageH || Math.min(3.4, box.h - (currentY - box.y) - 0.35);
     const imgW = card.imageW || contentW;
-    const imgX = box.x + (box.w - imgW) / 2;
-    if (theme.id === 'keynote_dark_oral') {
-      slide.addShape(pptx.ShapeType.roundRect, {
-        x: imgX - 0.06,
-        y: currentY - 0.04,
-        w: imgW + 0.12,
-        h: imgH + 0.08,
-        rectRadius: 0.06,
-        fill: { color: 'FFFFFF' },
-        line: { color: '475569', width: 0.75 }
-      });
-    }
     slide.addImage({
       path: imgPath,
-      x: imgX,
+      x: box.x + (box.w - imgW) / 2,
       y: currentY,
       w: imgW,
       h: imgH,
@@ -1075,7 +883,7 @@ function renderCard(slide, box, card, cardIdx) {
 
       if (eq.explanation || eq.intuition) {
         const explText = eq.explanation || eq.intuition;
-        slide.addText(`Physical Intuition: ${explText}`, {
+        slide.addText(`💡 Physical Intuition: ${explText}`, {
           x: box.x + padLeft + 0.10,
           y: currentY,
           w: contentW - 0.10,
@@ -1145,7 +953,6 @@ const totalSlides = slides.length;
 
 slides.forEach((sData, idx) => {
   const slide = pptx.addSlide();
-  slide.background = { color: theme.background || theme.bg || 'FFFFFF' };
   const slideNum = idx + 1;
 
   // Chrome (Header / Footer / Tracker)
@@ -1200,22 +1007,6 @@ if (!fs.existsSync(outDir)) {
 // Generate PPTX file
 const tempPptx = outputPath.replace(/\.pptx$/i, '_stage1.pptx');
 
-function resolvePythonCommand() {
-  if (process.env.PYTHON_BIN) return process.env.PYTHON_BIN;
-  const candidates = process.platform === 'win32'
-    ? ['python', 'python3', 'py -3']
-    : ['python3', 'python'];
-  for (const candidate of candidates) {
-    try {
-      execSync(`${candidate} -B --version`, { stdio: 'ignore', timeout: 5000 });
-      return candidate;
-    } catch (_) {
-      // Fall back to next candidate (e.g., Windows Store python3 stub -> Conda python)
-    }
-  }
-  return process.platform === 'win32' ? 'python' : 'python3';
-}
-
 pptx.writeFile({ fileName: tempPptx })
   .then(() => {
     console.log(`[build_deck.js] Stage 1 PPTX generated: ${tempPptx}`);
@@ -1230,21 +1021,18 @@ pptx.writeFile({ fileName: tempPptx })
     // Phase 2: Inject Native OMML
     const injectorScript = path.join(__dirname, 'latex_to_omml.py');
     if (fs.existsSync(injectorScript)) {
-      const pyCmd = resolvePythonCommand();
-      console.log(`[build_deck.js] Phase 2: Running latex_to_omml.py injector via ${pyCmd}...`);
+      console.log(`[build_deck.js] Phase 2: Running latex_to_omml.py injector...`);
       try {
-        const cmd = `${pyCmd} -B "${injectorScript}" --inject --input "${tempPptx}" --output "${outputPath}"`;
-        execSync(cmd, { stdio: 'inherit', timeout: 60000 });
+        const cmd = `python3 "${injectorScript}" --inject --input "${tempPptx}" --output "${outputPath}"`;
+        execSync(cmd, { stdio: 'inherit' });
         if (fs.existsSync(tempPptx)) fs.unlinkSync(tempPptx);
         console.log(`[build_deck.js] Successfully created finalized OMML deck: ${outputPath}`);
       } catch (err) {
         console.warn(`[build_deck.js] Warning during OMML injection: ${err.message}. Falling back to Stage 1.`);
         fs.copyFileSync(tempPptx, outputPath);
-        if (fs.existsSync(tempPptx)) fs.unlinkSync(tempPptx);
       }
     } else {
       fs.copyFileSync(tempPptx, outputPath);
-      if (fs.existsSync(tempPptx)) fs.unlinkSync(tempPptx);
       console.log(`[build_deck.js] Saved to: ${outputPath}`);
     }
   })

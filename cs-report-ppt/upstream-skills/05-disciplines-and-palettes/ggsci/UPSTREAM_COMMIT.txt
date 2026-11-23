@@ -1,0 +1,3 @@
+﻿https://github.com/nanxstats/ggsci.git
+SHA: 37b74f85e62680b9d4523b0b4c0d9bfa0403d299
+Date: 2026-07-29 22:06:03 -0700

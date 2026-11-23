@@ -1,0 +1,3 @@
+upstream_url: https://github.com/LeoYeAI/openclaw-slides
+commit_sha: 417106ca1f92332994e530b019a8b9a13203e4a5
+license: MIT
