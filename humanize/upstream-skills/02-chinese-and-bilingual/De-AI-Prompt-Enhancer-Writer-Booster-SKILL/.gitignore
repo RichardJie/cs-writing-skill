@@ -1,0 +1,13 @@
+# 默认忽略项目中的所有新文件和目录。
+*
+
+# 仅允许同步以下四个目录及其全部内容。
+!README.md
+!de-ai-writing/
+!de-ai-writing/**
+!good-writing/
+!good-writing/**
+!example/
+!example/**
+!.backup/
+!.backup/**

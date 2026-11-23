@@ -1,0 +1,16 @@
+archive/
+.last-migration-archive
+.DS_Store
+**/.DS_Store
+*.xlsx
+*.xls
+*.csv
+*.tsv
+*.zip
+*.log
+
+# 默认只发布通用中文去 AI 味与文采增强 skill。
+# 其他本地个人 skills 保持私有，除非明确取消忽略并完成脱敏审计。
+skills/*
+!skills/zh-humanizer-literary/
+!skills/zh-humanizer-literary/**

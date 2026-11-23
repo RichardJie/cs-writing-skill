@@ -1,0 +1,16 @@
+{
+  "name": "humanizer",
+  "owner": {
+    "name": "Adam Boudjemaa",
+    "url": "https://github.com/Aboudjem"
+  },
+  "metadata": {
+    "description": "See which words make a draft sound like AI, then rewrite it in one of five voices. Optional 0 to 100 score. No network calls of its own."
+  },
+  "plugins": [
+    {
+      "name": "humanizer",
+      "source": "./"
+    }
+  ]
+}

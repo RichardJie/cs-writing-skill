@@ -1,0 +1,14 @@
+{
+  "name": "rebuttal-skills",
+  "owner": {
+    "name": "yuangao-tum",
+    "url": "https://github.com/yuangao-tum"
+  },
+  "plugins": [
+    {
+      "name": "rebuttal-skills",
+      "source": "./",
+      "description": "Composable skills for conference/journal rebuttals: overall process (write-rebuttal) + per-concern answer strategies (nlp-rebuttal)."
+    }
+  ]
+}

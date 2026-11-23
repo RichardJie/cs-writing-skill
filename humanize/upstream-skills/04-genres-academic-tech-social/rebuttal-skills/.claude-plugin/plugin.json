@@ -1,0 +1,20 @@
+{
+  "name": "rebuttal-skills",
+  "description": "Two composable Claude Code skills for writing peer-review rebuttals: write-rebuttal (overall process — Parikh–Batra–Lee method, 18 tactics, AC-facing structure) and nlp-rebuttal (per-concern playbook — 28 reviewer-concern scenarios with answer templates).",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yuan Gao",
+    "url": "https://github.com/yuangao-tum"
+  },
+  "homepage": "https://github.com/yuangao-tum/rebuttal-skills",
+  "repository": "https://github.com/yuangao-tum/rebuttal-skills",
+  "license": "MIT",
+  "keywords": [
+    "rebuttal",
+    "author-response",
+    "peer-review",
+    "academic-writing",
+    "nlp",
+    "machine-learning"
+  ]
+}

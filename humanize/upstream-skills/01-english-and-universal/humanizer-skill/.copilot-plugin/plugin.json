@@ -1,0 +1,14 @@
+{
+  "name": "humanizer",
+  "version": "0.8.4",
+  "description": "See which words make a draft sound like AI, then rewrite it in one of five voices. Optional 0 to 100 score. No network calls of its own.",
+  "author": {
+    "name": "Adam Boudjemaa",
+    "url": "https://github.com/Aboudjem/humanizer-skill"
+  },
+  "homepage": "https://github.com/Aboudjem/humanizer-skill",
+  "repository": "https://github.com/Aboudjem/humanizer-skill",
+  "license": "MIT",
+  "keywords": ["writing", "ai-detection", "humanizer", "burstiness", "voice-profiles", "content-quality"],
+  "skills": ["humanizer"]
+}

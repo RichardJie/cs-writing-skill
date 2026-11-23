@@ -1,0 +1,194 @@
+<div align="center">
+
+# Anti-Slop Design
+
+<img src=".github/social-preview.png" alt="Left: a pile of overlapping purple cards. Right: an ordered grid with one accent colour." width="760">
+
+**A Claude Agent Skill that stops your AI from shipping the same purple-gradient website as everyone else.**
+
+Web and mobile. 20 modules.
+
+[![Validate](https://github.com/Ferousco-dev/anti-slop-design/actions/workflows/validate.yml/badge.svg)](https://github.com/Ferousco-dev/anti-slop-design/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+[![Claude Skill](https://img.shields.io/badge/Claude-Agent%20Skill-d97757)](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+
+</div>
+
+---
+
+## The problem
+
+Ask any AI to "build a modern landing page" and you get the same site every time:
+
+> Purple→indigo gradient hero · Inter headline · centered badge → heading → gray subheading → two buttons · three identical feature cards with icons · 1px gray borders on everything · glassmorphic nav · fade-in-on-scroll on every section.
+
+That is not a style. It is **regression to the mean** — the model emitting the statistically most common interface in its training data. The web has a name for it now: **AI slop**.
+
+It costs real things. Users form a first impression in ~50ms and mostly from visual design. Generic design reads as automated, and automated increasingly reads as untrustworthy. Slop erodes credibility, dilutes brand, suppresses conversion, and reliably fails accessibility.
+
+## What this skill does
+
+`anti-slop-design` installs as a [Claude Agent Skill](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview). Once installed, Claude loads it automatically whenever you generate, review, or refactor UI — and it changes how the model decides.
+
+It gives the agent:
+
+- **A hard rejection list** of the specific patterns that mark output as AI-generated
+- **An operating protocol** that forces a named visual direction *before* any code, so sampling never falls back to the mode
+- **A design-decision framework** — the Hierarchy of Needs, the "Would Stripe do this?" test, the self-interrogation script
+- **A mechanism-level explanation** of *why* slop happens (the Tailwind `indigo-500` cascade, inherited library defaults, prompt underspecification), so the agent can generalize to patterns not on the list
+- **Non-negotiable floors** for accessibility, performance, and durability
+
+It does not make your AI weird. Over-correction — brutalism on a medical dashboard, scroll-jacking on a pricing page — is its own failure mode, and the skill guards against that too. The target is **intentionality**, not deviation.
+
+## Install
+
+### As a plugin — recommended, because you get updates
+
+Installing as a plugin means new versions reach you when they ship. Copying files does not.
+
+```bash
+/plugin marketplace add Ferousco-dev/anti-slop-design
+/plugin install anti-slop-design@anti-slop-design
+```
+
+Then `/reload-plugins`. The skill triggers on its own; to force it, `/anti-slop-design:anti-slop-design`.
+
+**To update later:**
+
+```bash
+/plugin marketplace update anti-slop-design
+```
+
+Claude Code compares the `version` in the plugin manifest, so you only get an update when a real release lands rather than on every commit. CI fails the build if that version and the changelog disagree.
+
+---
+
+### Copying the files instead
+
+These give you the skill at a point in time. You will not get updates; re-run the command to refresh.
+
+#### Claude Code (project-level)
+
+```bash
+git clone https://github.com/Ferousco-dev/anti-slop-design.git /tmp/anti-slop-design && cp -r /tmp/anti-slop-design/skills/anti-slop-design .claude/skills/
+```
+
+#### Claude Code (all your projects)
+
+```bash
+git clone https://github.com/Ferousco-dev/anti-slop-design.git /tmp/anti-slop-design && mkdir -p ~/.claude/skills && cp -r /tmp/anti-slop-design/skills/anti-slop-design ~/.claude/skills/
+```
+
+#### One-liner installer
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Ferousco-dev/anti-slop-design/main/install.sh | bash
+```
+
+Pass `--project` to install into `./.claude/skills` instead of your home directory.
+
+#### Claude.ai / Claude Desktop
+
+Download the `.zip` from the [latest release](https://github.com/Ferousco-dev/anti-slop-design/releases/latest) and upload it under **Settings → Capabilities → Skills**.
+
+Verify with `/skills` in Claude Code — you should see `anti-slop-design` listed.
+
+## Usage
+
+There is nothing to invoke. The skill triggers on its own when you say things like:
+
+- *"Build the landing page for this."*
+- *"This dashboard looks AI-generated — fix it."*
+- *"Review this component for design quality."*
+- *"Make this feel premium."*
+- *"Give this some personality."*
+
+To force it in Claude Code:
+
+```text
+/anti-slop-design
+```
+
+### What changes
+
+Without it:
+
+> Centered hero, `bg-gradient-to-r from-indigo-500 to-purple-600`, Inter 700, three `<Card>` components in a grid, `motion.div` with `initial={{opacity:0,y:20}}`.
+
+With it: Claude names a visual thesis first, derives a type/space/color system, designs all eight interaction states, and closes by telling you which decisions it made and why — so you can argue with them.
+
+## Repo structure
+
+```text
+anti-slop-design/
+├── skills/
+│   └── anti-slop-design/
+│       ├── SKILL.md              # entry point — loaded on trigger
+│       ├── references/           # loaded on demand
+│       │   ├── 01-philosophy.md
+│       │   ├── 02-visual-patterns.md … 12-section-rules.md
+│       │   ├── 13-pre-emit-checklist.md
+│       │   ├── 14-workflow.md
+│       │   ├── 15-product-types.md
+│       │   ├── 16-mobile-app-patterns.md
+│       │   ├── 17-app-screen-rules.md … 19-data-visualisation.md
+│       │   └── 20-worked-example.md
+│       └── assets/
+│           └── project-context.template.md
+├── scripts/validate_skill.py     # CI validator
+├── .github/workflows/            # validate + release automation
+└── install.sh
+```
+
+The skill uses **progressive disclosure**: `SKILL.md` stays small so it costs almost nothing in context, and the deeper reference modules load only when the agent actually needs them.
+
+## Modules
+
+| # | Module | Covers | Status |
+|---|---|---|---|
+| 01 | Core Philosophy | Why slop happens, the three laws, cost analysis, self-interrogation | ✅ Stable |
+| 02 | Visual Patterns | 20 banned treatments: gradients, glassmorphism, blobs, glows, radius, shadows, badges | ✅ Stable |
+| 03 | Color Patterns | The purple monoculture, OKLCH ramps, 60-30-10, neutrals, dark mode, contrast | ✅ Stable |
+| 04 | Typography | Inter, pairings, type scales, measure, line height, tracking, accessibility floors | ✅ Stable |
+| 05 | Layout Patterns | The SaaS conveyor belt, hero alternatives, bento, spacing rhythm, scroll hijacking | ✅ Stable |
+| 06 | Component & Element Patterns | The SaaS triad, pricing dark patterns, carousels, loading, empty and error states | ✅ Stable |
+| 07 | Animation & Motion Patterns | Fade-in-everything, `transition: all`, timing thresholds, parallax, reduced motion | ✅ Stable |
+| 08 | Copywriting & Content | Buzzwords, headlines, voice, cadence uniformity, testimonials, case studies, corporate speak | ✅ Stable |
+| 09 | Code-Level & Technical Patterns | Div soup, ARIA misuse, focus management, tokens, Core Web Vitals, forms | ✅ Stable |
+| 10 | Image & Media Patterns | Stock photos, AI imagery, generic illustration, icons, screenshots, alt text | ✅ Stable |
+| 11 | The Craft List | The eight states, optical alignment, real content, keyboard, performance budgets | ✅ Stable |
+| 12 | Section-by-Section Rules | Nav, hero, proof, features, pricing, FAQ, CTA, footer, forms, dashboards, 404 | ✅ Stable |
+| 13 | Pre-Emit Self-Critique Checklist | Six gates from instant-fails to the final four questions | ✅ Stable |
+| 14 | Workflow & Execution Protocol | Full protocol, module routing, review / existing-product / constrained-scope modes | ✅ Stable |
+| 15 | Product Types & Design Personality | Six personality axes, register mismatch, 34 product categories, research protocol | ✅ Stable |
+| 16 | Mobile App Patterns | Platform divergence, hover on touch, safe areas, reach, permissions, Dynamic Type | ✅ Stable |
+| 17 | App Screen Rules | Onboarding, feed, detail, search, profile, settings, paywall, checkout, errors | ✅ Stable |
+| 18 | Trust Signals by Category | The proof ladder, what nine audiences actually accept, placement | ✅ Stable |
+| 19 | Data Visualisation | Truncated axes, dual axes, rainbow palettes, chart accessibility, dashboards | ✅ Stable |
+| 20 | Worked Example | The full protocol on a real brief, with the wrong turns left in | ✅ Stable |
+
+Plus [`assets/project-context.template.md`](skills/anti-slop-design/assets/project-context.template.md) — copy it to `references/00-project-context.md` to pin your own product's brief, palette, and voice so they stop being re-decided every session.
+
+## A note on the examples
+
+This skill was written while building [AppMD](https://github.com/Ferousco-dev), a mobile app analysis tool. That's why APK, permission, and mobile-security examples turn up throughout the reference modules.
+
+**They are illustrations, not requirements.** Every rule is domain-independent — an example about permissions in an APK applies identically to line items on an invoice or fields in a patient record. If you're using this skill, Claude will substitute your product and domain automatically. If you're reading the modules directly, read past the APKs to the principle underneath.
+
+Contributions are welcome in any domain. New examples from other product categories make the skill better, not noisier.
+
+## Contributing
+
+New banned patterns are the most valuable contribution. If you can screenshot a tell that marks output as AI-generated, open a PR against the relevant reference module. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Every PR is gated by CI: frontmatter validation, size budgets, link checking, and markdown lint.
+
+## License
+
+[MIT](LICENSE) — use it, fork it, ship it commercially. Attribution appreciated, not required.
+
+---
+
+<div align="center">
+<sub>Built by <a href="https://github.com/Ferousco-dev">Feranmi</a> · AppMD</sub>
+</div>

@@ -1,0 +1,177 @@
+% Author-response / rebuttal LaTeX template (Parikh-Batra-Lee method).
+% Fill every [bracket] AND replace every example table cell -- all values in
+% this file are invented placeholders. Delete what you don't need.
+% Tip numbers refer to references/eighteen-tips.md. Compiles with pdflatex.
+%
+% SCOPE: use only where free-form PDF responses are accepted (journals, ARR
+% attachments, some workshops). CVPR/ICCV/ECCV require the official venue
+% rebuttal template. For plain-text OpenReview/ARR response boxes, draft in
+% markdown from references/rebuttal-skeleton.md instead -- the structure and
+% the two AC tables carry over.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{mdframed}
+
+% ---- Per-reviewer colour coding (Tip 11; colourblind-friendly palette) ----
+% Change the printed labels (R1/R2/R3) inside the definitions to the venue's
+% actual reviewer IDs so reviewers find themselves at a glance; keep the
+% macro names \rA/\rB/\rC unchanged.
+\definecolor{cRA}{RGB}{0,84,159}   % blue
+\definecolor{cRB}{RGB}{176,80,0}   % orange
+\definecolor{cRC}{RGB}{123,31,162} % purple
+\newcommand{\rA}{\textcolor{cRA}{\textbf{R1}}}
+\newcommand{\rB}{\textcolor{cRB}{\textbf{R2}}}
+\newcommand{\rC}{\textcolor{cRC}{\textbf{R3}}}
+% Fourth reviewer? Uncomment (teal), and add a column to both AC tables:
+% \definecolor{cRD}{RGB}{0,105,92}
+% \newcommand{\rD}{\textcolor{cRD}{\textbf{R4}}}
+
+% ---- Capability/coverage marks: yes / partial / not applicable ----
+\newcommand{\cmark}{\textcolor{cRA}{\checkmark}}
+\newcommand{\pmark}{\textcolor{cRB}{$\sim$}}
+\newcommand{\xmark}{\textcolor{gray}{--}}
+
+% ---- Reviewer's original comment, verbatim, in a shaded quote box (Tip 3) ----
+\definecolor{qbg}{RGB}{244,244,244}
+\newmdenv[backgroundcolor=qbg,linewidth=0pt,skipabove=4pt,skipbelow=2pt,
+          innertopmargin=4pt,innerbottommargin=4pt]{rquotebox}
+\newcommand{\Rq}[1]{\begin{rquotebox}\small\itshape #1\end{rquotebox}}
+% Placeholder when the verbatim text isn't pasted in yet -- renders in red,
+% and scripts/lint_rebuttal.py flags any remaining \Rtodo before you post:
+\newcommand{\Rtodo}[1]{\begin{rquotebox}\small\itshape\textcolor{red}{[\,paste
+original text: #1\,]}\end{rquotebox}}
+
+% ---- Response lead-ins ----
+\newcommand{\Resp}{\textbf{Response.}\ }
+\newcommand{\point}[1]{\smallskip\noindent\textbf{#1}\ }
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}
+\titlespacing*{\section}{0pt}{1.4ex}{0.8ex}
+\setlength{\parskip}{0.5ex}
+\setlength{\parindent}{0pt}
+
+\title{\vspace{-2em}Author Response --- Submission [ID]\\
+\large [Paper title]}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-3em}
+
+% Opening: Tips 1, 10, 11, 13, 15, 17 in one short paragraph.
+We thank all reviewers. All three recognize [restate the consensus strengths
+in the reviewers' own words]. Each original comment is quoted (shaded) with
+our response directly beneath it. \emph{Reviewer threads are colour-coded:
+\rA{}, \rB{}, \rC{}.} [k] concerns are shared ([name them]); we answer each
+once in full and cross-reference. Where a reviewer asked for a number we
+computed it and report it here; where new compute did not fit the response
+window we say so and scope it to the camera-ready.
+
+% =====================================================================
+\section{To Reviewer \rA{} \normalfont(Overall [x], Confidence [y])}
+% =====================================================================
+Thank you for recognizing [restate the specific praise in the reviewer's own
+words]. % Tip 1: start positive, per reviewer.
+
+% Order \point blocks strongest-answer-first within each reviewer (Tip 2).
+\point{W1 --- [short name of the concern].}
+\Rq{[Reviewer's original comment, verbatim.]}
+\Resp \textbf{[Direct one-line answer first: Yes / No / the number.]} [Then
+the detail: what you ran, the setup, what it shows.] % Tip 3.
+
+% Every piece of evidence is a small table with a Takeaway line beneath it
+% (Tips 8, 12): self-contained, interpretable without the paper.
+\begin{center}\scriptsize
+\textbf{Table 1 --- [What it shows] ($N{=}[\ldots]$)}\\[2pt]
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Method & [Metric A] $\uparrow$ & [Metric B] $\downarrow$ & [Metric C] $\uparrow$ \\
+\midrule
+% NB: brace a leading [bracket] placeholder after \midrule or \\ -- otherwise
+% TeX reads it as an optional argument and errors with "Missing number".
+{[Baseline]}  & [\ldots] & [\ldots] & [\ldots] \\
+\textbf{Ours} & \textbf{[\ldots]} & \textbf{[\ldots]} & \textbf{[\ldots]} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent\textbf{\emph{Takeaway.}} [One or two sentences interpreting the
+table for a reader who will not study it. State the mechanism, not just the
+delta.]
+
+\point{W2 --- [next concern].}
+\Rtodo{W2 text}
+\Resp [\ldots]
+
+% =====================================================================
+% ... repeat a \section per reviewer ...
+% =====================================================================
+
+% =====================================================================
+\section{To the Area Chair \normalfont(decision summary)}
+% =====================================================================
+We thank the Area Chair for coordinating the review of our submission.
+
+\textbf{Our contribution.} [One-sentence scoped claim of what the paper is
+and is not.]
+
+\textbf{Reviewer standing.} [Consensus strengths, in the reviewers' own
+words; overall score trend if any.]
+
+% ---- Table A: reviewer standing. Show score MOVEMENT (pre -> post).
+%      Every cell below is an invented example -- replace all of it. ----
+\begin{center}\footnotesize
+\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Reviewer & Overall (pre $\to$ post response) & Other scores & W / S \\
+\midrule
+\rA{} & [3 $\to$ 3 (replied; concerns marked resolved)] & [Confidence 4] & [3 W, 2 S] \\
+\rB{} & [3.5 $\to$ no reply yet] & [Confidence 3] & [4 W, 1 S] \\
+\rC{} & [2.5 $\to$ \textbf{3} $\uparrow$ (raised after our response)] & [Confidence 4] & [6 W, 2 S] \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---- Table B: concern-coverage matrix. One row per CONSOLIDATED concern,
+%      priority-ordered (Tips 2+10+11). Reviewer columns cite each
+%      reviewer's own W/S numbering. "Done?" = evidence is IN this response
+%      (Tip 13); defer honestly with a scoped label (Tip 15).
+%      Every cell below is an invented example -- replace all of it. ----
+\begin{center}\footnotesize
+\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
+\adjustbox{max width=\textwidth}{%
+\begin{tabular}{@{}llccccl@{}}
+\toprule
+Priority & Concern / suggestion & \rA{} & \rB{} & \rC{} & Done? & Evidence in this response \\
+\midrule
+High   & [Biggest concern, best answer]  & [W3] & --      & [W1] & \cmark & [2 new baseline tables] \\
+High   & [Statistical support for X]     & --   & [W1, S2] & --  & \cmark & [5-seed study, 95\% CIs] \\
+Medium & [Component failure analysis]    & [W1] & --      & [S3] & \cmark & [per-component breakdown] \\
+Medium & [Reproducibility]               & --   & [W4]    & [W5] & \cmark & [pinned versions, code release] \\
+Low    & [Typos / figure fixes]          & [S2] & --      & [S1] & \cmark & [manuscript swept] \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+% ---- Silent-reviewer note: name each non-responding reviewer's top concern
+%      and the ARTIFACT that answers it. ----
+\textbf{Note.} While Reviewers \rA{} and \rB{} may still respond during the
+remaining discussion period, we would be grateful if the AC could also weigh
+the evidence already posted: \rA{}'s main concern ([X]) is addressed by
+[computed artifact]; \rB{}'s request for [Y] is addressed by [computed
+artifact].
+
+\textbf{Overall.} [The ask: scoped claim + requested decision + fallback.]
+Thank you for your time and consideration.
+
+\end{document}

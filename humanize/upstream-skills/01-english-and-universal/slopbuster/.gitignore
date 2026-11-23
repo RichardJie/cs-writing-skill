@@ -1,0 +1,14 @@
+# macOS resource forks
+._*
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Temp files
+tmp/
+
+# Local research notes — not for publication
+research/

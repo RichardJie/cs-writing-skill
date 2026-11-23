@@ -1,0 +1,41 @@
+{
+  "name": "standard-readme-spec",
+  "version": "1.3.1",
+  "description": "A standard style for README files",
+  "bin": {
+    "standard-readme": "cat.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RichardLitt/standard-readme.git"
+  },
+  "keywords": [
+    "standard",
+    "markdown",
+    "readme",
+    "parse",
+    "lint",
+    "standard-readme",
+    "spec",
+    "md",
+    "documentation"
+  ],
+  "author": {
+    "name": "Richard Littauer",
+    "email": "richard.littauer@gmail.com",
+    "url": "http://burntfen.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RichardLitt/standard-readme/issues"
+  },
+  "homepage": "https://github.com/RichardLitt/standard-readme",
+  "coordinates": [
+    52.5173031,
+    13.4535065
+  ],
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/standard-readme"
+  }
+}

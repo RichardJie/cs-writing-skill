@@ -1,0 +1,56 @@
+# Humanizer
+
+> See why your draft sounds like AI, then fix it. Humanizer quotes the words that sound machine-written, then rewrites the draft in one of five voices. It is a Markdown skill for coding agents: it names 55 AI writing patterns and reports a 0 to 100 AI-tell score. The skill and the optional zero-dependency Node CLI make no network call of their own; the rewrite runs on the agent's model. MIT license. Last updated 2026-11-17 for v0.8.4.
+
+## Start here
+
+- [README](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): what it does, install, a real before and after, FAQ, limits
+- [SKILL.md](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): the skill itself, the only file an install needs
+- [Pattern deep dives](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/references/patterns.md): the 55 patterns with triggers, sources and before and after pairs
+- [AGENTS.md](https://github.com/Aboudjem/humanizer-skill/blob/main/AGENTS.md): how an agent works in this repo, with the test commands
+
+## Install
+
+- Recommended, the Vercel skills CLI (works in more than 70 agents, pick yours in the menu): `npx skills add Aboudjem/humanizer-skill -g`. Add `-a codex` or another agent code to install straight into one agent; drop `-g` for one project. Page: https://skills.sh/aboudjem/humanizer-skill (in a terminal it shows the agent menu; without an interactive terminal it installs into every agent folder, so use `-a <agent>` in scripts)
+- Claude Code plugin (the same skill, no extra command or hook): `claude plugin marketplace add Aboudjem/10x` then `claude plugin install humanizer@10x`
+- [Per-editor paths](https://github.com/Aboudjem/humanizer-skill/blob/main/docs/editors.md): Cursor, Codex, Copilot, Gemini CLI, OpenCode, Windsurf, Zed, Kimi Code CLI, and the manual copy
+
+## Use
+
+- Rewrite: `/humanizer "your text"` or `/humanizer --file draft.md --voice technical`
+- Detect only: `/humanizer "your text" --mode detect --score`
+- Voices: `casual`, `professional`, `technical`, `warm`, `blunt`
+- Score a file with the CLI: `node cli/index.js score draft.md`
+- Gate a folder: `node cli/index.js scan docs --fail-above 40`
+- Check a rewrite kept its facts: `node cli/index.js compare --before a.md --after b.md --check-facts`
+
+## The 55 patterns
+
+- P1 to P8, content: significance inflation, promotional language, AI vocabulary
+- P9 to P18, language and style: negative parallelisms, dash overuse, structured-list syndrome
+- P19 to P21, communication: chatbot artifacts, knowledge-cutoff disclaimers, sycophantic tone
+- P22 to P30, filler and hedging: filler phrases, generic conclusions, uniform sentence length
+- P31 to P43, emerging: elegant variation, placeholder text, markup leaks, infomercial hooks
+- P44 to P55, craft and forensic: false agency, aphorism formulas, unicode obfuscation, hedge debris
+
+## Reference
+
+- [Metrics CLI](https://github.com/Aboudjem/humanizer-skill/blob/main/cli/README.md): the four signals behind the score, the fact check, the CI gate, exit codes
+- [What the score measures](https://github.com/Aboudjem/humanizer-skill/blob/main/docs/science.md): the research behind the signals and the rewrite rules
+- [Pre-commit hook](https://github.com/Aboudjem/humanizer-skill/blob/main/docs/pre-commit.md): score only the staged Markdown
+- [FAQ](https://github.com/Aboudjem/humanizer-skill/blob/main/docs/faq.md): privacy, models, detectors, false positives
+- [Comparison](https://github.com/Aboudjem/humanizer-skill/blob/main/docs/comparison.md): how it differs from paraphrasers and detectors
+- [Example pair](https://github.com/Aboudjem/humanizer-skill/tree/main/examples/blog-post): a specimen, its rewrite, and the commands that made both
+
+## Limits
+
+- The score reads four text signals. It is not a trained detector and it does not prove who wrote a text.
+- The tool does not promise to pass any AI detector.
+- The CLI metrics are built for English prose.
+- The fact check finds lost numbers, dates, versions, URLs and acronyms. It does not check meaning.
+
+## Optional
+
+- [CHANGELOG](https://github.com/Aboudjem/humanizer-skill/blob/main/CHANGELOG.md): version history
+- [CONTRIBUTING](https://github.com/Aboudjem/humanizer-skill/blob/main/CONTRIBUTING.md): how to add a pattern
+- [Browser demo](https://humanizer-skill.vercel.app): a client-side subset of the patterns
