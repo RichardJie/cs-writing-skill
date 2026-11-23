@@ -1,6 +1,6 @@
 # cs-writing-skill
 
-Cross-harness Agent Skill pack for research narrative framing, multi-dimensional AI-voice removal (`humanize`), crystal-clear concept explanation (`plain`), and publication-grade academic presentation generation (`cs-report-ppt`). Each installable skill lives in its own top-level directory with a `SKILL.md` router, progressive-disclosure `references/`, and optional `agents/openai.yaml` UI metadata.
+Cross-harness Agent Skill pack for research narrative framing, multi-dimensional AI-voice removal (`humanize`), crystal-clear concept explanation (`plain`), publication-grade academic presentation generation (`cs-report-ppt`), and extensible scientific figure production (`figure`). Each installable skill lives in its own top-level directory with a `SKILL.md` router, progressive-disclosure `references/` or modular sub-skills, and optional `agents/openai.yaml` UI metadata.
 
 ```text
 cs-writing-skill/
@@ -22,24 +22,37 @@ cs-writing-skill/
 │   │   ├── visual-image-de-ai.md                    # :image / :photo / :mj / :flux — optical physics & film halation/grain
 │   │   └── scientific-figures-and-ui-de-ai.md       # :figure / :diagram / :ui — Nature/NeurIPS vectors & anti-slop UI
 │   └── agents/openai.yaml
-└── cs-report-ppt/                                   # Multi-scenario, multi-disciplinary academic deck generator
-    ├── SKILL.md                                     # 4-axis master router, 14-slide spine & vision-in-the-loop QA
-    ├── references/
-    │   ├── open-source-skills-and-engines.md        # 5-track engine selector, 300+ DPI harvesting & 25-pt QA checklist
-    │   ├── scenarios-group-meeting.md               # Journal club deep-dive, literature survey & weekly lab progress
-    │   ├── scenarios-conference-defense-grant.md    # Oral/Spotlight/Poster, 开题/中期/硕博答辩, NSFC/grants & Job Talk
-    │   ├── disciplines-stem.md                      # CS/AI/Systems/Security, Math/Stats/TCS & Physics/EE/IC/Robotics
-    │   ├── disciplines-biomed-econ-humanities.md    # BioMed/Clinical/Chem, Econ/Finance/Mgmt & Humanities/Law/Qual
-    │   ├── languages-and-typography.md              # Academic English, 中文学术汇报 (去Word化) & CN-EN bilingual tracks
-    │   ├── palettes-and-layouts.md                  # 6 scholarly HEX palettes, anti-AI-slop laws & 12 16:9 layouts
-    │   ├── spine_template.md                        # Canonical 14-slide Session Note per-slide blueprint
-    │   ├── typography_rules.md                      # 16:9 EMU/inch geometry, 3 vertical zones & 7 core grid models
-    │   ├── omml_syntax_guide.md                     # Native OpenXML <a14:m><m:oMath> LaTeX-to-OMML guide
-    │   ├── architecture_diagrams.md                 # Native DrawingML vector diagram specification
-    │   └── marginal_annotations.md                  # 5-class Lab Research Synergy callouts (旁注)
-    ├── scripts/                                     # build_deck.js, crop_figures.py, latex_to_omml.py, verify_deck.py
-    ├── resources/                                   # Declarative themes/palettes JSON & sample figure-backed decks
-    └── agents/openai.yaml
+├── cs-report-ppt/                                   # Multi-scenario, multi-disciplinary academic deck generator
+│   ├── SKILL.md                                     # 4-axis master router, 14-slide spine & vision-in-the-loop QA
+│   ├── references/
+│   │   ├── open-source-skills-and-engines.md        # 5-track engine selector, 300+ DPI harvesting & 25-pt QA checklist
+│   │   ├── scenarios-group-meeting.md               # Journal club deep-dive, literature survey & weekly lab progress
+│   │   ├── scenarios-conference-defense-grant.md    # Oral/Spotlight/Poster, 开题/中期/硕博答辩, NSFC/grants & Job Talk
+│   │   ├── disciplines-stem.md                      # CS/AI/Systems/Security, Math/Stats/TCS & Physics/EE/IC/Robotics
+│   │   ├── disciplines-biomed-econ-humanities.md    # BioMed/Clinical/Chem, Econ/Finance/Mgmt & Humanities/Law/Qual
+│   │   ├── languages-and-typography.md              # Academic English, 中文学术汇报 (去Word化) & CN-EN bilingual tracks
+│   │   ├── palettes-and-layouts.md                  # 6 scholarly HEX palettes, anti-AI-slop laws & 12 16:9 layouts
+│   │   ├── spine_template.md                        # Canonical 14-slide Session Note per-slide blueprint
+│   │   ├── typography_rules.md                      # 16:9 EMU/inch geometry, 3 vertical zones & 7 core grid models
+│   │   ├── omml_syntax_guide.md                     # Native OpenXML <a14:m><m:oMath> LaTeX-to-OMML guide
+│   │   ├── architecture_diagrams.md                 # Native DrawingML vector diagram specification
+│   │   └── marginal_annotations.md                  # 5-class Lab Research Synergy callouts (旁注)
+│   ├── scripts/                                     # build_deck.js, crop_figures.py, latex_to_omml.py, verify_deck.py
+│   ├── resources/                                   # Declarative themes/palettes JSON & sample figure-backed decks
+│   └── agents/openai.yaml
+└── figure/                                          # Extensible academic & scientific figure generation hub
+    ├── SKILL.md                                     # Sub-skill registry, tag/intent router, guardrails & plug-in spec
+    ├── agents/openai.yaml
+    ├── nature-figure-skill/                         # :nature (default) — Python/R journal workflow + FigureForge studio
+    │   ├── SKILL.md                                 # Sub-skill entrypoint & route dispatcher
+    │   ├── README.md / README.zh-CN.md              # Bilingual showcase, templates & quick start
+    │   ├── LICENSE / DERIVATIVE_NOTICE.md           # MIT license & upstream attribution
+    │   ├── figureforge/                             # :figureforge — No-code SVG studio (22 templates, 16 palettes)
+    │   ├── assets/                                  # 9 showcase SVG atlases (83 panels) + workflow diagrams
+    │   ├── skills/nature-figure/                    # Contract-first Python/R engine, 14 references & figures4papers demos
+    │   ├── skills/nature-*/                         # Bundled companion nature-* reference modules
+    │   └── scripts/                                 # Zero-dependency template, SVG & link/schema checks
+    └── <future-sub-skill>/                          # Plug-in slot for future schematic / TikZ / bio / 3D figure skills
 ```
 
 ---
@@ -51,13 +64,15 @@ cs-writing-skill/
 | **`plain`** | [plain/SKILL.md](plain/SKILL.md) | Explain difficult concepts clearly without hand-waving | Diagnose where understanding breaks, then walk one small domain-native numerical example step by step |
 | **`humanize`** | [humanize/SKILL.md](humanize/SKILL.md) | Remove AI voice, enforce `paper-boundaries` academic framing, and strip visual/UI slop | Rewrite CN/EN/bilingual prose, frame non-defensive papers & rebuttals (`:paper-boundaries` / `:academic`), scrub generator fingerprints, humanize image prompts & UI |
 | **`cs-report-ppt`** | [cs-report-ppt/SKILL.md](cs-report-ppt/SKILL.md) | Multi-scenario, multi-disciplinary academic slide deck generator | Build figure-dominant 16:9 `.pptx`/`.pdf` decks with native OMML math across journal clubs, conference talks, thesis defenses, grants, and job talks |
+| **`figure`** | [figure/SKILL.md](figure/SKILL.md) | Extensible scientific & publication figure generation hub | Produce *Nature*-grade multi-panel Python/R vector bundles (`SVG` + `PDF` + `600 DPI TIFF`), pick from 83 chart-atlas panels, or prototype layouts in the no-code **FigureForge** SVG studio |
 
 > **`paper-boundaries` Integration Note:** Standalone `paper-boundaries` (Press-Conference Principle / `发布会原则`) is now built directly into `humanize` at [humanize/paper-boundaries.md](humanize/paper-boundaries.md). Invoke `/humanize :paper-boundaries` for pure narrative/experiment restructuring, or `/humanize :academic` to chain narrative surgery *before* section-by-section scholarly prose de-slopping.
 
-The three skills remain cleanly orthogonal:
+The four skills remain cleanly orthogonal:
 - **`plain`** governs *how to repair mental models and explain hard mechanisms with concrete domain-native numbers*;
 - **`humanize`** governs *how to structure non-defensive arguments (`:paper-boundaries`) and strip synthetic AI tells across text, academic writing, imagery, and UI*;
-- **`cs-report-ppt`** governs *how to turn papers, surveys, experiment logs, theses, and grants into publication-grade slide decks*.
+- **`cs-report-ppt`** governs *how to turn papers, surveys, experiment logs, theses, and grants into publication-grade slide decks*;
+- **`figure`** governs *how to design, plot, edit, and export submission-grade scientific figures and multi-panel composites via modular figure sub-skills (starting with `nature-figure-skill`)*.
 
 ---
 
@@ -95,13 +110,27 @@ Combine tags across Scenario, Discipline, Language Track, and Palette (e.g., `/c
 
 ---
 
+## `/figure` Sub-Skill Hub & Tag Matrix
+
+`figure` ([figure/SKILL.md](figure/SKILL.md)) is an extensible **scientific figure dispatcher** designed to host multiple specialized plotting, schematic, and illustration sub-skills under `figure/<sub-skill-dir>/`. It currently integrates [`jing1312/nature-figure-skill`](https://github.com/jing1312/nature-figure-skill) at [figure/nature-figure-skill/](figure/nature-figure-skill/SKILL.md) ([LICENSE](figure/nature-figure-skill/LICENSE)) and provides a 3-step plug-in specification for future figure engines.
+
+| Route / Axis | Tags | Loaded Module(s) | Core Capabilities |
+|:---|:---|:---|:---|
+| **1. Nature Figure Workflow** *(Default)* | `:nature` *(default)*, `:plot`, `:contract` | [nature-figure-skill/SKILL.md](figure/nature-figure-skill/SKILL.md), [skills/nature-figure/SKILL.md](figure/nature-figure-skill/skills/nature-figure/SKILL.md), [figure-contract.md](figure/nature-figure-skill/skills/nature-figure/references/figure-contract.md) | Contract-first manuscript plotting: 1-sentence claim → 4 page archetypes → single-backend gate (`Python` or `R`) → non-occluding legends (`add_stat_strip`) → `save_pub_set` / `save_pub_r` (`SVG` + `PDF` + `600 DPI TIFF`) |
+| **2. Visual No-Code Studio** | `:figureforge` (`:editor`, `:nocode`, `:canvas`) | [figureforge/README.md](figure/nature-figure-skill/figureforge/README.md), [nature-figure-skill/README.md](figure/nature-figure-skill/README.md) | Browser-based **FigureForge** infinite canvas & WYSIWYG SVG editor: 22 publication-grade templates, 16 series-linked palettes, 83 remixable panels, 1-click `SVG`/`PDF`/`TIFF`/`PNG`/`PPTX` export (skips `"Python or R?"` gate) |
+| **3. Backend & Demo Tracks** | `:python` (`:matplotlib`), `:r` (`:ggplot2`) | [api.md](figure/nature-figure-skill/skills/nature-figure/references/api.md), [common-patterns.md](figure/nature-figure-skill/skills/nature-figure/references/common-patterns.md), [demos.md](figure/nature-figure-skill/skills/nature-figure/references/demos.md), [r-workflow.md](figure/nature-figure-skill/skills/nature-figure/references/r-workflow.md) | `apply_publication_style()` (`5–7 pt` at `89/183 mm`, `svg.fonttype='none'`, `pdf.fonttype=42`), semantic `PALETTE` & `PALETTE_NMI_PASTEL`, 9 `figures4papers` demo projects, and `ggplot2`+`patchwork`+`ComplexHeatmap` R scaffolds |
+| **4. Chart Selection, 83-Panel Atlas & QA** | `:select` (`:chart-type`), `:atlas`, `:qa` (`:audit`) | [figure-selection.md](figure/nature-figure-skill/skills/nature-figure/references/figure-selection.md), [atlas-gallery.md](figure/nature-figure-skill/skills/nature-figure/references/atlas-gallery.md), [qa-contract.md](figure/nature-figure-skill/skills/nature-figure/references/qa-contract.md) | Task-to-chart routing, 9 SVG showcase atlases (`Base`/`Pro`/`Bio`/`Extra`/`Plus`/`Ultra`/`Max`/`Nova`/`Apex` — 83 panels), and pre-submission typography/statistics/blot/vector QA |
+| **5. Future Sub-Skill Slots** | `:arch`/`:tikz`, `:bio`, `:3d`, `:interactive` *(extensible)* | See §5 in [figure/SKILL.md](figure/SKILL.md) | 3-step plug-in architecture (`figure/<new-skill-dir>/SKILL.md`) for dropping in future schematic, `TikZ`, biomedical illustration, and 3D figure skills as normal Git-tracked directories |
+
+---
+
 ## MIRASIM
 
 ### Install
 
 1. Open **Plugins → Skill Pack → Install from GitHub**
 2. Enter the repo URL: `https://github.com/RichardJie/cs-writing-skill`
-3. MIRASIM discovers every top-level subdirectory containing a `SKILL.md` (`plain`, `humanize`, `cs-report-ppt`) and installs each as an independent skill in `~/.mirasim/skills/<skill-name>/`.
+3. MIRASIM discovers every top-level subdirectory containing a `SKILL.md` (`plain`, `humanize`, `cs-report-ppt`, `figure`) and installs each as an independent skill in `~/.mirasim/skills/<skill-name>/`.
 
 *(Upgrading from an earlier version? Remove the retired `~/.mirasim/skills/paper-boundaries` card if present; `paper-boundaries` now runs via `/humanize :paper-boundaries`.)*
 
@@ -123,16 +152,19 @@ Use **slash commands** in the MIRASIM chat input:
 | `/humanize :claude` / `:deepseek` | Scrub generator-specific rhetorical tells with adversarial cross-family guardrails |
 | `/humanize :image :mj` / `:ui` | Engineer optical photorealistic image prompts or refactor vibe-coded SaaS UI slop |
 | `/cs-report-ppt` | Build a 14-slide figure-dominant academic deck from a paper PDF (supports scenario/discipline/language tags) |
+| `/figure` / `/figure :nature :python` | Generate *Nature*-grade multi-panel scientific plots (`SVG` + `PDF` + `600 DPI TIFF`) via contract-first Python or R pipelines |
+| `/figure :figureforge` / `/figure :select` | Launch no-code SVG layout templates in FigureForge or recommend optimal chart families from raw result tables |
 
 Natural-language triggers also work directly:
 - *"Use plain to explain what grouped-query attention is actually computing"*
 - *"humanize :paper-boundaries — reframe our mixed latency/accuracy table and abstract"*
 - *"humanize :chinese :wechat :deepseek — 去掉这篇公众号草稿的 DeepSeek 金句味和大厂黑话"*
 - *"cs-report-ppt :phd-defense :cs :zh :oxford_navy — generate my PhD defense deck"*
+- *"figure :nature :python — turn this ablation CSV into a 183mm two-column Nature multi-panel figure"*
 
 ### Note on `SKILL.md` Descriptions
 
-MIRASIM reads the `description` field from each top-level `SKILL.md` frontmatter using a **single-line** parser. Never use YAML folded or block scalars (`>-` or `|`); always use a single-line double-quoted string (`description: "..."`), and never place extra `SKILL.md` files inside nested reference folders.
+MIRASIM reads the `description` field from each `SKILL.md` frontmatter using a **single-line** parser. Never use YAML folded or block scalars (`>-` or `|`); always use a single-line double-quoted string (`description: "..."`), and never name plain reference documents inside `references/` as `SKILL.md`.
 
 ---
 
@@ -147,6 +179,7 @@ rm -rf ~/.claude/skills/paper-boundaries
 cp -R /tmp/cs-writing-skill/plain ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/humanize ~/.claude/skills/
 cp -R /tmp/cs-writing-skill/cs-report-ppt ~/.claude/skills/
+cp -R /tmp/cs-writing-skill/figure ~/.claude/skills/
 ```
 
 Project-scoped install: copy skill directories into `<project>/.claude/skills/`.
@@ -160,6 +193,7 @@ Mention the skill by name or invoke explicitly with tags:
 - `$humanize :chinese` / `$humanize :bilingual`
 - `$humanize :image :flux` / `$humanize :ui`
 - `$cs-report-ppt :journal-club :cs :bilingual`
+- `$figure :nature :python` / `$figure :nature :r` / `$figure :figureforge`
 
 ---
 
