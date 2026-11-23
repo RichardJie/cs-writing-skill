@@ -1,0 +1,4 @@
+upstream_url: https://github.com/PlutoLei/paperbanana-skill
+commit_sha: 666160731f41cdde623290f1a36fd0ce6f8a2891
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /SKILL.md, /.claude-plugin/**, /plugins/**, /docs/**, /scripts/**, /tests/** to exclude heavy binary showcase/asset blobs.

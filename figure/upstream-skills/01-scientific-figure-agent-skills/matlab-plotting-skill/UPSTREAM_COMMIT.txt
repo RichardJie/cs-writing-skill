@@ -1,0 +1,6 @@
+﻿Repository: Kkkakania/matlab-plotting-skill
+URL: https://github.com/Kkkakania/matlab-plotting-skill
+Commit: 5122e25210f376148f6af85fea293be7700817be
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

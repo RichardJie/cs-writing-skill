@@ -1,0 +1,102 @@
+---
+myimage1: "../img/mistake/calculation_error.png"
+pathSlug: "calculation_error"
+mytitle: "Calculation errors"
+output:
+  html_document:
+      template: template_caveat.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+
+---
+
+
+<br><br>
+<div class="mycontent">
+
+
+This is probably the most obvious pitfall example of the collection, but is probably the most frequent one as well. Number inconsistencies on a graphic make it completely useless.
+
+# Percentages don't add up to 100%
+***
+For example, when displaying percentages on a pie chart, double-check that the percents sum to 100%:
+
+<br><br>
+
+<center>
+<img src="IMG/calc_error2.jpg" alt="img" width="500" height="600">
+</center>
+
+<center>
+Source: [WTF Visualizations](http://viz.wtf/post/162907112938/i-guess-its-best-to-show-all-the-data-and-use-a#notes)
+</center>
+<br><br>
+
+Here, alsoe note that using an exploded 3D pie chart is probably the worst way to convey information ever invented. ([Read more about it](http://www.data-to-viz.com/caveat/pie.html))
+
+
+
+# Values don't match visuals
+***
+In the following example, the 45% annotation is linked with the biggest part of the donut chart; clearly something is incorrect.
+
+<br><br>
+
+<center>
+<img src="IMG/calc_error1.png" alt="img" width="400" height="500">
+</center>
+
+<center>
+Source: [WTF Visualizations](http://viz.wtf/post/169392205697/fewer-people-would-have-a-hard-time-giving-up)
+</center>
+<br><br>
+
+
+
+
+
+
+
+
+# Going further
+***
+
+- On a daily basis, the website [WTF Visualization](http://viz.wtf) shows visualizations that make no sense. Check it out or follow them on [twitter](https://twitter.com/WTFViz).
+
+
+<br>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

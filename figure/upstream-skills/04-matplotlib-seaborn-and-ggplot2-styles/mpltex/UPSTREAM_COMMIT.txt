@@ -1,0 +1,4 @@
+Repository: https://github.com/liuyxpp/mpltex
+Branch: master
+Commit SHA: 99d7bd067cfc3f9da2b26e30f0752fcd8e2b8516
+License: BSD-3-Clause

@@ -1,0 +1,10 @@
+title: Gravitons
+tags:
+  - physics
+  - quantum field theory
+  - particle physics
+  - gravity
+  - string theory
+  - Feynman diagrams
+description: >-
+  One-loop [functional renormalization group](https://en.wikipedia.org/wiki/Functional_renormalization_group) flow $\partial_t V_g$ of a graviton effective potential drawn as [Feynman diagrams](../feynman-building-blocks): a self-energy loop with two three-graviton vertices plus a tadpole with one four-graviton vertex, each carrying a regulator insertion (crossed circle). Every line is a graviton propagator. Expanding the Einstein-Hilbert action around flat space produces graviton self-interactions at every order, and because Newton's constant has negative mass dimension, perturbative quantum gravity is non-renormalizable, motivating approaches like asymptotic safety and string theory.

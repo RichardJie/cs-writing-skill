@@ -1,0 +1,5 @@
+repository: https://github.com/james20141606/sci-figure-workflow
+commit_sha: 5c70a24be780338a77ed3a2071f7d0aa0026d39d
+branch: main
+license: See upstream repository / README
+stars_at_harvest: 42

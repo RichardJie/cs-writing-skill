@@ -1,0 +1,4 @@
+Repository: https://github.com/kassambara/ggpubr
+Branch: master
+Commit SHA: e46af48626049ece687e13ade833cc0ea43c9252
+License: GPL-2.0

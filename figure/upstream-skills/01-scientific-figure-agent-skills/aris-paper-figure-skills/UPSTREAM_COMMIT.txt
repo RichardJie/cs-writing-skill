@@ -1,0 +1,6 @@
+﻿Repository: wanshuiyin/Auto-claude-code-research-in-sleep
+URL: https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep
+Commit: 4ba94ae2a1c1fbbb14858750dd8764cabf6c28bd
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-checkout of figure skills (skills/paper-figure, skills/paper-illustration, skills/figure-spec, skills/figure-description, and Codex equivalents under skills/skills-codex/) + LICENSE.

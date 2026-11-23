@@ -1,0 +1,335 @@
+# Draw.io MCP Server
+
+The official [draw.io](https://www.draw.io) MCP (Model Context Protocol) server that enables LLMs to create and open diagrams in the draw.io editor.
+
+[![An AI assistant turns a prompt for a customer refund flowchart into an editable draw.io diagram in the chat, with Open in draw.io, Copy and Download diagram buttons](https://www.drawio.com/img/mcp/drawio-mcp-hero-poster.jpg?v=7)](https://www.drawio.com/mcp/)
+
+▶ [Watch the video](https://www.drawio.com/mcp/) and set up draw.io in your AI assistant on drawio.com/mcp.
+
+## Four Ways to Create Diagrams
+
+This repository offers four approaches for integrating draw.io with AI assistants. Pick the one that fits your setup:
+
+| | [MCP App Server](#mcp-app-server) | [MCP Tool Server](#mcp-tool-server) | [Assistant Plugins](#assistant-plugins-claude-code-codex-cli-github-copilot) | [Project Instructions](#alternative-project-instructions-no-mcp-required) |
+|---|---|---|---|---|
+| **How it works** | Renders diagrams inline in chat | Opens diagrams in your browser | Generates `.drawio` files, optional PNG/SVG/PDF export or browser URL | Claude generates draw.io URLs via Python |
+| **Diagram output** | Interactive viewer embedded in conversation | draw.io editor in a new tab | `.drawio`, `.drawio.png` / `.svg` / `.pdf`, or browser URL | Clickable link to draw.io |
+| **Requires installation** | No (hosted at `mcp.draw.io`) | Yes (npm package) | One-line plugin install (draw.io Desktop only for PNG/SVG/PDF export) | No — just paste instructions |
+| **Supports XML, CSV, Mermaid** | ✅ All three, and PlantUML | ✅ All three | XML and Mermaid (Mermaid converted by draw.io Desktop or an installed Chrome, Edge or Chromium) | ✅ All three |
+| **Editable in draw.io** | Via "Open in draw.io" button | ✅ Directly | ✅ Directly | Via link |
+| **Works with** | Claude.ai, ChatGPT, VS Code, Cursor, GitHub Copilot CLI, any MCP Apps host | Claude Desktop, Cursor, OpenCode, Gemini CLI, any MCP client | Claude Code, Codex CLI, GitHub Copilot, Cursor, Antigravity, OpenCode | Claude.ai (with Projects) |
+| **Best for** | Inline previews in chat | Local desktop workflows | Local development workflows | Quick setup, no install needed |
+
+### Mermaid in, editable draw.io out
+
+Every way takes Mermaid and gives a native draw.io diagram, not a picture of one: shapes, connectors that end on the shapes they join, and labels that are the shapes' own text, so the diagram can be edited, moved and restyled in draw.io like one drawn there. draw.io converts Mermaid with its own parser and layout, the same in the editor, draw.io Desktop, the tool server and the app server's viewer: the 28 diagram types of the [Mermaid reference](shared/mermaid-reference.md), plus swimlane, use case, agent flow, railroad and Cynefin diagrams.
+
+- **App Server:** flowcharts, ER and sequence diagrams are converted on the server into editable cells, laid out and styled in the calm theme (see [MCP App Server](#mcp-app-server)); the inline viewer converts the other types, and "Open in draw.io" opens those with the Mermaid kept on them for editing the source.
+- **Tool Server:** the draw.io editor converts it when the link opens.
+- **Plugins:** draw.io Desktop's CLI converts it to a `.drawio` file, or without Desktop the skill's `mermaid-to-drawio.js` runs the same converter in an installed Chrome, Edge or Chromium.
+
+[`mcp-app-server/test/mermaid-types.test.js`](mcp-app-server/test/mermaid-types.test.js) converts a diagram of each type both ways and checks the result. In a few types some parts still come out as drawings: loose lines in timelines, tree views, Ishikawa, railroad, event modeling and Cynefin diagrams, radar curves as images, and names beside their shapes in architecture and Wardley diagrams ([details](mcp-app-server/AGENTS.md#mermaid-conversion)).
+
+---
+
+## Guides
+
+User guides with tested prompts and examples are in the draw.io documentation, and the setup for each assistant is on [drawio.com/mcp](https://www.drawio.com/mcp/):
+
+- [Write prompts](https://www.drawio.com/docs/manual/generate/ai-assistants/prompts/): Mermaid or draw.io XML, speed and models
+- [Diagram types and examples](https://www.drawio.com/docs/manual/generate/ai-assistants/diagram-types/) and the [gallery of every diagram type](https://www.drawio.com/docs/manual/generate/ai-assistants/gallery/)
+- [Change and style diagrams](https://www.drawio.com/docs/manual/generate/ai-assistants/edit-and-style/): changes by prompt, color themes, styles
+- [Install options and output formats](https://www.drawio.com/docs/manual/generate/drawio-mcp-server/)
+- [Diagram viewer](https://www.drawio.com/docs/manual/generate/ai-assistants/diagram-viewer/)
+
+The gallery is generated from [`docs/images/gallery/gallery.json`](docs/images/gallery/gallery.json) and the editable light and dark SVGs next to it; drawio.com reads them when the site is built.
+
+---
+
+## MCP App Server
+
+The MCP App server renders draw.io diagrams **inline** in AI chat interfaces using the [MCP Apps](https://modelcontextprotocol.io/docs/extensions/apps) protocol. Instead of opening a browser tab, diagrams appear directly in the conversation as interactive iframes.
+
+The official hosted endpoint is available at:
+
+```
+https://mcp.draw.io/mcp
+```
+
+Add this URL as a remote MCP server in Claude.ai, ChatGPT, VS Code (GitHub Copilot), Cursor, GitHub Copilot CLI, or any MCP Apps-compatible host — no installation required. On Claude.ai, draw.io is also listed in the [connector directory](https://claude.ai/directory/draw-io) and can be added from there in one click; in ChatGPT and Codex, in the [plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6abea666ca5081919375ed8d1d38da95). In Cursor (≥ 2.6), diagrams render inline in the Agent chat ([one-click install](https://cursor.com/en/install-mcp?name=drawio&config=eyJ1cmwiOiJodHRwczovL21jcC5kcmF3LmlvL21jcCJ9)); on older builds, use the stdio [`@drawio/mcp`](mcp-tool-server/README.md) tool server instead. In GitHub Copilot CLI, run `copilot mcp add --transport http drawio https://mcp.draw.io/mcp`; a terminal can't show diagrams inline, so it gets a link that opens each diagram in draw.io.
+
+You can also run the server locally via Node.js or the [`jgraph/drawio-mcp`](https://hub.docker.com/r/jgraph/drawio-mcp) Docker image, or deploy your own instance to Cloudflare Workers.
+
+**Tools:**
+- **`create_diagram`** — Renders draw.io XML, Mermaid (28 diagram types), PlantUML or draw.io CSV as an interactive diagram inline in chat. Mermaid flowcharts, ER and sequence diagrams, PlantUML sequence and activity diagrams and CSV are converted on the server into editable draw.io shapes, laid out and styled, and a syntax error comes back with its line and how to fix it
+- **`search_shapes`** — Searches 10,000+ shapes across all draw.io libraries (AWS, Azure, GCP, P&ID, electrical, Cisco, Kubernetes, UML, BPMN, etc.) by keyword, supplemented by the draw.io icon service (brand logos and general-purpose concept icons) when the built-in libraries have no good match. Returns exact style strings that can be used directly in XML. Use this to find the correct shape before calling `create_diagram`.
+- **`get_drawio_reference`** — Returns the XML or Mermaid generation reference, which the model reads once per format before its first diagram.
+- **`create_semantic_diagram`** — The fast mode for flowcharts and swimlane diagrams, used only when you ask for a quick or cheap diagram (see below).
+
+**Fast mode.** Ask for speed or economy in so many words, in any language, and the model describes a flowchart or swimlane diagram instead of placing every shape: the steps, the lanes, the transitions and a row and a column per step. The server lays it out, routes the lines and styles it. For example:
+
+- "**Quickly** draw a flowchart of returning a book at a library kiosk: scan the library card, scan the book, check for a reservation or a late fee, then print a receipt. **Just a rough sketch is fine.**"
+- "Draw a swimlane diagram for requesting a new laptop, with lanes for Employee, Manager and IT. **Keep it cheap: use as few tokens as possible.**"
+
+Without such words, and for every other diagram type, the model uses `create_diagram`, which places the shapes with more care. In the benchmark of 15 November 2026 (Claude Code with Sonnet 5.5 and Opus 5.5, 20 prompts in English and German written for the test, three runs each), the models chose the right tool in 118 of 120 sessions. With the wish, the diagram came 3 to 4 times sooner (Sonnet 14 s instead of 46 s, Opus 27 s instead of 108 s), with less than half the output tokens. In blind comparisons with the diagrams the models placed themselves, the fast ones won 0.61 (Sonnet) and 0.67 (Opus) of the judgements, but each model lost on one flowchart without lanes. Limits:
+
+- It draws flowcharts and swimlanes only, in the calm theme, without styles of your choosing. A flowchart asked for as a "rough sketch" therefore comes in the calm theme, not with the hand-drawn look `create_diagram` gives a sketch.
+- Flowcharts without lanes get up to 24 steps; larger ones are drawn with `create_diagram`.
+
+Self-hosted servers leave the tool out with `DRAWIO_SEMANTIC_TYPES=off`. Details are in [`shared/semantic/FAST-MODE.md`](shared/semantic/FAST-MODE.md).
+
+**Mermaid, PlantUML and CSV.** Besides draw.io XML, `create_diagram` takes Mermaid, PlantUML and draw.io CSV. The model picks a format, or uses the one you ask for or paste. These types are converted on the server into editable draw.io shapes, laid out and styled, and the model gets the diagram back as draw.io XML:
+
+- **Mermaid:** flowcharts (`flowchart`, `graph`), ER diagrams and sequence diagrams
+- **PlantUML:** sequence diagrams, and activity diagrams in the new syntax
+- **CSV:** draw.io's [CSV import format](https://www.drawio.com/docs/manual/insert/insert-from-csv/) with the tree, flow and `none` layouts; each row keeps its columns as shape data
+
+A syntax error comes back to the model with its line and how to fix it, so the model can correct the source and send it again. Everything else goes to the viewer, which converts it with draw.io's own converters, as *Arrange > Insert > Advanced* does in the editor, and the model gets a note that says so: the other Mermaid types (class, state, Gantt, mind map, …), the other PlantUML types (class, use case, component, state, activity in the old syntax, …) and CSV with `# list`, `# container`, the `circle` layout or a custom layout. Self-hosted servers leave all of it to the viewer with `DRAWIO_CONVERT=off`.
+
+One example per format, each converted on the server. Mermaid, a flowchart with a decision shape and labelled connectors:
+
+```
+flowchart LR
+  A[Order received] --> B{Paid?}
+  B -->|yes| C[Ship order]
+  B -->|no| D[Send reminder]
+```
+
+PlantUML, a sequence diagram with a lifeline for each participant and a line for each message:
+
+```
+@startuml
+Customer -> Shop: Place order
+Shop --> Customer: Confirmation
+@enduml
+```
+
+CSV, an org chart drawn as a tree, each shape keeping its `name` and `manager` as shape data:
+
+```
+# label: %name%
+# connect: {"from": "manager", "to": "name", "invert": true}
+# layout: verticaltree
+name,manager
+CEO,
+CTO,CEO
+CFO,CEO
+```
+
+**[Full documentation →](mcp-app-server/README.md)**
+
+> **Note:** Diagrams appear inline in hosts that support the MCP Apps extension, such as Claude.ai, ChatGPT, VS Code with GitHub Copilot and Cursor. In other hosts, such as GitHub Copilot CLI, the tool still works and answers with a link that opens the diagram in draw.io.
+
+---
+
+## MCP Tool Server
+
+The original MCP server that opens diagrams directly in the draw.io editor. Supports XML, CSV, and Mermaid.js formats with lightbox and dark mode options. Published as [`@drawio/mcp`](https://www.npmjs.com/package/@drawio/mcp) on npm.
+
+Quick start: `npx @drawio/mcp`
+
+Setup instructions are available for Claude Desktop, Claude Code, VS Code (GitHub Copilot), Cursor (with one-click install), OpenCode, and Gemini CLI (as an extension of this repository).
+
+**[Full documentation →](mcp-tool-server/README.md)**
+
+---
+
+## Assistant Plugins (Claude Code, Codex CLI, GitHub Copilot)
+
+The `drawio` skill packaged as a plugin for AI coding assistants (under [`plugins/`](plugins/README.md)): it generates native `.drawio` files, with optional export to PNG, SVG, or PDF (with embedded XML so the exported file remains editable in draw.io) — or a browser URL that opens the diagram directly in `app.diagrams.net`. The Claude Code and Cursor plugins also bundle the hosted MCP App Server, so diagrams show inline where the host supports it; the Codex and Copilot ports need no MCP setup. The same skill ships for four hosts:
+
+**Claude Code** ([full documentation →](plugins/claude-code/README.md)) — install from this repo's marketplace:
+
+```
+/plugin marketplace add jgraph/drawio-mcp
+/plugin install drawio@drawio
+```
+
+Or load it directly from a local clone with `claude --plugin-dir ./plugins/claude-code`.
+
+**Codex CLI** ([full documentation →](plugins/codex/drawio/README.md)) — install from the same marketplace repo:
+
+```bash
+codex plugin marketplace add jgraph/drawio-mcp
+codex plugin add drawio@drawio
+```
+
+**GitHub Copilot CLI** ([full documentation →](plugins/copilot/README.md)) — install from the same marketplace repo:
+
+```bash
+copilot plugin marketplace add jgraph/drawio-mcp
+copilot plugin install drawio@drawio
+```
+
+Other Copilot surfaces (VS Code agent mode, the coding agent, code review) load the same skill from a repo's `.github/skills/` directory instead — see the [plugin README](plugins/copilot/README.md).
+
+**Cursor** ([full documentation →](plugins/cursor/README.md)) — the same skill plus the hosted MCP App Server, so diagrams also render inline in Cursor's Agent chat. Install it from the Cursor Marketplace (**Customize** → **drawio** → **Install**), or copy `plugins/cursor` to `~/.cursor/plugins/local/drawio` and reload the window.
+
+**Antigravity** ([full documentation →](plugins/antigravity/README.md)) — install from the plugin's directory on GitHub:
+
+```bash
+agy plugin install https://github.com/jgraph/drawio-mcp/tree/main/plugins/antigravity
+```
+
+**OpenCode** needs no plugin at all: it discovers skills in `.opencode/skills/` and `.claude/skills/` (and their `~/` equivalents), so the Claude Code skill folder works as-is — see [OpenCode (no plugin needed)](plugins/README.md#opencode-no-plugin-needed) for the one-line install.
+
+By default, the plugin writes a `.drawio` file and opens it in draw.io. Mention a format in your request to change the output:
+- **png / svg / pdf** — exports using the draw.io desktop CLI with `--embed-diagram`
+- **url** — compresses the XML with Node.js's built-in `zlib` and opens the result at `app.diagrams.net`. No draw.io Desktop needed; the `.drawio` file is kept locally as a persistent copy.
+
+---
+
+## Alternative: Project Instructions (No MCP Required)
+
+An alternative approach that works **without installing anything**. Add instructions to a Claude Project that teach Claude to generate draw.io URLs using Python code execution. No MCP server, no desktop app — just paste and go.
+
+**[Full documentation →](project-instructions/README.md)**
+
+---
+
+## Diagram layouts
+
+Two optional, independent layout passes can run after the AI generates a diagram — one re-arranges the nodes, the other only reroutes the edges. Which are available depends on the approach:
+
+| Layout pass | What it does | App Server (`create_diagram`) | Tool Server (`open_drawio_xml`) | Assistant Plugins | Project Instructions |
+|---|---|---|---|---|---|
+| **ELK auto-layout** (`postLayout: "elk"`) | Re-arranges nodes into a clean layered layout; routes the edges as part of it | ✅ | — | ✅ via draw.io Desktop CLI (`--layout`) | — |
+| **libavoid routing** (`routing: "libavoid"`) | Keeps node positions; reroutes connectors orthogonally *around* the shapes | ✅ | ✅ from **v1.3.0** | ✅ via draw.io Desktop CLI (`--layout libavoid`) | — |
+
+- These apply to **draw.io XML** diagrams. **Mermaid** diagrams are auto-laid-out already, so neither pass is needed.
+- The **App Server** applies these in the inline viewer after the diagram renders; the **Tool Server** applies libavoid server-side before opening the draw.io editor; the **plugins** run them through the locally installed draw.io Desktop CLI.
+- Pick one, not both: ELK already routes its own edges, so adding libavoid on top is redundant. Use `postLayout` to re-arrange a layout, or `routing` to tidy the connectors on a layout you placed deliberately.
+
+---
+
+## Data Residency & Offline Use
+
+If you're deploying in an environment with strict data restrictions, here is exactly
+where diagram data goes for each approach.
+
+**No component sends your diagram to a cloud rasterizer.** `convert.diagrams.net` (or
+any cloud export endpoint) is not called anywhere in this repository, and there is no
+"local dependency missing → fall back to cloud" path. PNG/SVG/PDF export happens only
+in the assistant plugins, which shell out to your **locally installed draw.io Desktop CLI**
+(located via `which drawio`); if it isn't installed, the `.drawio` file is kept and
+nothing is sent.
+
+### Does your diagram leave the machine?
+
+| Approach | Diagram leaves the machine? |
+|---|---|
+| **MCP App Server — hosted (`mcp.draw.io`)** | **Yes** — it is sent to the draw.io server as the MCP request. Self-host instead (below) to keep it local. |
+| **MCP App Server — self-hosted** (local Node, the `jgraph/drawio-mcp` Docker image, or your own Cloudflare) | No — processed by your server and embedded in HTML that renders client-side. |
+| **MCP Tool Server** (`@drawio/mcp`) | No — carried in the URL `#fragment`, which browsers do not transmit to the server. |
+| **Assistant Plugins** (Claude Code, Codex CLI, GitHub Copilot, Cursor, Antigravity) | No — written locally and exported by your local draw.io Desktop CLI. Without Desktop, Mermaid is converted in a local headless browser, which downloads only draw.io's scripts (viewer.diagrams.net) and fonts (Google Fonts); its `--link` fallback carries the Mermaid in the URL `#fragment`. The Claude Code and Cursor plugins also bundle the hosted App Server: diagrams drawn with it are sent to `mcp.draw.io` (row above). |
+
+By default the servers do not write diagram content to their logs — only request
+metadata (method, session, status, timing). The Cloudflare-hosted App Server logs
+response bodies only when run with `DEBUG=true`.
+
+### Reducing external requests
+
+Even when the diagram itself stays local, the rendering loads draw.io's web-app /
+viewer **code** from `app.diagrams.net` and `viewer.diagrams.net` by default. These
+fetch application code and assets — not your diagram — but they are still outbound
+requests. To reduce or remove them:
+
+- **App Server:** build with the `VIEWER_PATH` environment variable to inline the
+  viewer instead of loading it from `viewer.diagrams.net`. Server-side, it makes a
+  version check against `viewer.diagrams.net` at startup and daily (no data, 5 s
+  timeout, safe to block), and `search_shapes` queries `icons.diagrams.net` with the
+  search terms unless `DRAWIO_ICON_SERVICE_URL=off`. Set `DRAWIO_BASE_URL` to a
+  self-hosted draw.io instance to have "Open in draw.io" and the link for clients
+  without inline diagrams open there; the inline viewer still loads its code and
+  shape images from diagrams.net.
+- **Tool Server:** set the `DRAWIO_BASE_URL` environment variable to a self-hosted
+  draw.io instance. Its two server-side passes also fetch **code** from
+  `viewer.diagrams.net` once per draw.io release and cache it per user: the libavoid
+  routing core (`routing: "libavoid"`, also primed at install time) and the
+  drawio-elk bundle (`postLayout: "elk"`, fetched on first use, overridable with
+  `DRAWIO_ELK_URL`). Not requesting those passes makes no such call; the diagram is
+  never part of one either way.
+- **Assistant Plugins:** the opt-in `url` output mode opens the diagram at
+  `app.diagrams.net` (hardcoded — no `DRAWIO_BASE_URL` equivalent). Use the default
+  `.drawio` output or local Desktop export instead if you need to avoid that request.
+
+### Your LLM is a separate consideration
+
+The diagram is *generated* by the LLM. If you use a hosted model, the diagram content
+is produced in that provider's cloud regardless of where this MCP server runs.
+End-to-end isolation requires a locally hosted model as well.
+
+### Verifying
+
+The only reliable way to confirm a deployment makes **no** outbound calls is to run it
+with network egress blocked (or watch the browser's Network tab) and verify it still
+renders. We recommend this for any strict-isolation deployment.
+
+---
+
+## XML Reference (Single Source of Truth)
+
+The draw.io XML generation reference — covering edge routing, containers, layers, tags, metadata, dark mode, style properties, and XML well-formedness — lives in a single canonical file:
+
+**[`shared/xml-reference.md`](shared/xml-reference.md)**
+
+All four approaches above use this file as their single source of truth for LLM prompts:
+
+| Approach | How it accesses the reference |
+|----------|-------------------------------|
+| MCP App Server | Reads the file at startup / build time and returns it from the `get_drawio_reference` tool |
+| MCP Tool Server | Reads the file at startup (from repo or bundled copy via `prepack`) and returns it from the `get_drawio_reference` tool; the `open_drawio_xml` description carries the condensed [`shared/xml-essentials.md`](shared/xml-essentials.md) |
+| Assistant Plugins (Claude Code, Codex CLI, GitHub Copilot) | Fetch the condensed [`shared/xml-essentials.md`](shared/xml-essentials.md) by its GitHub raw URL, and the full reference only for layers, tags, metadata, tables, cross-functional grids and dark-mode colors |
+| Project Instructions | Users copy the condensed `shared/xml-essentials.md` into their Claude Project, and the full reference only when they need those topics |
+
+When updating XML generation guidance, edit `shared/xml-reference.md` — changes propagate to all consumers automatically. If the change touches a rule that `shared/xml-essentials.md` summarizes, update that line there too.
+
+---
+
+## Shape Search Index
+
+The `search_shapes` tool is powered by a pre-built index of all draw.io shapes. The index is generated from the live draw.io client (`https://app.diagrams.net/js/app.min.js`) by running all sidebar palette initializations in Node.js via jsdom and capturing the shape data.
+
+Icons from the draw.io icon service (`icons.diagrams.net` — the same grouped icon search the editor sidebar uses) are **not** part of this index: `search_shapes` queries the service live when the local index has no strong match for a query, returning the icons as `shape=image` styles. Set `DRAWIO_ICON_SERVICE_URL` to a self-hosted service to override the endpoint, or to `off` to disable icon supplementation.
+
+`shape-search/search-index.json` is committed to the repository. The [Update Shape Search Index](.github/workflows/update-search-index.yml) GitHub Action regenerates it from the released draw.io client after every draw.io release (drawio-dev dispatches `drawio-release` when its build has finished) and daily as a fallback, and opens a pull request when the shapes changed. Once merged, the tool server picks it up from the CDN; the hosted app server bundles it, so it needs a deploy.
+
+To regenerate the index manually (e.g. when iterating on the generator itself):
+
+```bash
+cd shape-search
+npm install
+npm run generate
+
+# Rebuild the MCP App Server worker to embed the updated index
+cd ../mcp-app-server
+npm run build:worker
+```
+
+The generator fetches `app.min.js` directly from the public draw.io web app, so no local checkout of the draw.io source is needed.
+
+---
+
+## Development
+
+```bash
+# MCP App Server
+cd mcp-app-server
+npm install
+npm start
+
+# MCP Tool Server
+cd mcp-tool-server
+npm install
+npm start
+```
+
+## Related Resources
+
+- [draw.io](https://www.draw.io) - Free online diagram editor
+- [draw.io Desktop](https://github.com/jgraph/drawio-desktop) - Desktop application
+- [@drawio/mcp on npm](https://www.npmjs.com/package/@drawio/mcp) - This package on npm
+- [drawio-mcp on GitHub](https://github.com/jgraph/drawio-mcp) - Source code repository
+- [Mermaid.js Documentation](https://mermaid.js.org/intro/)
+- [MCP Specification](https://modelcontextprotocol.io/)
+- [MCP Apps Extension](https://modelcontextprotocol.io/docs/extensions/apps)

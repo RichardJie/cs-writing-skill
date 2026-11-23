@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper-Fig-Skill"
+  short_description: "Create editable academic PPT figures with formula support"
+  default_prompt: "Use $paper-fig-skill to create or edit an editable academic PowerPoint, reuse existing native modules by their smallest semantically complete boundary, perform readability-driven secondary layout adaptation, and enforce Hybrid Reconstruction, collision, anchor, layering, and native audit gates."

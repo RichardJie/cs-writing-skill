@@ -1,0 +1,180 @@
+---
+myimage: "TreeSmall.png"
+pathSlug: "treemap"
+mytitle: "Treemap"
+output:
+  html_document:
+      self_contained: false
+      mathjax: default
+      lib_dir: libs
+      template: template_datatoviz.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+
+<div class="mycontent">
+
+
+
+
+# Definition {#definition}
+***
+
+A `Treemap` displays `hierarchical` data as a set of nested rectangles. Each group is represented by a rectangle, which area is proportional to its value. Using color schemes and or interactivity, it is possible to represent several dimensions: groups, subgroups etc.
+
+Here is an example describing the [world population](https://www.data-to-viz.com/story/SevCatOneNumNestedOneObsPerGroup.html) of 250 countries. The world is divided in continent (group), continent are divided in regions (subgroup), and regions are divided in countries. In this tree structure, countries are considered as leaves: they are at the end of the branches.
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.height=4}
+# libraries
+library(tidyverse)
+library(treemap)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/11_SevCatOneNumNestedOneObsPerGroup.csv", header=T, sep=";")
+data[ which(data$value==-1),"value"] <- 1
+colnames(data) <- c("Continent", "Region", "Country", "Pop")
+
+# Plot
+p <- treemap(data,
+
+            # data
+            index=c("Continent", "Region", "Country"),
+            vSize="Pop",
+            type="index",
+
+            # Main
+            title="",
+            palette="Dark2",
+
+            # Borders:
+            border.col=c("black", "grey", "grey"),
+            border.lwds=c(1,0.5,0.1),
+
+            # Labels
+            fontsize.labels=c(0.7, 0.4, 0.3),
+            fontcolor.labels=c("white", "white", "black"),
+            fontface.labels=1,
+            bg.labels=c("transparent"),
+            align.labels=list( c("center", "center"), c("left", "top"), c("right", "bottom")),
+            overlap.labels=0.5#, inflate.labels=T
+
+)
+```
+
+<br>
+
+*Note*: You can read more about this story [here](https://www.data-to-viz.com/story/SevCatOneNumNestedOneObsPerGroup.html), with many more way to visualize this dataset. Data source: wikipedia and formating by [1](https://github.com/mledoze/countries) and [2](http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022).
+
+
+
+# What for
+***
+
+Treemaps are used to show two types of information simultaneously:
+
+- how the whole is divided: for each level of the hierarchy, it is easy to understand which entity is the most important and how the whole is distributed among entities. Treemap can even be used without any hierarchy, just to show the value of several entities like in a barplot.
+
+- How the hierarchy is organized. Note that it is hard to represent more than 3 levels on a static version tough.
+
+
+Treemaps have the advantage to make efficient use of space, what makes them useful to represent a big amount of data.
+
+
+
+
+# Variation {#variation}
+***
+
+The main variation of treemaps concerns the use of interactivity. It is advised to use it if you have more than 2 or 3 levels of organization to display. Indeed, treemap get cluttered in this situation otherwise.
+
+In the figure below, clicking on a group zooms on it a reveals the underlying structure. Hint: click on the title to come back to the previous level of the hierarchy.
+
+```{r, warning=FALSE, fig.width=9}
+library(d3treeR)
+d3tree2(p, rootname = "General" )
+```
+
+
+
+
+# Common mistakes {#mistake}
+***
+
+- Don't annotate more than 3 levels of the hierarchy, it would make the figure unreadable.
+- Prioritize the highest level of the hierarchy.
+- Interactive version really makes sense for treemap.
+
+# Related {#related}
+***
+
+<div class="row">
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="http://www.data-to-viz.com/graph/heatmap.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/HeatmapSmall.png">
+  <p class="mytitlerelated">Heatmap</p>
+  <p class="mytextrelated">Representation of data where the individual values contained in a matrix are represented as colors</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/circularpacking.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/CircularPackingSmall.png">
+  <p class="mytitlerelated">Circular packing</p>
+  <p class="mytextrelated">A circular version of a Treemap to visualize a hierarchical organization</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/sunburst.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/SunburstSmall.png">
+  <p class="mytitlerelated">Sunburst Diagram</p>
+  <p class="mytextrelated">Display a hierarchy through a set of nested donut plots.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="http://www.data-to-viz.com/graph/dendrogram.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/DendrogramSmall.png">
+  <p class="mytitlerelated">Dendrogram</p>
+  <p class="mytextrelated">A network structure used to show a hierarchical organization.</p>
+  </a>
+  </div>
+</div>
+
+
+
+# Build your own {#code}
+***
+
+The [R](https://www.r-graph-gallery.com/treemap.html), [Python](https://www.python-graph-gallery.com/treemap/), [React](https://www.react-graph-gallery.com/treemap) and [D3](https://d3-graph-gallery.com/treemap.html) graph galleries are 4 websites providing hundreds of chart example, always providing the reproducible code. Click the button below to see how to build the chart you need with your favorite programing language.
+
+<p>
+<a href="https://www.r-graph-gallery.com/treemap.html" class="btn btn-primary">R graph gallery</a>
+<a href="https://python-graph-gallery.com/treemap/" class="btn btn-primary">Python gallery</a>
+<a href="https://www.react-graph-gallery.com/treemap" class="btn btn-primary">React gallery</a>
+<a href="https://d3-graph-gallery.com/treemap.html" class="btn btn-primary">D3 gallery</a>
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

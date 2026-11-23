@@ -1,0 +1,258 @@
+#' Tufte's box plot
+#'
+#' Edward Tufte's revisions of the box plot as described in
+#' *The Visual Display of Quantitative Information*.
+#' This function provides several box plot variants:
+#' - A point indicating the median, a gap indicating the
+#'   interquartile range, and lines for whiskers.
+#' - An offset line indicating the interquartile range
+#'   and a gap indicating the median.
+#' - A line indicating the interquartile range,
+#'   a gap indicating the median, and points indicating
+#'   the minimum and maximum values.
+#' - A wide line indicating the interquartile range,
+#'   a gap indicating the median, and lines indicating the minimum and
+#'   maximum.
+#'
+#' @section Aesthetics:
+#' - `x` (required)
+#' - `y` (required)
+#' - `colour`
+#' - `size`
+#' - `linewidth`
+#' - `linetype`
+#' - `shape`
+#' - `fill`
+#' - `alpha`
+#'
+#' @references Tufte, Edward R. (2001) The Visual Display of
+#' Quantitative Information, Chapter 6.
+#'
+#' McGill, R., Tukey, J. W. and Larsen, W. A. (1978) Variations of
+#' box plots. The American Statistician 32, 12-16.
+#'
+#' @seealso [ggplot2::geom_boxplot()]
+#' @inheritParams ggplot2::geom_point
+#' @param outlier.colour Color of outlying points.
+#' @param outlier.shape Shape of outlying points.
+#' @param outlier.size Size of outlying points.
+#' @param outlier.stroke Stroke width of outlying points.
+#' @param median.type How to represent the median, one of:
+#'   * `"point"`, the default: the median is a point, and the interquartile
+#'     range is a gap in the line.
+#'   * `"line"`: the interquartile range is a line, possibly offset, and the
+#'     median is a gap in the line.
+#' @param whisker.type How to represent the whiskers, one of:
+#'   * `"line"`, the default: whiskers are lines.
+#'   * `"point"`: whiskers are points at `ymin` and `ymax`.
+#' @param voffset Controls the size of the gap in the line representing the
+#'    median when `median.type = "line"`. This is a fraction of the range
+#'    of the summarized axis (`y`, or `x` for a horizontal box plot).
+#' @param hoffset Controls how much the interquartile line is offset from the
+#'    whiskers when `median.type = "line"`. This is a fraction of the
+#'    range of the grouping axis (`x`, or `y` for a horizontal box plot).
+#' @inheritParams stat_fivenumber
+#' @param  stat The statistical transformation to use on the data for this
+#'    layer, as a string. The default (`stat = 'fivenumber'`) calls
+#'    [stat_fivenumber()] and produces whiskers that extend
+#'    from the interquartile range to the extremes of the data; specifying
+#'    [ggplot2::stat_boxplot()] will produce a more traditional boxplot
+#'    with whiskers extending to the most extreme points that are < 1.5 IQR
+#'    away from the hinges (i.e., the first and third quartiles).
+#' @family geom tufte
+#' @family tufte
+#' @returns A ggplot2 layer.
+#' @export
+#'
+#' @example inst/examples/ex-geom_tufteboxplot.R
+geom_tufteboxplot <-
+  function(
+    mapping = NULL,
+    data = NULL,
+    stat = "fivenumber",
+    position = "dodge",
+    outlier.colour = "black", # nolint: object_name_linter
+    outlier.shape = 19, # nolint: object_name_linter
+    outlier.size = 1.5, # nolint: object_name_linter
+    outlier.stroke = 0.5, # nolint: object_name_linter
+    voffset = 0.01,
+    hoffset = 0.005,
+    na.rm = FALSE, # nolint: object_name_linter
+    show.legend = NA, # nolint: object_name_linter
+    inherit.aes = TRUE, # nolint: object_name_linter
+    median.type = "point", # nolint: object_name_linter
+    whisker.type = "line", # nolint: object_name_linter
+    ...,
+    orientation = NA
+  ) {
+    layer(
+      data = data,
+      mapping = mapping,
+      stat = stat,
+      geom = GeomTufteboxplot,
+      position = position,
+      show.legend = show.legend,
+      inherit.aes = inherit.aes,
+      params = list(
+        outlier.colour = outlier.colour,
+        outlier.shape = outlier.shape,
+        outlier.size = outlier.size,
+        outlier.stroke = outlier.stroke,
+        voffset = voffset,
+        hoffset = hoffset,
+        median.type = median.type,
+        whisker.type = whisker.type,
+        na.rm = na.rm,
+        orientation = orientation,
+        ...
+      )
+    )
+  }
+
+#' @rdname geom_tufteboxplot
+#' @usage NULL
+#' @format NULL
+#' @export
+#' @importFrom ggplot2 draw_key_pointrange ggproto_parent GeomBoxplot GeomSegment GeomPoint flip_data
+#' @importFrom scales alpha
+#' @importFrom grid grobTree
+GeomTufteboxplot <- # nolint: object_name_linter
+  ggproto(
+    "GeomTufteboxplot",
+    GeomBoxplot,
+    setup_data = function(self, data, params) {
+      data <- ggproto_parent(GeomBoxplot, self)$setup_data(data, params)
+      data <- flip_data(data, params$flipped_aes)
+      x_range <- diff(range(data$x))
+      y_range <- max(data$ymax) - min(data$ymin)
+      data$hoffset <- params$hoffset * x_range
+      data$voffset <- params$voffset * y_range
+      flip_data(data, params$flipped_aes)
+    },
+    draw_group = function(
+      data,
+      panel_scales,
+      coord,
+      outlier.colour = "black", # nolint: object_name_linter
+      outlier.shape = 19, # nolint: object_name_linter
+      outlier.size = 1.5, # nolint: object_name_linter
+      outlier.stroke = 0.5, # nolint: object_name_linter
+      varwidth = FALSE,
+      median.type = c("point", "line"), # nolint: object_name_linter
+      whisker.type = c("line", "point"), # nolint: object_name_linter
+      # Not read here: setup_data() scales them into `data`. They are formals so
+      # ggplot2 treats them as geom parameters, so keep the constructor's defaults.
+      hoffset = 0.005,
+      voffset = 0.01,
+      flipped_aes = FALSE
+    ) {
+      median.type <- match.arg(median.type) # nolint: object_name_linter
+      whisker.type <- match.arg(whisker.type) # nolint: object_name_linter
+      # Build every piece as a vertical box plot, then flip each one back.
+      data <- flip_data(data, flipped_aes)
+      draw <- function(geom, pieces) {
+        geom$draw_panel(flip_data(pieces, flipped_aes), panel_scales, coord)
+      }
+
+      common <- data.frame(
+        colour = data$colour,
+        linetype = data$linetype,
+        fill = alpha(data$fill, data$alpha),
+        stroke = data$stroke,
+        shape = data$shape,
+        group = data$group,
+        stringsAsFactors = FALSE
+      )
+
+      if (whisker.type == "line") {
+        whiskers <- data.frame(
+          x = data$x,
+          xend = data$x,
+          y = c(data$upper, data$lower),
+          yend = c(data$ymax, data$ymin),
+          linewidth = data$linewidth,
+          alpha = data$alpha,
+          common,
+          stringsAsFactors = FALSE
+        )
+        whiskers_grob <- draw(GeomSegment, whiskers)
+      } else if (whisker.type == "point") {
+        whiskers <- data.frame(
+          x = data$x,
+          y = c(data$ymin, data$ymax),
+          size = data$size,
+          alpha = data$alpha,
+          common,
+          stringsAsFactors = FALSE
+        )
+        whiskers_grob <- draw(GeomPoint, whiskers)
+      }
+
+      if (median.type == "point") {
+        middata <- data.frame(
+          x = data$x,
+          y = data$middle,
+          size = data$size * data$width,
+          alpha = data$alpha,
+          common,
+          stringsAsFactors = FALSE
+        )
+        middle_grob <- draw(GeomPoint, middata)
+      } else if (median.type == "line") {
+        middata <- data.frame(
+          y = c(data$upper, data$middle) + c(0, -data$voffset / 2),
+          yend = c(data$middle, data$lower) + c(data$voffset / 2, 0),
+          x = data$x + data$hoffset,
+          xend = data$x + data$hoffset,
+          linewidth = data$linewidth * data$width,
+          alpha = data$alpha,
+          common,
+          stringsAsFactors = FALSE
+        )
+        middle_grob <- draw(GeomSegment, middata)
+      }
+
+      if (!is.null(data$outliers) && length(data$outliers[[1]]) >= 1) {
+        outliers <- data.frame(
+          y = data$outliers[[1]],
+          x = data$x[1],
+          colour = outlier.colour,
+          shape = outlier.shape,
+          size = outlier.size,
+          stroke = outlier.stroke,
+          fill = NA,
+          alpha = NA,
+          stringsAsFactors = FALSE
+        )
+        outliers_grob <- draw(GeomPoint, outliers)
+      } else {
+        outliers_grob <- NULL
+      }
+
+      ggname(
+        "geom_tufteboxplot",
+        grobTree(
+          outliers_grob,
+          whiskers_grob,
+          middle_grob
+        )
+      )
+    },
+    draw_key = draw_key_pointrange,
+    default_aes = aes(
+      weight = 1,
+      colour = "black",
+      fill = "grey20",
+      size = 0.5,
+      linewidth = 0.5,
+      alpha = NA,
+      shape = 19,
+      stroke = 0.5,
+      width = 1,
+      linetype = "solid",
+      outlier.colour = "black",
+      outlier.shape = 19,
+      outlier.size = 1.5,
+      outlier.stroke = 0.5
+    )
+  )

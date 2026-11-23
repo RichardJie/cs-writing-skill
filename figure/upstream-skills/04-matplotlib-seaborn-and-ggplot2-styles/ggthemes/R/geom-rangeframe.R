@@ -1,0 +1,170 @@
+#' Range frames
+#'
+#' Axis lines which extend to the maximum and minimum of the plotted data.
+#'
+#' @section Aesthetics:
+#' - `colour`
+#' - `linewidth`
+#' - `linetype`
+#' - `alpha`
+#'
+#' @inheritParams ggplot2::geom_point
+#' @param sides A string that controls which sides of the plot the frames appear on.
+#'   It can be set to a string containing any of `"t"`, `"r"`, `"b"`, and `"l"` (for example, `"trbl"`), for top, right,
+#'   bottom, and left. Any other value is an error: a frame cannot be drawn on a
+#'   side that was not named, so a typo would otherwise silently draw nothing.
+#' @returns A ggplot2 layer.
+#' @export
+#'
+#' @details This should be used with `coord_cartesian(clip="off")` in order to
+#'   correctly draw the lines.
+#'
+#'   Secondary axes ([ggplot2::sec_axis()]) only relabel the
+#'   existing axis; they do not introduce a separate data range. Because of
+#'   this, `sides = "trbl"` already draws correctly-positioned frames on
+#'   the top/right edges of a panel that has a secondary axis -- there is no
+#'   separate "secondary" range for `geom_rangeframe()` to draw against.
+#'
+#' @references Tufte, Edward R. (2001) The Visual Display of
+#' Quantitative Information, Chapter 6.
+#'
+#' @family geom tufte
+#' @family tufte
+#' @importFrom ggplot2 layer
+#' @example inst/examples/ex-geom_rangeframe.R
+geom_rangeframe <- function(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  ...,
+  sides = "bl",
+  na.rm = FALSE, # nolint: object_name_linter
+  show.legend = NA, # nolint: object_name_linter
+  inherit.aes = TRUE # nolint: object_name_linter
+) {
+  check_sides(sides)
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRangeFrame,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      sides = sides,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+
+#' Validate the `sides` argument of `geom_rangeframe()`
+#'
+#' `sides` packs a set of side letters into one string, so an unrecognised
+#' letter cannot be caught by matching against allowed values the way
+#' `match.arg()` would. Left unchecked it fails silently: `draw_panel()` tests
+#' each side with `grepl()`, so `sides = "xy"` draws no frame at all and says
+#' nothing.
+#' @noRd
+check_sides <- function(sides) {
+  if (!rlang::is_string(sides) || !grepl("^[trbl]+$", sides)) {
+    cli::cli_abort(c(
+      "{.arg sides} must be a string made up of {.val t}, {.val r}, {.val b} and {.val l}.",
+      "x" = "You supplied {.val {sides}}.",
+      "i" = "For example, {.code sides = \"bl\"} draws the bottom and left frames."
+    ))
+  }
+  invisible(sides)
+}
+
+#' @rdname geom_rangeframe
+#' @usage NULL
+#' @format NULL
+#' @export
+#' @importFrom ggplot2 Geom
+#' @importFrom scales alpha
+# nolint start: object_name_linter
+GeomRangeFrame <- ggplot2::ggproto(
+  "GeomRangeFrame",
+  ggplot2::Geom,
+  optional_aes = c("x", "y"),
+  non_missing_aes = c("x", "y"),
+  draw_panel = function(data, panel_scales, coord, sides = "bl") {
+    rugs <- list()
+    data <- coord[["transform"]](data, panel_scales)
+    gp <- gpar(
+      col = alpha(data[["colour"]], data[["alpha"]]),
+      lty = data[["linetype"]],
+      lwd = data[["linewidth"]] * ggplot2::.pt
+    )
+    if (!is.null(data[["x"]])) {
+      if (grepl("b", sides)) {
+        rugs[["x_b"]] <- ggname(
+          "range_x_b",
+          segmentsGrob(
+            x0 = unit(min(data[["x"]], na.rm = TRUE), "native"),
+            x1 = unit(max(data[["x"]], na.rm = TRUE), "native"),
+            y0 = unit(0, "npc"),
+            y1 = unit(0, "npc"),
+            gp = gp
+          )
+        )
+      }
+
+      if (grepl("t", sides)) {
+        rugs[["x_t"]] <- ggname(
+          "range_x_t",
+          segmentsGrob(
+            x0 = unit(min(data[["x"]], na.rm = TRUE), "native"),
+            x1 = unit(max(data[["x"]], na.rm = TRUE), "native"),
+            y0 = unit(1, "npc"),
+            y1 = unit(1, "npc"),
+            gp = gp
+          )
+        )
+      }
+    }
+
+    if (!is.null(data[["y"]])) {
+      if (grepl("l", sides)) {
+        rugs[["y_l"]] <- ggname(
+          "range_y_l",
+          segmentsGrob(
+            y0 = unit(min(data[["y"]], na.rm = TRUE), "native"),
+            y1 = unit(max(data[["y"]], na.rm = TRUE), "native"),
+            x0 = unit(0, "npc"),
+            x1 = unit(0, "npc"),
+            gp = gp
+          )
+        )
+      }
+
+      if (grepl("r", sides)) {
+        rugs[["y_r"]] <- ggname(
+          "range_y_r",
+          segmentsGrob(
+            y0 = unit(min(data[["y"]], na.rm = TRUE), "native"),
+            y1 = unit(max(data[["y"]], na.rm = TRUE), "native"),
+            x0 = unit(1, "npc"),
+            x1 = unit(1, "npc"),
+            gp = gp
+          )
+        )
+      }
+    }
+    ggname("geom_rangeframe", gTree(children = do.call("gList", rugs)))
+  },
+  default_aes = ggplot2::aes(
+    colour = "black",
+    linewidth = 0.5,
+    linetype = 1,
+    alpha = NA
+  ),
+  # Accept the pre-ggplot2 3.4.0 `size` with a deprecation message, as
+  # ggplot2's own line geoms do.
+  rename_size = TRUE,
+  draw_key = ggplot2::draw_key_path
+)
+# nolint end: object_name_linter

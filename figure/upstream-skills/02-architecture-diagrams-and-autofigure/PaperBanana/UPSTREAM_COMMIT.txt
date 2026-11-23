@@ -1,0 +1,4 @@
+upstream_url: https://github.com/dwzhu-pku/PaperBanana
+commit_sha: 9ceea039be86dd40294361856a4b7bf097d9e2b7
+license: Apache-2.0
+note: Sparse-checkout of /LICENSE, /README.md, /pyproject.toml, /main.py, /skill/**, /agents/**, /prompts/**, /style_guides/**, /visualize/**, /utils/**, /configs/**, /scripts/**, /tests/** to exclude heavy binary showcase/asset blobs.

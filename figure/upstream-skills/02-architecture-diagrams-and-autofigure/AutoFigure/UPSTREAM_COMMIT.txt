@@ -1,0 +1,4 @@
+upstream_url: https://github.com/ResearAI/AutoFigure
+commit_sha: d6e57ccfa28f9c344d73aaa77d955bc1fd4eb6c4
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /pyproject.toml, /setup.py, /autofigure/**, /backend/**, /frontend/LICENSE, /frontend/README.md to exclude heavy binary showcase/asset blobs. Moved standalone env file(s) (backend/requirements.txt) per global Conda hygiene policy.

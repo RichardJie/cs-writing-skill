@@ -1,0 +1,4 @@
+upstream_url: https://github.com/aadarwal/plugins
+commit_sha: 566ea4f8701c9f9036bfe6d11363fc1ddb51bba8
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /plugins/paper/tikz/**, /plugins/paper/science-writing/commands/critique-figures.md to exclude heavy binary showcase/asset blobs.

@@ -1,0 +1,19 @@
+{
+  "name": "chart-skills",
+  "owner": {
+    "name": "Ryan Doyle",
+    "url": "https://www.pie-chart-generator.com?ref=chart-skills"
+  },
+  "metadata": {
+    "description": "Chart skills for AI agents, with free tools and live usage counts from pie-chart-generator.com",
+    "version": "1.0.0",
+    "repository": "https://github.com/rdoyle99/chart-skills"
+  },
+  "plugins": [
+    {
+      "name": "chart-skills",
+      "description": "Chart skills: chart context, choose the right chart, pie chart percentages, chart colors, charts from spreadsheets, circle graphs for school, charts for slides, labels, chart audits, citing chart statistics",
+      "source": "./"
+    }
+  ]
+}

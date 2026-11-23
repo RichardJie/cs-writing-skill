@@ -1,0 +1,4 @@
+repository: https://github.com/MLNLP-World/Paper-Picture-Writing-Code
+commit_sha: 4092efa7b630afccb22f1c27370e945b464a556c
+branch: main
+license: See upstream repository / README

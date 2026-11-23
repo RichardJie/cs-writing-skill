@@ -1,0 +1,6 @@
+﻿Repository: TingxiYu/academic-figure-skill
+URL: https://github.com/TingxiYu/academic-figure-skill
+Commit: 1df9940dd01ac939f072b12fe28d6353b79b90f9
+Branch: main
+License: Apache-2.0 (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/assets/figures/, /assets/figure-atlas/). All checked-out files <=500KB preserved verbatim.

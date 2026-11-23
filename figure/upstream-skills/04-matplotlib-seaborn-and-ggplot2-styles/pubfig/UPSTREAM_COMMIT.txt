@@ -1,0 +1,4 @@
+Repository: https://github.com/Galaxy-Dawn/pubfig
+Branch: main
+Commit SHA: 4eec11658d689b730bebd299ee1a0a196687deaf
+License: MIT

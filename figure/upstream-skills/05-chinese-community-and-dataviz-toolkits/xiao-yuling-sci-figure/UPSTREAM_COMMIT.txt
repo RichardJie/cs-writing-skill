@@ -1,0 +1,5 @@
+repository: https://github.com/xiao-yuling/sci-figure
+commit_sha: a44fbcae2de59cfdefb016a0eab86e66e0ba8555
+branch: main
+license: MIT
+stars_at_harvest: 26

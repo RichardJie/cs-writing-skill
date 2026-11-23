@@ -1,0 +1,6 @@
+﻿Repository: haohuresearch/nature-fig-env
+URL: https://github.com/haohuresearch/nature-fig-env
+Commit: cd357adfd38d3a115af5bfa82e90d56e618a451a
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/assets/reference-images/). All checked-out files <=500KB preserved verbatim.

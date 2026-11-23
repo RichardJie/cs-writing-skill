@@ -1,0 +1,6 @@
+﻿Repository: liushunqi8-hash/editaplot2026
+URL: https://github.com/liushunqi8-hash/editaplot2026
+Commit: 1ebc8acc2ca084b77e950a328f98b2d832216245
+Branch: main
+License: Apache-2.0 (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

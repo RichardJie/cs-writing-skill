@@ -1,0 +1,15 @@
+title: Semi-supervised Learning
+creator: Petar Veličković
+creator_url: http://petar-v.com
+url: https://github.com/PetarV-/TikZ/tree/86aee049f5355d77c598b936399e42caf8941e60/Semi-supervised%20learning
+source: |
+  Unsupervised methods: Diving deep into autoencoders, *Introduction to Deep Learning (COMPGI23), University College London*
+date: 2026-05-27
+tags:
+  - machine learning
+  - semi-supervised learning
+  - classification
+description: |
+  The same [labeled and unlabeled samples](https://scikit-learn.org/stable/modules/semi_supervised.html) shown with two illustrative decision boundaries. The first uses only the labeled examples; the second follows low-density structure revealed by the unlabeled samples. A legend distinguishes samples and boundaries, and the caption states the required cluster assumption.
+
+  Gray samples are displayed in both panels for comparison but only inform the second boundary. This assumes that nearby, densely connected samples tend to share a class. Unlabeled data can hurt when that assumption fails; the boundaries are illustrative, not fitted model results.

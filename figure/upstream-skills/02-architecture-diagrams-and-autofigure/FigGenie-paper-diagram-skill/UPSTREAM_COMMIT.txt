@@ -1,0 +1,4 @@
+upstream_url: https://github.com/Sleepy-Avacado/FigGenie-paper-diagram-skill
+commit_sha: c136a6aeefc6f6fe11fc615a5199cca57be3322a
+license: MIT
+note: Sparse-checkout of /LICENSE, /CREDITS.md, /SOURCES.md, /README.md, /README.zh-CN.md, /.claude-plugin/**, /skills/figgenie-paper-diagram/SKILL.md, /skills/figgenie-paper-diagram/scripts/**, /skills/figgenie-paper-diagram/references/**, /skills/figgenie-paper-diagram/assets/exemplars/README.md, /skills/figgenie-paper-diagram/assets/exemplars/ai/README.md, /skills/figgenie-paper-diagram/assets/exemplars/ai/SOURCES.md, /skills/figgenie-paper-diagram/assets/fonts/LICENSES.md to exclude heavy binary showcase/asset blobs. Moved 1 binary/heavy file(s) >500KB (801.5 KB) out of staging.

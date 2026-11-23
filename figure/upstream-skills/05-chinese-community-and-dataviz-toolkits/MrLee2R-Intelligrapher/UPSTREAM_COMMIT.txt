@@ -1,0 +1,5 @@
+repository: https://github.com/MrLee2R/Intelligrapher
+commit_sha: f459476e8f9ad64df67ae0cf2038a281f087707e
+branch: main
+license: MIT
+stars_at_harvest: 112

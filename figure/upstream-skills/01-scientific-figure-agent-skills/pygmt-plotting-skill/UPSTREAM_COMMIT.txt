@@ -1,0 +1,6 @@
+﻿Repository: rookieplayerjr/pygmt-plotting-skill
+URL: https://github.com/rookieplayerjr/pygmt-plotting-skill
+Commit: 12b19f934f78f92c976f44fc1fc94ed402e9599c
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/previews/, /INTRO.html, /MANUAL.html). All checked-out files <=500KB preserved verbatim.

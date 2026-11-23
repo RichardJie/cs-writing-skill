@@ -1,0 +1,103 @@
+---
+myimage1: "../img/mistake/connect_your_dot.png"
+mytitle: "Connect your dots when the X-axis is ordered"
+pathSlug: "connect_your_dot"
+output:
+  html_document:
+      self_contained: FALSE
+      template: template_caveat.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+<br><br>
+<div class="mycontent">
+
+Let's consider a dataset composed by two numeric variables. The x-axis represents years, and the y-axis the yearly sunspot numbers from 1749 to 1983. ([Sunspots](https://en.wikipedia.org/wiki/Sunspot) are temporary phenomena on the Sun’s photosphere that appear as spots darker than the surrounding areas.). The original dataset comes from this [scientific publication](https://onlinelibrary.wiley.com/doi/abs/10.1002/asna.19622860613), related by [Andrews et al.](https://www.springer.com/gp/book/9781461295631).
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.width=10}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+
+# Load dataset: comes with R
+data <- data.frame(
+  Year = as.numeric(time(sunspot.year)),
+  Sunspots = as.numeric(sunspot.year)
+)
+
+# Plot
+data %>%
+  head(100) %>%
+  ggplot( aes(x=Year, y=Sunspots)) +
+    geom_point() +
+    ggtitle("Number of sunspots per year") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=12)
+    )
+```
+
+Here, it is hard to see any trend. It looks like no relationships exist between time and sunspot number.
+
+
+# Connect your lines
+***
+However, if your x-axis is ordered, like for time, you should connect dots.
+
+Let's take the exact same graphic, except that we connect dots together with segments. We switch from a [scatter plot](https://www.data-to-viz.com/graph/scatter.html) to a [line plot](https://www.data-to-viz.com/graph/line.html).
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.width=10}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+
+# Load dataset: comes with R
+data <- data.frame(
+  Year = as.numeric(time(sunspot.year)),
+  Sunspots = as.numeric(sunspot.year)
+)
+
+# Plot
+data %>%
+  head(100) %>%
+  ggplot( aes(x=Year, y=Sunspots)) +
+    geom_line() +
+    ggtitle("Number of sunspots per year") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=12)
+    )
+```
+
+Now, it is obvious that a pattern exists. The sunspot numbers follow this nearly periodic 11-year change in the sun’s activity, making the line go up and down quite regularly. It is also clear that some spikes are higher than others, with maximum smoothed sunspot numbers ranging from approximately 50 to 180.
+
+
+
+
+# Going further
+***
+
+- Have a look at our page on [aspect ratio](https://www.data-to-viz.com/caveat/aspect_ratio.html); aspect ratio can have a strong impact on the [readability](https://www.data-to-viz.com/caveat/aspect_ratio.html) of your line plot.
+
+<br>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/tt-a1i/archify
+commit_sha: 3ca198d867ce4b616332f846ff66e5c8e5e60f95
+license: Apache-2.0
+note: Sparse-checkout of /LICENSE, /README.md, /archify/SKILL.md, /archify/references/**, /archify/templates/**, /archify/scripts/**, /archify-pr/**, /.agents/skills/** to exclude heavy binary showcase/asset blobs.

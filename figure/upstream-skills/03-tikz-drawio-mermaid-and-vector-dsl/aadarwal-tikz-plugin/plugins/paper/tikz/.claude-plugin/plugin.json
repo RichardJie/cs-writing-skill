@@ -1,0 +1,11 @@
+{
+  "name": "tikz",
+  "version": "0.1.0",
+  "description": "Generate LaTeX TikZ figures, commutative diagrams (tikz-cd), and plots (pgfplots), with on-demand compilation.",
+  "author": {
+    "name": "Aadarsh Agarwal",
+    "url": "https://github.com/aadarwal"
+  },
+  "license": "MIT",
+  "keywords": ["tikz", "latex", "diagrams", "pgfplots", "tikz-cd"]
+}

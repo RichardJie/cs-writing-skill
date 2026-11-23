@@ -1,0 +1,3 @@
+upstream_url: https://github.com/Cocoon-AI/architecture-diagram-generator
+commit_sha: 4b9087d55268c79a935105439dbcd37b630fc3f3
+license: MIT

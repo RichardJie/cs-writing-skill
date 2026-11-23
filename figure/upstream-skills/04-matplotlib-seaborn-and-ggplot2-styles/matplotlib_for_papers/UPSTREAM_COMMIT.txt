@@ -1,0 +1,4 @@
+Repository: https://github.com/jbmouret/matplotlib_for_papers
+Branch: master
+Commit SHA: c2c8747b72b639068efd3b0a57aaa7d42feda0b2
+License: CC-BY-NC-SA-4.0

@@ -1,155 +1,92 @@
 ---
 name: figure
-description: "Modular academic and scientific figure generation hub. Routes publication-grade multi-panel plots, chart-family selection, Python/R vector pipelines, and no-code SVG layout editing (:nature, :figureforge, :python, :r, :atlas, :qa) to nature-figure-skill, with an extensible sub-skill registry for future diagram and illustration engines."
+description: "Scientific figure, academic architecture diagram, and data visualization directory indexing jing1312/nature-figure-skill, 124 upstream open-source plotting and diagram skills, and source-attributed journal, scholar, and community figure guides."
 ---
 
-# Academic & Scientific Figure Generation Hub (`figure`)
+# Scientific Figure & Academic Diagram Directory (`figure`)
 
-Unified, extensible top-level skill hub for **submission-grade scientific plotting, multi-panel composite figures, visual SVG layout prototyping, and academic diagram engineering**. Read the matched sub-skill entrypoint and reference modules before generating layouts or plotting code.
-
-```text
-figure/
-├── SKILL.md                                           # Master figure router, shared guardrails & extension spec
-├── agents/openai.yaml                                 # Harness UI metadata
-├── nature-figure-skill/                               # :nature (default) — Nature-grade Python/R workflow + FigureForge
-│   ├── SKILL.md                                       # Standardized sub-skill entrypoint & route dispatcher
-│   ├── README.md / README.zh-CN.md                    # Bilingual overview, templates showcase & quick start
-│   ├── LICENSE / DERIVATIVE_NOTICE.md                 # MIT license & upstream attribution
-│   ├── figureforge/                                   # :figureforge — No-code browser SVG studio (22 templates, 16 palettes)
-│   │   ├── index.html / README.md
-│   │   ├── css/                                       # style.css, workspace.css
-│   │   └── js/                                        # 20 modular canvas/editor/palette/showcase scripts
-│   ├── assets/                                        # 9 rendered SVG atlases (83 panels) + workflow diagrams
-│   ├── skills/
-│   │   ├── nature-figure/                             # Core contract-first Python/R publication figure engine
-│   │   │   ├── SKILL.md                               # Backend gate, 3 hard rules, Python & R scaffolds
-│   │   │   ├── references/                            # 14 playbooks: contract, selection, api, R, 83-panel atlas, QA
-│   │   │   ├── assets/                                # gallery/, chart-atlas/, figures4papers/ demo scripts
-│   │   │   ├── evals/                                 # evals.json + visual-baseline/render.py
-│   │   │   └── agents/openai.yaml
-│   │   └── nature-{polishing,writing,citation,data,reader,response,paper2ppt,academic-search}/
-│   ├── scripts/                                       # Zero-dependency template, SVG & link/schema self-checks
-│   └── tools/make_mockup.py                           # Product card mockup utility
-└── <future-sub-skill>/                                # Plug-in slot for future diagram / schematic / 3D / bio figure skills
-    └── SKILL.md
-```
+This file is a factual classification and routing directory indexing verbatim open-source scientific plotting and diagram repositories alongside source-attributed journal, scholar, and practitioner figure guides. Commit SHAs, licenses, DOIs, and external URLs for all entries are cataloged in [curated-guides/SOURCES_CATALOG.md](curated-guides/SOURCES_CATALOG.md).
 
 ---
 
-## 1. Sub-Skill Registry (`已接入与预留画图子技能注册表`)
+## 1. Flagship Integrated Upstream Suite (`nature-figure-skill/` — `jing1312/nature-figure-skill`)
 
-`figure` operates as an open **dispatcher + guardrail layer**. Each specialized figure engine lives in an isolated subdirectory `figure/<sub-skill-dir>/` with its own `SKILL.md` and assets:
-
-| Sub-Skill Directory | Primary Tag(s) | Status | Entrypoint | Core Domain & Output Deliverables |
-|:---|:---|:---|:---|:---|
-| [`nature-figure-skill/`](nature-figure-skill/SKILL.md) | `:nature` *(default)*, `:plot`, `:figureforge`, `:python`, `:r`, `:atlas`, `:qa` | **Active** | [nature-figure-skill/SKILL.md](nature-figure-skill/SKILL.md) → [skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md) & [figureforge/README.md](nature-figure-skill/figureforge/README.md) | *Nature* / *Science* / *Cell* / *NeurIPS* quantitative & multi-panel composite figures: contract-first `matplotlib`/`seaborn` & `ggplot2`/`patchwork`/`ComplexHeatmap` pipelines (`SVG` + `PDF` + `600 DPI TIFF`), 9 atlases (83 panels), `figures4papers` demos, and the no-code **FigureForge** SVG studio |
-| `figure/<arch-diagram-skill>/` | `:arch`, `:tikz`, `:schematic` *(reserved)* | *Plug-in Slot* | `figure/<arch-diagram-skill>/SKILL.md` | Method/system architecture diagrams, LaTeX `TikZ` / DrawingML / SVG tensor pipelines, Figure 1 conceptual schematics |
-| `figure/<bio-illustration-skill>/` | `:bio`, `:pathway`, `:clinical` *(reserved)* | *Plug-in Slot* | `figure/<bio-illustration-skill>/SKILL.md` | Wet-lab experimental workflows, signaling pathways, CONSORT / clinical trial schematics, organ/cell vector icons |
-| `figure/<3d-scientific-skill>/` | `:3d`, `:manifold`, `:teaser` *(reserved)* | *Plug-in Slot* | `figure/<3d-scientific-skill>/SKILL.md` | Geometric/physics ray-cast illustrations, point-cloud / mesh / robotics filmstrips, CV/graphics teaser plates |
-| `figure/<interactive-vis-skill>/` | `:interactive`, `:web-vis` *(reserved)* | *Plug-in Slot* | `figure/<interactive-vis-skill>/SKILL.md` | Interactive HTML/SVG/Vega/Plotly exploratory & supplementary web figures |
-
----
-
-## 2. Tag-Based & Intent-Based Routing Protocol (`标签与意图双模路由`)
-
-Explicit tags compose freely (e.g., `/figure :nature :python`, `/figure :nature :r :qa`, `/figure :figureforge`, `/figure :select`). When no tag is supplied, auto-detect from user intent using §2.2.
-
-### 2.1 Active Tag Router (`nature-figure-skill`)
-
-| Tag(s) | Load Module(s) (In Order) | Action & Execution Rules |
+| Component / Module | Upstream Entrypoint(s) | Scope in Upstream Repository |
 |:---|:---|:---|
-| `:nature` *(default)* / `:plot` | 1. [nature-figure-skill/SKILL.md](nature-figure-skill/SKILL.md)<br>2. [nature-figure-skill/skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md) | Full *Nature*-standard figure pipeline: triage FigureForge vs. code → lock **Figure Contract** → enforce **Backend Gate (`Python or R?`)** if unspecified → single-backend render → QA → `save_pub_set()` / `save_pub_r()` export |
-| `:figureforge` (`:editor`, `:nocode`, `:canvas`) | 1. [nature-figure-skill/figureforge/README.md](nature-figure-skill/figureforge/README.md)<br>2. [nature-figure-skill/README.md](nature-figure-skill/README.md) | **No-code / layout-first route**: launch or guide the **FigureForge** infinite canvas & WYSIWYG SVG editor (`figureforge/index.html` locally or <https://jing1312.github.io/nature-figure-skill/figureforge/>) with 22 templates, 16 palettes, and 83 remixable panels. **Never ask `"Python or R?"` on this route.** |
-| `:select` (`:chart-type`) | 1. [figure-selection.md](nature-figure-skill/skills/nature-figure/references/figure-selection.md)<br>2. [atlas-gallery.md](nature-figure-skill/skills/nature-figure/references/atlas-gallery.md) | Recommend 1–3 optimal chart families from the scientific claim (group comparison, distribution, trend, matrix, hierarchy, network, survival/clinical) plus explicit anti-recommendations |
-| `:contract` (`:layout`) | 1. [figure-contract.md](nature-figure-skill/skills/nature-figure/references/figure-contract.md)<br>2. [nature-2026-observations.md](nature-figure-skill/skills/nature-figure/references/nature-2026-observations.md)<br>3. [common-patterns.md](nature-figure-skill/skills/nature-figure/references/common-patterns.md) | Convert a raw claim or table list into a one-sentence conclusion, 4-archetype classification (`quantitative grid`, `schematic-led composite`, `image plate + quant`, `asymmetric mixed-modality`), non-redundant panel map, and hero-panel hierarchy |
-| `:python` (`:matplotlib`, `:seaborn`) | 1. [nature-figure-skill/skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md)<br>2. [api.md](nature-figure-skill/skills/nature-figure/references/api.md)<br>3. [common-patterns.md](nature-figure-skill/skills/nature-figure/references/common-patterns.md)<br>4. [demos.md](nature-figure-skill/skills/nature-figure/references/demos.md) *(when adapting `figures4papers`)* | **Pre-satisfies the Python backend gate**: execute exclusively in Python (`apply_publication_style()`, `svg.fonttype='none'`, `pdf.fonttype=42`, `PALETTE` / `PALETTE_NMI_PASTEL`, `add_stat_strip()`, `save_pub_set()`) |
-| `:r` (`:ggplot2`, `:patchwork`, `:complexheatmap`) | 1. [nature-figure-skill/skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md)<br>2. [r-workflow.md](nature-figure-skill/skills/nature-figure/references/r-workflow.md)<br>3. [r-template-index.md](nature-figure-skill/skills/nature-figure/references/r-template-index.md) | **Pre-satisfies the R backend gate**: execute exclusively in R (`ggplot2` + `patchwork` + `ComplexHeatmap` + `ggrepel`, exported via `svglite` + `cairo_pdf` + `ragg::agg_tiff` in `save_pub_r()`) |
-| `:atlas` (`:templates`, `:demos`) | 1. [atlas-gallery.md](nature-figure-skill/skills/nature-figure/references/atlas-gallery.md)<br>2. [chart-types.md](nature-figure-skill/skills/nature-figure/references/chart-types.md)<br>3. [tutorials.md](nature-figure-skill/skills/nature-figure/references/tutorials.md) | Reuse geometry (`W=1080, COLW=352`), jewel-pastel / NPG / NMI palettes, and patterns from the 9 showcase atlases (83 panels) and 9 bundled `figures4papers` projects |
-| `:qa` (`:audit`, `:check`) | 1. [qa-contract.md](nature-figure-skill/skills/nature-figure/references/qa-contract.md)<br>2. [design-theory.md](nature-figure-skill/skills/nature-figure/references/design-theory.md) | Pre-submission audit: final print point size (`5–7 pt` at `89/183 mm`), zero legend/stat occlusion, editable vector text, error-bar/`n`/test disclosure, blot/microscopy integrity, and cross-panel color consistency |
-
-### 2.2 Automatic Intent Routing (When No Tag Is Given)
-
-1. **Match registered sub-skill domain first**: If future specialized sub-skills are installed under `figure/<sub-skill-dir>/` and the prompt matches their registered domain (e.g., pure LaTeX `TikZ` circuit/architecture drawing), route to that sub-skill's `SKILL.md`.
-2. **Triage No-Code vs. Scripted Pipeline**:
-   - Requests mentioning *"no code"*, *"drag and drop"*, *"browser editor"*, *"show me layout skeletons first"*, or *"FigureForge"* → route directly to **FigureForge** ([nature-figure-skill/figureforge/README.md](nature-figure-skill/figureforge/README.md)).
-   - Requests asking *"which chart type fits my data?"* before plotting → open [figure-selection.md](nature-figure-skill/skills/nature-figure/references/figure-selection.md) first.
-   - All quantitative, statistical, bioinformatics, clinical, or ML manuscript plotting / revision / QA tasks → route to **[nature-figure-skill/skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md)**.
-3. **Respect the Backend Gate in Scripted Mode**:
-   - If the user already specified `:python` / `.py` / `matplotlib` or `:r` / `.R` / `ggplot2`, lock that backend immediately and never cross-render with the other language.
-   - If the user asks *"Python or R — which do you recommend?"*, consult [backend-selection.md](nature-figure-skill/skills/nature-figure/references/backend-selection.md), state the rationale, and proceed.
-   - Otherwise, ask one concise question (**"Python or R?"**) and wait before writing plotting scripts, per [skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md).
+| **Overview & Quick Start** | [nature-figure-skill/README.md](nature-figure-skill/README.md) · [README.zh-CN.md](nature-figure-skill/README.zh-CN.md) · [LICENSE](nature-figure-skill/LICENSE) · [DERIVATIVE_NOTICE.md](nature-figure-skill/DERIVATIVE_NOTICE.md) | Bilingual documentation, showcase renders, MIT license, and upstream attribution (`cb233215d6d9dbb25956c27c19b86377c1e9353e`) |
+| **Contract-First Python/R Figure Skill** | [nature-figure-skill/skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md) · [figure-contract.md](nature-figure-skill/skills/nature-figure/references/figure-contract.md) · [api.md](nature-figure-skill/skills/nature-figure/references/api.md) · [r-workflow.md](nature-figure-skill/skills/nature-figure/references/r-workflow.md) | Upstream `nature-figure` Agent Skill, Python/R workflow references, `figures4papers` demos ([demos.md](nature-figure-skill/skills/nature-figure/references/demos.md)), chart selection ([figure-selection.md](nature-figure-skill/skills/nature-figure/references/figure-selection.md)), 83-panel atlas index ([atlas-gallery.md](nature-figure-skill/skills/nature-figure/references/atlas-gallery.md)), and QA checklist ([qa-contract.md](nature-figure-skill/skills/nature-figure/references/qa-contract.md)) |
+| **FigureForge Visual SVG Studio** | [nature-figure-skill/figureforge/README.md](nature-figure-skill/figureforge/README.md) · [nature-figure-skill/assets/](nature-figure-skill/assets/) · [nature-figure-skill/scripts/](nature-figure-skill/scripts/) | Browser-based WYSIWYG SVG canvas & editor (22 templates, 16 palettes, 9 SVG showcase atlases / 83 panels) and upstream verification scripts |
+| **Companion `nature-*` Modules** | [nature-polishing](nature-figure-skill/skills/nature-polishing/SKILL.md) · [nature-writing](nature-figure-skill/skills/nature-writing/SKILL.md) · [nature-citation](nature-figure-skill/skills/nature-citation/SKILL.md) · [nature-data](nature-figure-skill/skills/nature-data/SKILL.md) · [nature-reader](nature-figure-skill/skills/nature-reader/SKILL.md) · [nature-response](nature-figure-skill/skills/nature-response/SKILL.md) · [nature-paper2ppt](nature-figure-skill/skills/nature-paper2ppt/SKILL.md) · [nature-academic-search](nature-figure-skill/skills/nature-academic-search/SKILL.md) | Upstream companion skills bundled in `jing1312/nature-figure-skill/skills/` |
 
 ---
 
-## 3. Core Capabilities of `nature-figure-skill`
+## 2. Source-Attributed Journal, Scholar & Community Guides (`curated-guides/`)
 
-Integrated from [`jing1312/nature-figure-skill`](https://github.com/jing1312/nature-figure-skill) (MIT; see [LICENSE](nature-figure-skill/LICENSE) and [DERIVATIVE_NOTICE.md](nature-figure-skill/DERIVATIVE_NOTICE.md)):
-
-- **Dual-Route Workflow (FigureForge ↔ Code Handoff)**:
-  - **FigureForge Visual Studio** ([figureforge/](nature-figure-skill/figureforge/)): VibePaper-style infinite canvas, 22 publication-grade templates (superplot bars, clustered heatmaps with dendrograms, volcano, forest, Kaplan–Meier + risk table, violin/box, multi-panel hero composites), 16 series-linked palettes, smart alignment guides, SVG element splitting, and 1-click `SVG` / `PDF` / `600 DPI TIFF` / `PNG` / `PPTX` export.
-  - **Contract-First Python & R Engine** ([skills/nature-figure/SKILL.md](nature-figure-skill/skills/nature-figure/SKILL.md)): Enforces `Figure Contract → Backend Gate → Single-Backend Render → Layout & QA → Unified Export Bundle`.
-- **9 Programmatic Showcase Atlases (83 Panels)**:
-  - `showcase.svg` (12 base statistical charts), `showcase-pro.svg` (radar, polar, quadrant, volcano, z-score heatmap), `showcase-bio.svg` (12 bioinformatics/single-cell panels: Mantel, GSEA, PCA ellipses, dot-dendrogram), `showcase-extra.svg` (OncoPrint, waterfall, alluvial, ridgeline, Bland–Altman, forest, Manhattan), `showcase-plus.svg` (chord, UpSet, network, ternary, treemap, sunburst, hexbin, parallel coords), `showcase-ultra.svg` (Circos, QQ, KM+risk, raincloud, GO lollipop, Venn, Gantt, radial tree, coverage tracks), `showcase-max.svg` (SPLOM, MA, pathway dot, circle packing, bump, 2D contour, dumbbell, diverging bar, calendar), `showcase-nova.svg` (Sankey, correlogram, mosaic, biplot, pyramid, ring heatmap, dual-axis, response surface, ECDF+KS), and `showcase-apex.svg` (funnel, Taylor, arc, icicle, beeswarm, cycle, horizon, bullet, waffle).
-- **Production `figures4papers` Demo Library**:
-  - 9 real *Nature Machine Intelligence* / ML / bioinformatics figure codebases under `nature-figure-skill/skills/nature-figure/assets/figures4papers/` indexed in [demos.md](nature-figure-skill/skills/nature-figure/references/demos.md).
-- **Bundled Companion `nature-*` Reference Skills**:
-  - `nature-figure-skill/skills/` preserves upstream's companion modules (`nature-polishing`, `nature-writing`, `nature-citation`, `nature-data`, `nature-reader`, `nature-response`, `nature-paper2ppt`, `nature-academic-search`) for *Nature*-specific data-availability statements, CNS citation verification, or bilingual reading when explicitly needed alongside figure production.
+| Curated Guide File | Indexed Primary Sources |
+|:---|:---|
+| [curated-guides/SOURCES_CATALOG.md](curated-guides/SOURCES_CATALOG.md) | 1:1 provenance table for `jing1312/nature-figure-skill` + all 124 `upstream-skills/` repositories (GitHub URLs, 40-char Commit SHAs, Licenses, file counts) and master URL/DOI index |
+| [curated-guides/by-journal-and-scholar-guides.md](curated-guides/by-journal-and-scholar-guides.md) | Official figure & accessibility specifications (*Nature*, *Science*/AAAS, *Cell Press*/*Elsevier*, *PLOS*, *IEEE*, *ACM* TAPS & *SIGACCESS*, *CVPR*, *NeurIPS*) and published visualization classics (Claus O. Wilke, Yan Holtz *From Data to Viz*, Rougier et al. 2014, Bang Wong *Nature Methods* *Points of View*, Franconeri et al. 2021, Weissgerber et al. 2015, Crameri et al. 2020, Okabe & Ito CUD) |
+| [curated-guides/by-community-practical-guides.md](curated-guides/by-community-practical-guides.md) | Source-linked netizen, blogger, and researcher practical guides across 知乎, GitHub 中文社区, 少数派, 科学网, 研之成理, Reddit (`r/MachineLearning`, `r/AskAcademia`, `r/LaTeX`, `r/datavisualization`), Hacker News, and researcher blogs |
 
 ---
 
-## 4. Shared Publication Figure Guardrails (`全局出版级配图硬性准则`)
+## 3. Categorized Upstream Open-Source Skills & Toolkits (`upstream-skills/` — 124 Repositories)
 
-Every sub-skill under `figure/` (both `nature-figure-skill` and all future drawing skills) MUST uphold these six publication invariants:
+### 3.1 Category Directory Overview
 
-1. **`G1` Exact 1:1 Column Geometry & Final Print Point Sizes**:
-   - Set canvas dimensions to real journal column widths **before** drawing (`89 mm` single-column, `120–136 mm` 1.5-column, `183 mm` double-column for *Nature*; `139.7 mm` NeurIPS; `174–178 mm` IEEE/CVPR).
-   - Size typography in **final print points**: `5.5–7 pt` axis/tick labels, `7–8 pt` bold lowercase panel letters (`a`, `b`, `c`), `0.6–0.8 pt` strokes. Never author `16–24 pt` slide text and shrink the canvas down.
-2. **`G2` Editable Vector Primary + High-DPI Print Companions**:
-   - Export editable vector text (`svg.fonttype = 'none'`, `pdf.fonttype = 42`, `svglite`, `cairo_pdf`, or native `TikZ`/SVG `<text>`) paired with `600 DPI` `.tiff` and `300+ DPI` `.png` previews via a single canonical export helper (`save_pub_set` / `save_pub_r`).
-   - Never deliver rasterized diffusion gibberish text, JPEG-compressed line art, or silently merged collages when independent figures were requested.
-3. **`G3` Zero Data Occlusion & Frameless Visual Hierarchy**:
-   - Remove top/right plot spines (`despine`) unless framing a bounded matrix/image plate; keep plot backgrounds pure `#FFFFFF` (use dark plates solely for fluorescence/microscopy channels).
-   - Never place legends, correlation boxes, or `p`-value callouts over data points; use direct curve labels, external frameless legends, or frameless top stat strips (`add_stat_strip`).
-4. **`G4` Semantic Role Color & Colorblind/Grayscale Safety**:
-   - Assign color by **scientific role** (proposed hero method vs. baseline family vs. neutral control vs. signed $\Delta$ accent)—never cycle arbitrary rainbow palettes or `jet`.
-   - Keep the exact same hue family for the same method across every panel (`a` through `f`), and ensure curves/bars remain distinguishable under deuteranopia/protanopia and monochrome print.
-5. **`G5` Evidence Non-Redundancy & Statistical Honesty**:
-   - Every panel in a composite figure must carry a unique link in the manuscript's claim chain (never pair a pie chart and stacked bar of the same percentages).
-   - Explicitly state sample size `n`, error-bar definition (`mean ± s.d.`, `median ± IQR`, `95% CI`), and statistical test in the figure strip or companion caption notes; tighten axes to honest ranges without distorting zero-baseline bars.
-6. **`G6` Privacy & Repository Hygiene**:
-   - Never expose private local user paths, chat-attachment filenames, or unpublished template provenance in figure text, code comments, or replies.
-   - Never create `venv`, `.venv`, `node_modules`, or `__pycache__` inside skill directories.
+| Category Directory | Repo Count | Taxonomic Scope |
+|:---|---:|:---|
+| [upstream-skills/01-scientific-figure-agent-skills/](upstream-skills/01-scientific-figure-agent-skills/) | 30 | Multi-domain scientific figure, biomedical schematic, OriginPro, MATLAB, PyGMT, and publication plotting Agent `SKILL.md` repositories |
+| [upstream-skills/02-architecture-diagrams-and-autofigure/](upstream-skills/02-architecture-diagrams-and-autofigure/) | 20 | Automated paper-diagram frameworks (`PaperBanana`, `AutoFigure`, `FigGenie`, `FigCraft`), neural network TikZ/Draw.io templates, and system architecture diagram skills |
+| [upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/) | 20 | LaTeX `TikZ`/`PGFPlots`, Typst `CeTZ`, `Draw.io` (`diagrams.net`), `Mermaid`, `Excalidraw`, `D2`, `Kroki`, and deterministic `SVG` DSL skills |
+| [upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/) | 30 | Python `matplotlib`/`seaborn` `.mplstyle` sheets, ML conference sizing (`tueplots`), bad-graph & visualization classics, perceptual colormaps, and R `ggplot2` publication packages |
+| [upstream-skills/05-chinese-community-and-dataviz-toolkits/](upstream-skills/05-chinese-community-and-dataviz-toolkits/) | 24 | Chinese research community plotting/LaTeX/Visio/PPT/palette repositories and cross-framework Data-to-Viz & chart toolkits |
+
+### 3.2 `01-scientific-figure-agent-skills/` (30 Repositories)
+
+| Sub-Area | Vendored Upstream Repositories |
+|:---|:---|
+| **General & Multi-Agent Scientific Figure Suites** | [K-Dense-AI/scientific-agent-skills](upstream-skills/01-scientific-figure-agent-skills/scientific-agent-skills/README.md) · [wanshuiyin/Auto-claude-code-research-in-sleep](upstream-skills/01-scientific-figure-agent-skills/aris-paper-figure-skills/skills/figure-description/SKILL.md) · [Orchestra-Research/AI-Research-SKILLs](upstream-skills/01-scientific-figure-agent-skills/AI-Research-SKILLs/README.md) · [Haojae/scipilot-figure-skill](upstream-skills/01-scientific-figure-agent-skills/scipilot-figure-skill/SKILL.md) · [TingxiYu/academic-figure-skill](upstream-skills/01-scientific-figure-agent-skills/academic-figure-skill/SKILL.md) · [Azhi-ss/academic-figure-skills](upstream-skills/01-scientific-figure-agent-skills/academic-figure-skills/README.md) · [Dsadd4/AgentFigureGallery](upstream-skills/01-scientific-figure-agent-skills/AgentFigureGallery/README.md) · [Alto-R/nature-figure-craft](upstream-skills/01-scientific-figure-agent-skills/nature-figure-craft/README.md) · [enesgul23/scientific-figure-skills](upstream-skills/01-scientific-figure-agent-skills/scientific-figure-skills/README.md) · [Yuhang-Xiao/scientific-figure](upstream-skills/01-scientific-figure-agent-skills/yuhang-xiao-scientific-figure/README.md) · [heyu-233/engineering-figure-agent](upstream-skills/01-scientific-figure-agent-skills/engineering-figure-agent/SKILL.md) |
+| **Conference & Journal Plotting (`Python` / `R`)** | [Trae1ounG/paper-plot-skills](upstream-skills/01-scientific-figure-agent-skills/paper-plot-skills/README.md) · [bigohofone/paper-figure-skill](upstream-skills/01-scientific-figure-agent-skills/bigohofone-paper-figure-skill/README.md) · [tvhahn/matplotlib-skill](upstream-skills/01-scientific-figure-agent-skills/tvhahn-matplotlib-skill/README.md) · [dazhiyang/scientific-plotting-skill](upstream-skills/01-scientific-figure-agent-skills/dazhiyang-scientific-plotting-skill/SKILL.md) · [Lilac21325/scientific-plotting](upstream-skills/01-scientific-figure-agent-skills/lilac-scientific-plotting/SKILL.md) · [gaoennan/sci-figure-skill](upstream-skills/01-scientific-figure-agent-skills/gaoennan-sci-figure-skill/SKILL.md) · [haohuresearch/nature-fig-env](upstream-skills/01-scientific-figure-agent-skills/nature-fig-env/SKILL.md) · [muzark/scientific-color-palettes](upstream-skills/01-scientific-figure-agent-skills/scientific-color-palettes/SKILL.md) |
+| **Biomedical, Mechanism & Vector Schematics** | [lgwrightlab/schematic-figure](upstream-skills/01-scientific-figure-agent-skills/schematic-figure/README.md) · [BAIKEMARK/happy-figure-skill](upstream-skills/01-scientific-figure-agent-skills/happy-figure-skill/SKILL.md) · [yiyanli123/biorender-mechanism-figures-skill](upstream-skills/01-scientific-figure-agent-skills/biorender-mechanism-figures-skill/README.md) · [wangjinglin0905-gif/biomedical-figure-production-skill](upstream-skills/01-scientific-figure-agent-skills/biomedical-figure-production-skill/README.md) · [Rooneyxu/bioinformatics-plotting-standards](upstream-skills/01-scientific-figure-agent-skills/bioinformatics-plotting-standards/SKILL.md) · [Garinmckayl/anima](upstream-skills/01-scientific-figure-agent-skills/anima/SKILL.md) |
+| **OriginPro, MATLAB, PyGMT & Illustrator Editing** | [liushunqi8-hash/editaplot2026](upstream-skills/01-scientific-figure-agent-skills/editaplot2026/SKILL.md) · [Gerry2024-hub/Gerry2024-hub-python-origin-plotting-skill](upstream-skills/01-scientific-figure-agent-skills/python-origin-plotting-skill/README.md) · [adjurtime/scientific-figure-skills](upstream-skills/01-scientific-figure-agent-skills/adjurtime-scientific-figure-skills/README.md) · [Kkkakania/matlab-plotting-skill](upstream-skills/01-scientific-figure-agent-skills/matlab-plotting-skill/README.md) · [rookieplayerjr/pygmt-plotting-skill](upstream-skills/01-scientific-figure-agent-skills/pygmt-plotting-skill/SKILL.md) |
+
+### 3.3 `02-architecture-diagrams-and-autofigure/` (20 Repositories)
+
+| Sub-Area | Vendored Upstream Repositories |
+|:---|:---|
+| **Automated Paper-Diagram Pipelines (`PaperBanana` / `AutoFigure` / `FigGenie` / `FigCraft`)** | [dwzhu-pku/PaperBanana](upstream-skills/02-architecture-diagrams-and-autofigure/PaperBanana/README.md) · [llmsresearch/paperbanana](upstream-skills/02-architecture-diagrams-and-autofigure/llmsresearch-paperbanana/README.md) · [PlutoLei/paperbanana-skill](upstream-skills/02-architecture-diagrams-and-autofigure/PlutoLei-paperbanana-skill/SKILL.md) · [ResearAI/AutoFigure](upstream-skills/02-architecture-diagrams-and-autofigure/AutoFigure/README.md) · [ResearAI/AutoFigure-Edit](upstream-skills/02-architecture-diagrams-and-autofigure/AutoFigure-Edit/README.md) · [Sleepy-Avacado/FigGenie-paper-diagram-skill](upstream-skills/02-architecture-diagrams-and-autofigure/FigGenie-paper-diagram-skill/README.md) · [296711867/figcraft-skills](upstream-skills/02-architecture-diagrams-and-autofigure/figcraft-skills/README.md) · [plbbl/academic-diagram-skill](upstream-skills/02-architecture-diagrams-and-autofigure/plbbl-academic-diagram-skill/SKILL.md) · [c-narcissus/research-paper-figure-skill-factory](upstream-skills/02-architecture-diagrams-and-autofigure/research-paper-figure-skill-factory/SKILL.md) |
+| **CS/ML Neural Network & Conference Pipeline Diagrams** | [HarisIqbal88/PlotNeuralNet](upstream-skills/02-architecture-diagrams-and-autofigure/PlotNeuralNet/README.md) · [kennethleungty/Neural-Network-Architecture-Diagrams](upstream-skills/02-architecture-diagrams-and-autofigure/Neural-Network-Architecture-Diagrams/README.md) · [dair-ai/ml-visuals](upstream-skills/02-architecture-diagrams-and-autofigure/ml-visuals/README.md) · [potamides/AutomaTikZ](upstream-skills/02-architecture-diagrams-and-autofigure/AutomaTikZ/README.md) · [potamides/DeTikZify](upstream-skills/02-architecture-diagrams-and-autofigure/DeTikZify/README.md) · [ChizkiyahuOhayon/CVPR-Figure](upstream-skills/02-architecture-diagrams-and-autofigure/cvpr-figure/SKILL.md) · [pengjunchi0/codex-visio-paper-figure-skill](upstream-skills/02-architecture-diagrams-and-autofigure/codex-visio-paper-figure-skill/SKILL.md) |
+| **System & C4 Architecture Diagram Skills** | [lazypay/Archscribe](upstream-skills/02-architecture-diagrams-and-autofigure/Archscribe/SKILL.md) · [cheriftj/c4-model-skill](upstream-skills/02-architecture-diagrams-and-autofigure/c4-model-skill/README.md) · [Cocoon-AI/architecture-diagram-generator](upstream-skills/02-architecture-diagrams-and-autofigure/Cocoon-architecture-diagram-generator/README.md) · [tt-a1i/archify](upstream-skills/02-architecture-diagrams-and-autofigure/archify-skill/README.md) |
+
+### 3.4 `03-tikz-drawio-mermaid-and-vector-dsl/` (20 Repositories)
+
+| Sub-Area | Vendored Upstream Repositories |
+|:---|:---|
+| **LaTeX `TikZ`, `PGFPlots` & Typst `CeTZ`** | [PetarV-/TikZ](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/PetarV-TikZ/README.md) · [janosh/diagrams](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/janosh-diagrams/readme.md) · [fraserlove/nntikz](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/nntikz/README.md) · [opentikz/opentikz](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/opentikz/README.md) · [0xE1337/thesis-figure-skill](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/thesis-figure-skill/README.md) · [TAO-QKV/Icarus-Figures](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/Icarus-Figures/README.md) · [aadarwal/plugins](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/aadarwal-tikz-plugin/README.md) · [wentorai/research-plugins](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/wentorai-latex-tikz-skills/README.md) |
+| **Draw.io (`diagrams.net`) Skills & XML Prompts** | [jgraph/drawio-mcp](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/jgraph-drawio-mcp-skills/README.md) · [Agents365-ai/drawio-skill](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/Agents365-drawio-skill/README.md) · [Will-hxw/drawio-diagram-builder](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/Will-hxw-drawio-diagram-builder/README.md) · [SHALINS428/Codex-drawio-skill](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/SHALINS428-Codex-drawio-skill/README.md) · [DayuanJiang/next-ai-draw-io](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/next-ai-draw-io-prompts/README.md) |
+| **`Mermaid`, `Excalidraw`, `D2`, `Kroki` & Deterministic `SVG`** | [imxv/Pretty-mermaid-skills](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/Pretty-mermaid-skills/SKILL.md) · [axtonliu/axton-obsidian-visual-skills](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/axton-obsidian-visual-skills/README.md) · [yctimlin/mcp_excalidraw](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/mcp_excalidraw/README.md) · [diegomarino/claude-toolshed](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/diegomarino-d2-mermaid-skills/README.md) · [mizchi/explainer](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/mizchi-d2-skills/README.md) · [smoldrago/kroki-diagrams](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/kroki-diagrams/README.md) · [bybit-exchange/svg-diagram](upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/bybit-svg-diagram/SKILL.md) |
+
+### 3.5 `04-matplotlib-seaborn-and-ggplot2-styles/` (30 Repositories)
+
+| Sub-Area | Vendored Upstream Repositories |
+|:---|:---|
+| **Python `matplotlib` / `seaborn` Journal `.mplstyle` & Conference Sizing** | [garrettj403/SciencePlots](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/SciencePlots/README.md) · [pnkraemer/tueplots](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/tueplots/README.md) · [killiansheriff/LovelyPlots](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/LovelyPlots/README.md) · [liuyxpp/mpltex](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/mpltex/README.rst) · [hosilva/mplstyle](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/hosilva-mplstyle/README.md) · [dylanljones/mplstyles](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/dylanljones-mplstyles/README.md) · [Galaxy-Dawn/pubfig](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/pubfig/README.md) · [proplot-dev/proplot](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/proplot/README.rst) · [mwaskom/seaborn](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/seaborn-paper-styles/README.md) |
+| **Visualization Books, Bad-Graph Guides & Raincloud Tutorials** | [cxli233/FriendsDontLetFriends](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/FriendsDontLetFriends/README.md) · [jbmouret/matplotlib_for_papers](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/matplotlib_for_papers/README.rst) · [rougier/ten-rules](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ten-rules/README.rst) · [rougier/scientific-visualization-book](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/scientific-visualization-book/README.md) · [matplotlib/cheatsheets](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/matplotlib-cheatsheets/README.md) · [RainCloudPlots/RainCloudPlots](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/RainCloudPlots/README.md) |
+| **Perceptual Colormaps, Label Placement, Stats & Multi-Panel Python** | [mpetroff/accessible-color-cycles](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/accessible-color-cycles/readme.md) · [callumrollo/cmcrameri](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/cmcrameri/README.md) · [Phlya/adjustText](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/adjustText/README.md) · [cphyc/matplotlib-label-lines](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/matplotlib-label-lines/Readme.md) · [trevismd/statannotations](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/statannotations/README.md) · [rgerum/pylustrator](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/pylustrator/README.md) |
+| **R `ggplot2` Journal Palettes, Themes & Multi-Panel Composition** | [nanxstats/ggsci](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ggsci/README.md) · [wilkelab/cowplot](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/cowplot/README.md) · [clauswilke/colorblindr](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/colorblindr/README.md) · [JLSteenwyk/ggpubfigs](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ggpubfigs/README.md) · [kassambara/ggpubr](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ggpubr/README.md) · [thomasp85/patchwork](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/patchwork/README.md) · [jrnold/ggthemes](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ggthemes/README.md) · [BlakeRMills/MetBrewer](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/MetBrewer/README.md) · [Broccolito/ggplot-skills](upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/ggplot-skills/README.md) |
+
+### 3.6 `05-chinese-community-and-dataviz-toolkits/` (24 Repositories)
+
+| Sub-Area | Vendored Upstream Repositories |
+|:---|:---|
+| **Chinese Research Community Plotting, LaTeX, Draw.io, Visio, PPT & Palettes** | [MLNLP-World/Paper-Writing-Tips](upstream-skills/05-chinese-community-and-dataviz-toolkits/MLNLP-World-Paper-Writing-Tips/README.md) · [MLNLP-World/Paper-Picture-Writing-Code](upstream-skills/05-chinese-community-and-dataviz-toolkits/MLNLP-World-Paper-Picture-Writing-Code/README.md) · [guanyingc/latex_paper_writing_tips](upstream-skills/05-chinese-community-and-dataviz-toolkits/guanyingc-latex-paper-writing-tips/README.md) · [guanyingc/python_plot_utils](upstream-skills/05-chinese-community-and-dataviz-toolkits/guanyingc-python-plot-utils/README.md) · [LigphiDonk/academic-figure-generator](upstream-skills/05-chinese-community-and-dataviz-toolkits/LigphiDonk-academic-figure-prompts/README.md) · [james20141606/sci-figure-workflow](upstream-skills/05-chinese-community-and-dataviz-toolkits/james20141606-sci-figure-workflow/SKILL.md) · [icebird1998/drawio-scientific-illustrator](upstream-skills/05-chinese-community-and-dataviz-toolkits/drawio-sci-illustrator/README.md) · [huashu996/PPT-Framework-Skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/huashu996-PPT-Framework-Skill/SKILL.md) · [ywq177995212697-droid/visio-scientific-figures](upstream-skills/05-chinese-community-and-dataviz-toolkits/ywq177995212697-visio-scientific-figures/README.md) · [lcpmgh/colors](upstream-skills/05-chinese-community-and-dataviz-toolkits/lcpmgh-colors/README.md) · [MrLee2R/Intelligrapher](upstream-skills/05-chinese-community-and-dataviz-toolkits/MrLee2R-Intelligrapher/README.md) · [xiao-yuling/sci-figure](upstream-skills/05-chinese-community-and-dataviz-toolkits/xiao-yuling-sci-figure/skill.md) · [Leey21/awesome-ai-research-writing](upstream-skills/05-chinese-community-and-dataviz-toolkits/Leey21-awesome-ai-research-writing/README.md) · [BinSpa/awesome-scientific-figures](upstream-skills/05-chinese-community-and-dataviz-toolkits/awesome-scientific-figures/README.md) |
+| **From Data to Viz & Cross-Framework Chart / Dataviz Toolkits** | [holtzy/data_to_viz](upstream-skills/05-chinese-community-and-dataviz-toolkits/holtzy-data-to-viz/README.md) · [holtzy/dataviz-skills](upstream-skills/05-chinese-community-and-dataviz-toolkits/holtzy-dataviz-skills/README.md) · [holtzy/dataviz-caveat-flashcards](upstream-skills/05-chinese-community-and-dataviz-toolkits/holtzy-dataviz-caveat-flashcards/README.md) · [antvis/chart-visualization-skills](upstream-skills/05-chinese-community-and-dataviz-toolkits/chart-visualization-skills/README.md) · [skthewimp/karthik-data-visualization-skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/karthik-data-visualization-skill/README.md) · [SNL-UCSB/data-visualization-skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/snl-ucsb-data-visualization-skill/SKILL.md) · [vikast908/data-visualization-skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/vikast908-data-visualization-skill/README.md) · [atlassian-labs/data-visualization-skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/atlassian-data-visualization-skill/README.md) · [onsen-ai/chart-skill](upstream-skills/05-chinese-community-and-dataviz-toolkits/onsen-chart-skill/SKILL.md) · [rdoyle99/chart-skills](upstream-skills/05-chinese-community-and-dataviz-toolkits/rdoyle99-chart-skills/README.md) |
 
 ---
 
-## 5. Extensible Architecture for Future Drawing Skills (`后续画图 Skill 扩展接入规范`)
+## 4. Directory Slot Convention for Adding Future Figure Skills
 
-`figure/` is architected to grow into a comprehensive multi-engine scientific visual suite (adding architecture diagrammers, `TikZ`/LaTeX schematic builders, biomedical pathway illustrators, 3D/teaser renderers, etc.) **without changing the top-level skill count or breaking MIRASIM / Claude Code installation**.
-
-### 3-Step Plug-In Guide (`三步标准接入流程`)
-
-#### Step 1 — Vendor Cleanly into `figure/<new-skill-dir>/` (Zero Git Submodule Trap)
-1. Clone or stage the upstream skill into a temporary folder outside the repo (always pass explicit network timeouts such as `git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15`).
-2. **CRITICAL — Strip `.git` Before Copying**: Remove `.git/` (plus repo-root-only `.github/` workflows, `.DS_Store`, `__pycache__`, `node_modules`) **before** copying into `figure/<new-skill-dir>/` so Git tracks every file as a normal `100644`/`100755` blob and **never** creates a `160000` submodule gitlink.
-3. Preserve upstream `LICENSE`, `README.md`, attribution notices, scripts, templates, and references intact; scrub any hardcoded personal home-directory or machine-local absolute paths.
-4. Ensure `figure/<new-skill-dir>/SKILL.md` exists and uses a **single-line double-quoted `description: "..."`** in its YAML frontmatter (strictly zero `>-` or `|` multiline YAML scalars).
-
-#### Step 2 — Register in `figure/SKILL.md` Sub-Skill Router
-1. Update the directory tree at the top of `figure/SKILL.md` and promote or add the sub-skill row in **§1 Sub-Skill Registry** with its `[<new-skill-dir>/SKILL.md](<new-skill-dir>/SKILL.md)` entrypoint.
-2. Assign clean, non-overlapping `:tag` triggers (e.g., `:arch` / `:tikz` for architecture schematics, `:bio` for pathway illustrations, `:3d` for ray-cast/mesh figures) in **§2.1** and add an intent rule in **§2.2** so natural-language requests dispatch deterministically while `:nature` remains the default quantitative publication-plotting engine.
-3. Confirm the new sub-skill adheres to **§4 Shared Publication Figure Guardrails (`G1–G6`)**.
-
-#### Step 3 — Sync Root `README.md` & Pass Verification Gates
-1. Add `<new-skill-dir>/` under `figure/` in root `README.md` (repo tree + `/figure` tag matrix). No extra `cp -R` line is needed for Claude Code or MIRASIM because installing `figure/` automatically bundles every `figure/<sub-skill-dir>/`!
-2. Run read-only verification (`python -B` so zero `__pycache__` is emitted):
-   - `git ls-files --stage figure/` → confirm `0` `160000` gitlinks and `0` nested `.git` directories.
-   - YAML frontmatter check → `figure/SKILL.md` and all nested `SKILL.md` / `openai.yaml` files parse cleanly with single-line quoted descriptions.
-   - Script & link check → all `.py` (`ast.parse`) and `.js` (`node --check`) scripts pass syntax checks, `0` hardcoded local user paths remain, and `100%` of relative Markdown links resolve.
-
----
-
-## Related Skills in Pack
-
-- **`humanize`** (`../humanize/SKILL.md` when installed in pack) — Pair with `:paper-boundaries` (`../humanize/paper-boundaries.md`) to lock the non-defensive claim hierarchy *before* designing Figure 1 or ablation plots, or `:figure` (`../humanize/references/scientific-figures-and-ui-de-ai.md`) to diagnose and purge `SF1–SF10` AI-generated diagram slop.
-- **`plain`** (`../plain/SKILL.md` when installed in pack) — Walk through one small domain-native numerical example step by step—ideal for designing toy walkthrough insets in method figures.
-- **`cs-report-ppt`** (`../cs-report-ppt/SKILL.md` when installed in pack) — Assemble exported high-DPI / vector figures into 16:9 conference, group-meeting, thesis-defense, or grant slide decks with Vision-in-the-Loop QA.
+1. Copy the upstream repository snapshot (stripped of `.git/` metadata) into `figure/<repo-dir>/` or the matching category directory under `upstream-skills/01..05/<repo-dir>/`.
+2. Preserve original upstream `SKILL.md`, source/template files, and `LICENSE` verbatim, and record the upstream GitHub URL and 40-character Commit SHA in `<repo-dir>/UPSTREAM_COMMIT.txt` and [curated-guides/SOURCES_CATALOG.md](curated-guides/SOURCES_CATALOG.md).
+3. Register the directory path in [SKILL.md](SKILL.md) and the `figure/` section of root [../README.md](../README.md).

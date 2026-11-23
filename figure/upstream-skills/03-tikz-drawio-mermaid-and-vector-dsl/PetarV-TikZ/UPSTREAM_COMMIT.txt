@@ -1,0 +1,3 @@
+upstream_url: https://github.com/PetarV-/TikZ
+commit_sha: 86aee049f5355d77c598b936399e42caf8941e60
+license: MIT

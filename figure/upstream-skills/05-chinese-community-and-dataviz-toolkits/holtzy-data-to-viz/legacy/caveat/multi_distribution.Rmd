@@ -1,0 +1,189 @@
+---
+myimage1: "../img/mistake/multi_distribution.png"
+mytitle: "Too many distributions"
+pathSlug: "multi_distribution"
+output:
+  html_document:
+      template: template_caveat.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+<br><br>
+<div class="mycontent">
+
+
+Comparing the distributions of several numeric variables is a common task in dataviz. The distribution of a variable can be represented using a [histogram](http://www.data-to-viz.com/graph/histogram.html) or a [density chart](http://www.data-to-viz.com/graph/density.html), and it is very tempting to represent many distributions on the same axis.
+
+Here is an example showing how people perceive probability vocabulary. On the [/r/samplesize](https://www.reddit.com/r/SampleSize/) thread of reddit, questions like *What probability would you assign to the phrase "Highly likely"* were asked. Here is the distribution of the score given by people to each question:
+
+
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE, message=FALSE}
+#library
+library(tidyverse)
+library(hrbrthemes)
+library(viridis)
+library(patchwork)
+
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/zonination/perceptions/master/probly.csv", header=TRUE, sep=",")
+data <- data %>%
+  gather(key="text", value="value") %>%
+  mutate(text = gsub("\\.", " ",text)) %>%
+  mutate(value = round(as.numeric(value),0))
+
+# A dataframe for annotations
+annot <- data.frame(
+  text = c("Almost No Chance", "About Even", "Probable", "Almost Certainly"),
+  x = c(5, 53, 65, 79),
+  y = c(0.15, 0.4, 0.06, 0.1)
+)
+
+# Plot
+data %>%
+  filter(text %in% c("Almost No Chance", "About Even", "Probable", "Almost Certainly")) %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(x=value, color=text, fill=text)) +
+    geom_density(alpha=0.6) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    geom_text( data=annot, aes(x=x, y=y, label=text, color=text), hjust=0, size=4.5) +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+In this case, the figure is quite neat. People give a probability between 0 and 20% for the sentence "Almost No chance", and between 75 and 100% for "Almost Certainly". Let's check what happens with more groups:
+
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE}
+# Plot
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(x=value, color=text, fill=text)) +
+    geom_density(alpha=0.6) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+Now the figure is way too cluttered and it is impossible to distinguish groups: there are too many distributions represented on the same graphic. How to avoid that?
+
+
+# Workaround {.tabset}
+***
+Several workarounds exist and are presented in detail in this [dedicated page](http://www.data-to-viz.com/story/OneNumOneCatSeveralObs.html). Here is just an overview of the possibilities:
+
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE}
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(x=text, y=value, fill=text)) +
+    geom_boxplot() +
+    geom_jitter(color="grey", alpha=0.3, size=0.9) +
+    scale_fill_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none"
+    ) +
+    coord_flip() +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+## Violin
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE}
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(x=text, y=value, fill=text, color=text)) +
+    geom_violin(width=2.1, size=0.2) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none"
+    ) +
+    coord_flip() +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+## Ridgeline
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE}
+library(ggridges)
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(y=text, x=value,  fill=text)) +
+    geom_density_ridges(alpha=0.6, bandwidth=4) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+
+## Faceting
+```{r, fig.align='center', fig.height=7, fig.width=8, warning=FALSE}
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(x=value, color=text, fill=text)) +
+    geom_density(alpha=0.6) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)") +
+    facet_wrap(~text, scale="free_y")
+```
+
+
+
+
+
+
+
+# Going further
+***
+
+**Disclaimer**: This idea originally comes from a publication of the [CIA](https://www.cia.gov/library/center-for-the-study-of-intelligence/csi-publications/books-and-monographs/psychology-of-intelligence-analysis/art15.html) which resulted in this [figure](https://www.cia.gov/library/center-for-the-study-of-intelligence/csi-publications/books-and-monographs/psychology-of-intelligence-analysis/fig18.gif/image.gif). Then, [Zoni Nation](https://github.com/zonination) cleaned the reddit dataset and built [graphics with R](https://github.com/zonination/perceptions). I heavily rely on his work in this post.
+
+
+**Other link**:
+
+- Doing boxplots in [R](https://www.r-graph-gallery.com/boxplot/) and [Python](https://python-graph-gallery.com/boxplot/)
+- Doing violin plots in [R](https://www.r-graph-gallery.com/violin/) and [Python](https://python-graph-gallery.com/violin/)
+
+
+<br>
+
+
+</div>

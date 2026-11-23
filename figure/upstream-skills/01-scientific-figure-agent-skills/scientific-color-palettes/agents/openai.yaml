@@ -1,0 +1,5 @@
+interface:
+  display_name: "Scientific Figure Colors"
+  short_description: "Semantic, publication-ready color systems for scientific figures"
+  brand_color: "#2C6E7E"
+  default_prompt: "Use $scientific-color-palettes to choose and apply a publication-ready palette for this scientific figure."

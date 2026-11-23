@@ -1,0 +1,3 @@
+upstream_url: https://github.com/potamides/AutomaTikZ
+commit_sha: 06134b9bb5c2cc009000573b8972089d66ff04e9
+license: Apache-2.0

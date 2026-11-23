@@ -1,0 +1,4 @@
+interface:
+  display_name: "Origin Figure"
+  short_description: "Create or revise one editable Origin paper figure"
+  default_prompt: "Use $origin-figure to create or revise one editable paper figure in Origin using the approved suite style, save the OPJU first, and export only when I request it."

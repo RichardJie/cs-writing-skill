@@ -1,0 +1,88 @@
+#import "@preview/cetz:0.5.3": canvas, draw
+#import draw: bezier, circle, content, line
+
+#set page(width: auto, height: auto, margin: 8pt, fill: none)
+#set text(size: 12pt)
+
+#canvas({
+  let node-radius = .42
+  let arr = (mark: (end: "stealth", fill: black, scale: .7), stroke: black + 1pt)
+
+  let vertices = (
+    a-real: ((0, 0), $arrow(a)_"real"$),
+    b-fake: ((3, 0), $arrow(b)_"fake"$),
+    a-rec: ((5.6, 0), $arrow(a)_"rec"$),
+    b-real: ((1.7, 3.9), $arrow(b)_"real"$),
+    b-disc: ((4.6, 2.5), $arrow(b)$),
+  )
+  for (name, (pos, label)) in vertices {
+    circle(pos, radius: node-radius, fill: rgb("#cdd3da"), stroke: 1pt, name: name)
+    // fixed-height box: centering by ink bounds would push accented, subscripted labels low
+    content(name, box(height: 0.7em, align(horizon, label)))
+  }
+
+  // labeled arrow with text above and below its midpoint
+  let labeled(from, to, name, above, below, dy: .35, dy-below: .35) = {
+    line(from, to, ..arr, name: name)
+    content((rel: (0, dy), to: name + ".mid"), above)
+    content((rel: (0, -dy-below), to: name + ".mid"), below)
+  }
+
+  for (to, domain) in (("a-real", "A"), ("b-real", "B")) {
+    labeled((rel: (-2.4, 0), to: to), to, "in-" + lower(domain), [real data], [(type #domain)])
+  }
+  for (from, to, name, label, caption) in (
+    ("a-real", "b-fake", "gen1", $G_(A B)(arrow(a))$, $A -> B$),
+    ("b-fake", "a-rec", "gen2", $G_(B A)(arrow(b))$, $B -> A$),
+  ) {
+    labeled(from, to, name, label, align(center)[generator \ (#caption)], dy: .4, dy-below: .55)
+  }
+  labeled(
+    "b-disc",
+    (rel: (3, 0), to: "b-disc"),
+    "disc",
+    $D_B (arrow(b))$,
+    align(center)[discriminator \ (type B)],
+    dy: .4,
+    dy-below: .62,
+  )
+  content((rel: (.1, 0), to: "disc.end"), [real?], anchor: "west")
+
+  // routing dots
+  let pt1 = (3, 1.7)
+  let pt2 = (3, 4.0)
+  let pt3 = (2.85, 3.35)
+  for pt in (pt1, pt2) { circle(pt, radius: .07, fill: black, stroke: none) }
+
+  // solid feeds
+  line((rel: (0, node-radius), to: "b-fake"), (rel: (0, -.07), to: pt1), ..arr)
+  line((rel: (node-radius, 0), to: "b-real"), (rel: (-.07, 0), to: pt2), ..arr)
+
+  // dashed selector curve pt1 ↔ pt2, bowing left through the switch pivot pt3,
+  // which is drawn after the dash so its opaque fill occludes it
+  let dashed = (dash: "dashed", paint: black, thickness: 1pt)
+  bezier(pt1, pt2, (2.63, 2.85), stroke: dashed)
+  circle(pt3, radius: .09, fill: rgb("#cdd3da"), stroke: .9pt)
+  // switch output to the discriminator, starting at pt3's rim
+  line(
+    (rel: (.085, -.031), to: pt3),
+    (rel: (-node-radius * .8, node-radius * .8), to: "b-disc"),
+    ..arr,
+  )
+
+  // dashed cyclic-consistency loop
+  line(
+    (rel: (0, -node-radius), to: "a-real"),
+    (rel: (0, -1.35), to: "a-real"),
+    (rel: (0, -1.35), to: "a-rec"),
+    (rel: (0, -node-radius), to: "a-rec"),
+    stroke: dashed,
+    mark: (start: "stealth", end: "stealth", fill: black, scale: .7),
+  )
+  content(
+    (rel: (2.8, -1.45), to: "a-real"),
+    [cycle-consistency loss: reconstruction $arrow(a)_"rec" approx arrow(a)_"real"$],
+    anchor: "north",
+  )
+  content((2.6, 2.65), align(right)[switch: real \ or fake $arrow(b)$], anchor: "east")
+})

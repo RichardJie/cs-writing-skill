@@ -1,0 +1,4 @@
+upstream_url: https://github.com/jgraph/drawio-mcp
+commit_sha: a7d1ead5397200659239269a6fe9ae431cbfe27d
+license: Apache-2.0
+note: Sparse-checkout of /LICENSE, /README.md, /.agents/**, /.claude-plugin/**, /.cursor-plugin/**, /plugins/**, /project-instructions/**, /mcp-tool-server/**, /shared/** to exclude heavy binary showcase/asset blobs.

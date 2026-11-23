@@ -1,0 +1,6 @@
+﻿Repository: Broccolito/ggplot-skills
+URL: https://github.com/Broccolito/ggplot-skills
+Commit: 7f430d5a2e2027b4b2b45fb9ef02c2a50be59b11
+Branch: main
+License: MIT (declared in README.md)
+Note: All upstream files <=500KB preserved verbatim.

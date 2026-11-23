@@ -1,0 +1,10 @@
+title: QFT Propagator Poles
+tags:
+  - physics
+  - quantum field theory
+  - complex analysis
+  - Green's function
+  - propagators
+  - causality
+  - Matsubara
+description: Complex $p_0$ plane for evaluating a [Matsubara](../matsubara-contours) frequency sum over a product of two propagators, one of them shifted by the external frequency $q_0$. The Matsubara frequencies $i\omega_n$ lie on the imaginary axis. The two zigzag [branch cuts](../branch-cuts-1) at $\operatorname{Im} p_0 = 0$ and $\operatorname{Im} p_0 = -q_0$ split the plane into regions (I), (II) and (III), and the dots $\alpha_{1,2}^{1,2}$ mark the poles of the two propagators in each region. Closing the contour region by region turns the frequency sum into residues at these poles plus integrals along the cuts.

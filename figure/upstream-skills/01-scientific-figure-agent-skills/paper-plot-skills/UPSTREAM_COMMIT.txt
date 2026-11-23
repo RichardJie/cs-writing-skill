@@ -1,0 +1,6 @@
+﻿Repository: Trae1ounG/paper-plot-skills
+URL: https://github.com/Trae1ounG/paper-plot-skills
+Commit: cde5e8486b3511d7819d54cc569df5d5636aa91a
+Branch: main
+License: No LICENSE file in upstream repository
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\paper-plot-skills\: repro\scatter_tsne_repro.png (698702 bytes)

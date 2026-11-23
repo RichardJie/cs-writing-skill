@@ -1,0 +1,4 @@
+upstream_url: https://github.com/plbbl/academic-diagram-skill
+commit_sha: 501efb0208bf865897079fa05844c249f0736077
+license: MIT
+note: Sparse-checkout of /LICENSE, /THIRD_PARTY_NOTICES.md, /README.md, /README.zh-CN.md, /GET_STARTED.zh-CN.md, /SKILL.md, /agents/**, /examples/README.md, /examples/provenance.json, /examples/figures/*.drawio, /references/README.md to exclude heavy binary showcase/asset blobs.

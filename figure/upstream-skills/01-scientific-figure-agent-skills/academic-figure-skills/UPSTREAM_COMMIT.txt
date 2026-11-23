@@ -1,0 +1,6 @@
+﻿Repository: Azhi-ss/academic-figure-skills
+URL: https://github.com/Azhi-ss/academic-figure-skills
+Commit: 73545d2f2227b03a185c8834709c7808ada5b0cb
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/docs/gallery/, /fig-draw/references/previews/). All checked-out files <=500KB preserved verbatim.

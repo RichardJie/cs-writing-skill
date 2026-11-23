@@ -1,0 +1,4 @@
+Repository: https://github.com/matplotlib/cheatsheets
+Branch: main
+Commit SHA: e1f77b5067cb207359b8637188f1f2ad4a260e60
+License: BSD-2-Clause

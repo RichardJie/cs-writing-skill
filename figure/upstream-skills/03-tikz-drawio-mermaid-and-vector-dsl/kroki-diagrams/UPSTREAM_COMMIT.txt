@@ -1,0 +1,4 @@
+upstream_url: https://github.com/smoldrago/kroki-diagrams
+commit_sha: e02cd223d55f5ed67892b85d938ca5818eed76c6
+license: MIT
+note: Moved 1 binary/heavy file(s) >500KB (7531.3 KB) out of staging.

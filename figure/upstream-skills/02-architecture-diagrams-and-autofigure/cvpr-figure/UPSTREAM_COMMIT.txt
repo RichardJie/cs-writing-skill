@@ -1,0 +1,6 @@
+﻿Repository: ChizkiyahuOhayon/CVPR-Figure
+URL: https://github.com/ChizkiyahuOhayon/CVPR-Figure
+Commit: 8adb0d6b881ed0c8643657ccd1b2f43258d4a3d1
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

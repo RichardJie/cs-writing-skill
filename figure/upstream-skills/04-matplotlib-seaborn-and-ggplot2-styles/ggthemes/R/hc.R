@@ -1,0 +1,229 @@
+#' Chart styling for each Highcharts theme
+#'
+#' Values are taken from Highcharts 13's `css/themes/<style>.css`, falling back
+#' to `css/highcharts.css` for the two `default` styles. Highcharts resolves
+#' `.highcharts-axis-labels` and `.highcharts-title` to
+#' `--highcharts-neutral-color-80`, `.highcharts-axis-title` to
+#' `--highcharts-neutral-color-60`, and `.highcharts-grid-line` to
+#' `--highcharts-neutral-color-10`; `bg` is `--highcharts-background-color`.
+#'
+#' A `NULL` colour means the style does not override ggplot2's default, which
+#' is the case for the light styles.
+#' @noRd
+hc_theme_styles <- list(
+  "default" = list(
+    bg = "#FFFFFF",
+    grid = "#e6e6e6",
+    text = NULL,
+    title = NULL,
+    axis_title = NULL,
+    legend_bg = NULL,
+    x_grid = FALSE
+  ),
+  "default_dark" = list(
+    bg = "#141414",
+    grid = "#2c2c2c",
+    text = "#d0d0d0",
+    # Default colour of unmapped geoms, which would be black on the dark
+    # background.
+    ink = "#d0d0d0",
+    title = "#d0d0d0",
+    axis_title = "#a1a1a1",
+    legend_bg = NULL,
+    x_grid = FALSE
+  ),
+  "darkunica" = list(
+    bg = "#2a2a2b",
+    grid = "#707073",
+    text = "#E0E0E3",
+    ink = "#E0E0E3",
+    title = "#E0E0E3",
+    axis_title = "#E0E0E3",
+    legend_bg = NULL,
+    x_grid = FALSE
+  ),
+  # `grid-light` is the one Highcharts theme that draws vertical grid lines
+  # (`xAxis.gridLineWidth = 1`), and it puts the legend on a filled box.
+  "grid_light" = list(
+    bg = "#FFFFFF",
+    grid = "#e6e6e6",
+    text = NULL,
+    title = NULL,
+    axis_title = NULL,
+    legend_bg = "#f2f2f2",
+    x_grid = TRUE
+  ),
+  "sand_signika" = list(
+    bg = "#F7F7F7",
+    grid = "#e6e6e6",
+    text = "#6E6E70",
+    title = "black",
+    axis_title = NULL,
+    legend_bg = NULL,
+    x_grid = FALSE
+  )
+)
+
+#' Highcharts theme
+#'
+#' Themes based on [Highcharts](https://www.highcharts.com/) plots.
+#'
+#' @details
+#'
+#' Only the Highcharts themes that restyle the chart itself get a `style`
+#' here. The `"high-contrast"`, `"avocado"` and `"sunset"`
+#' themes shipped with Highcharts 13 change nothing but the series colors, so
+#' they are available through [hc_pal()] alone; combine them with
+#' `theme_hc("default")` or `theme_hc("default_dark")`.
+#'
+#' Highcharts pairs several of these themes with a web font
+#' (`darkunica` with Unica One, `grid_light` with Dosis,
+#' `sand_signika` with Signika). Those are not requested here, since the
+#' font may not be installed; pass `base_family` to use one.
+#'
+#' @references
+#'
+#' <https://www.highcharts.com/demo/highcharts/line-chart>
+#'
+#' @inheritParams ggplot2::theme_bw
+#' @param style The Highcharts theme to use. One of
+#'   `r ggthemes:::md_optlist(names(ggthemes:::hc_theme_styles))`.
+#' @param bgcolor `r lifecycle::badge("defunct")` Use `style` instead.
+#' @example inst/examples/ex-theme_hc.R
+#' @family themes hc
+#' @returns A ggplot2 theme object (class `theme`).
+#' @section Palettes:
+#' The theme sets [hc_pal()], with the palette named by `style`, for discrete
+#' color and fill as the default palettes, so a plot draws in the theme's colors
+#' without a matching scale. A `scale_*()` added to the plot still takes
+#' precedence.
+#' @export
+theme_hc <- function(
+  base_size = 12,
+  base_family = "sans",
+  style = c("default", "default_dark", "darkunica", "grid_light", "sand_signika"),
+  bgcolor = lifecycle::deprecated()
+) {
+  if (lifecycle::is_present(bgcolor)) {
+    lifecycle::deprecate_stop("4.2.0", "theme_hc(bgcolor)", "theme_hc(style)")
+  }
+  style <- match.arg(style)
+  spec <- hc_theme_styles[[style]]
+
+  # Start from theme_grey(), which is what this partial theme was added to
+  # before it became complete.
+  ret <- theme_grey(base_size = base_size, base_family = base_family) +
+    theme(
+      rect = element_rect(fill = spec$bg, linetype = 0, colour = NA),
+      text = element_text(size = base_size, family = base_family),
+      title = element_text(hjust = 0.5),
+      axis.title.x = element_text(hjust = 0.5),
+      axis.title.y = element_text(hjust = 0.5),
+      panel.grid.major.y = element_line(colour = spec$grid),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.x = if (spec$x_grid) element_line(colour = spec$grid) else element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.border = element_blank(),
+      panel.background = element_blank(),
+      legend.position = "bottom",
+      legend.key = element_rect(fill = "#FFFFFF00")
+    )
+
+  # `theme() + theme()` copies over only the non-NULL properties of the new
+  # elements, so these keep the sizes and justifications set above.
+  if (!is.null(spec$text)) {
+    ret <- ret +
+      theme(
+        text = element_text(colour = spec$text),
+        # `axis.text` must be set explicitly: the `theme_grey()` this builds on
+        # sets `axis.text` to "grey30", which would otherwise beat the
+        # inherited `text` colour and leave the axis labels near-invisible on
+        # the dark backgrounds.
+        axis.text = element_text(colour = spec$text),
+        legend.title = element_text(colour = spec$text)
+      )
+  }
+  if (!is.null(spec$title)) {
+    ret <- ret + theme(title = element_text(colour = spec$title))
+  }
+  if (!is.null(spec$axis_title)) {
+    ret <- ret +
+      theme(
+        axis.title.x = element_text(colour = spec$axis_title),
+        axis.title.y = element_text(colour = spec$axis_title)
+      )
+  }
+  if (!is.null(spec$ink)) {
+    ret <- ret + theme(geom = ggplot2::element_geom(ink = spec$ink, paper = spec$bg))
+  }
+  if (!is.null(spec$legend_bg)) {
+    ret <- ret + theme(legend.background = element_rect(fill = spec$legend_bg))
+  }
+  ret +
+    theme_palettes(hc_pal(style))
+}
+
+
+#' Highcharts color palette (discrete)
+#'
+#' Highcharts uses many different color palettes in its plots. This collects
+#' the palettes shipped with Highcharts 13, plus the default Highcharts used
+#' before v11.
+#'
+#' `"default"` and `"default_dark"` are the light- and dark-mode
+#' forms of the palette Highcharts has used by default since v11.0.0; they
+#' differ only in positions 2 and 3. `"classic"` is the default
+#' Highcharts used from v5.0.0 through v10.x. The remaining palettes come
+#' from the themes bundled with Highcharts.
+#'
+#' Note that `"avocado"` and `"sunset"` have only four colors.
+#'
+#' @param palette A string, the name of the Highcharts palette to use.
+#'   One of `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$hc))`.
+#'
+#' @family color hc
+#' @returns A palette function. It takes the number of colors `n` and returns a character vector of `n`
+#'   hex colors, and can be used as the `palette` argument of [ggplot2::discrete_scale()].
+#' @export
+#' @example inst/examples/ex-hc_pal.R
+hc_pal <- function(palette = "default") {
+  # Match on the name rather than indexing directly, so that a non-character
+  # `palette` (e.g. `hc_pal(1)`) is rejected instead of silently positionally
+  # indexing the palette list.
+  if (!palette %in% names(ggthemes::ggthemes_data$hc)) {
+    cli::cli_abort(
+      "{.arg palette} must be one of {.val {names(ggthemes::ggthemes_data$hc)}}, not {.val {palette}}."
+    )
+  }
+  values <- unname(ggthemes::ggthemes_data$hc[[palette]])
+  f <- manual_pal_checked(values)
+  attr(f, "max_n") <- length(values)
+  f
+}
+
+#' Highcharts color and fill scales
+#'
+#' Color and fill scales which use the palettes in
+#' [hc_pal()] and are meant for use with
+#' [theme_hc()].
+#'
+#' @inheritParams ggplot2::scale_colour_hue
+#' @inheritParams hc_pal
+#' @family color hc
+#' @rdname scale_hc
+#' @returns A ggplot2 scale object.
+#' @export
+#' @example inst/examples/ex-scale_hc.R
+scale_colour_hc <- function(palette = "default", ...) {
+  discrete_scale("colour", palette = hc_pal(palette), ...)
+}
+
+#' @rdname scale_hc
+#' @export
+scale_color_hc <- scale_colour_hc
+
+#' @rdname scale_hc
+#' @export
+scale_fill_hc <- function(palette = "default", ...) {
+  discrete_scale("fill", palette = hc_pal(palette), ...)
+}

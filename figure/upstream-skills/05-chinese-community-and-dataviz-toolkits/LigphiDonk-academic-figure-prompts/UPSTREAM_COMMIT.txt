@@ -1,0 +1,5 @@
+repository: https://github.com/LigphiDonk/academic-figure-generator
+commit_sha: 0a2bec6bb56d6b47143a81909f8d818716bdcbab
+branch: main
+license: MIT
+stars_at_harvest: 3025

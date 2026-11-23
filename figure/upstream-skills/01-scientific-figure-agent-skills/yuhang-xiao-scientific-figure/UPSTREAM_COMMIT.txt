@@ -1,0 +1,6 @@
+﻿Repository: Yuhang-Xiao/scientific-figure
+URL: https://github.com/Yuhang-Xiao/scientific-figure
+Commit: 9b42f4083a7af5ef0e33422dd02789393f7e5b72
+Branch: scientific-figure
+License: MIT (see LICENSE)
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\yuhang-xiao-scientific-figure\: examples\amazon_regression_v2\08_previews\comparison_master_vs_editable.png (957042 bytes)

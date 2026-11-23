@@ -1,0 +1,254 @@
+---
+myimage: "BundleSmall.png"
+pathSlug: "edge_bundling"
+mytitle: "Hierarchical edge bundling"
+output:
+  html_document:
+      self_contained: false
+      mathjax: default
+      lib_dir: libs
+      template: template_datatoviz.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+
+<div class="mycontent">
+
+
+
+# Definition {#definition}
+***
+`Hierarchical Edge Bundling` allows to visualize `adjacency relations` between entities organized in a `hierarchy`. The idea is to bundle the adjacency edges together to decrease the clutter usually observed in complex networks.
+
+<br>
+
+<u>Step 1</u>: Let's consider the hierarchy of the [Flare](http://flare.prefuse.org) ActionScript visualization library. The elements of its library are organized in several folder, like query, data, scale... Each folder is then subdivided in subfolders and so on. The hierarchy can be visualized as a [dendrogram](https://www.data-to-viz.com/graph/dendrogram.html) as follow:
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.height=6, fig.width=6}
+# Libraries
+library(tidyverse)
+library(viridis)
+library(patchwork)
+library(hrbrthemes)
+library(ggraph)
+library(igraph)
+
+# The flare dataset is provided in ggraph
+edges <- flare$edges
+vertices <- flare$vertices %>% arrange(name) %>% mutate(name=factor(name, name))
+connections <- flare$imports
+
+# Preparation to draw labels properly:
+vertices$id=NA
+myleaves=which(is.na( match(vertices$name, edges$from) ))
+nleaves=length(myleaves)
+vertices$id[ myleaves ] = seq(1:nleaves)
+vertices$angle= 90 - 360 * vertices$id / nleaves
+vertices$hjust<-ifelse( vertices$angle < -90, 1, 0)
+vertices$angle<-ifelse(vertices$angle < -90, vertices$angle+180, vertices$angle)
+
+# Build a network object from this dataset:
+mygraph <- graph_from_data_frame(edges, vertices = vertices)
+
+# The connection object must refer to the ids of the leaves:
+from = match( connections$from, vertices$name)
+to = match( connections$to, vertices$name)
+
+# Basic dendrogram
+ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+    geom_edge_link(size=0.4, alpha=0.1) +
+    geom_node_text(aes(x = x*1.01, y=y*1.01, filter = leaf, label=shortName, angle = angle, hjust=hjust), size=1.5, alpha=1) +
+    coord_fixed() +
+    theme_void() +
+    theme(
+      legend.position="none",
+      plot.margin=unit(c(0,0,0,0),"cm"),
+    ) +
+    expand_limits(x = c(-1.2, 1.2), y = c(-1.2, 1.2))
+```
+
+<u>Step 2</u>: now consider another level of information. Some elements of the library have dependencies: basically they call other elements when they are used. A naive approach to represent this connection would be to draw a straight line (left). Instead, hierarchical edge bundling uses a curve that follows the hierarchy link between the 2 elements (right).
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.height=6, fig.width=10}
+
+# Just one connection:
+from_head = match( connections$from, vertices$name) %>% head(1)
+to_head = match( connections$to, vertices$name) %>% head(1)
+
+# Basic dendrogram
+p1 <- ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+    geom_edge_link(size=0.4, alpha=0.1) +
+    geom_conn_bundle(data = get_con(from = from_head, to = to_head), alpha = 1, colour="#69b3a2", width=2, tension=0) +
+    geom_node_text(aes(x = x*1.01, y=y*1.01, filter = leaf, label=shortName, angle = angle, hjust=hjust), size=1.5, alpha=1) +
+    coord_fixed() +
+    theme_void() +
+    theme(
+      legend.position="none",
+      plot.margin=unit(c(0,0,0,0),"cm"),
+    ) +
+    expand_limits(x = c(-1.2, 1.2), y = c(-1.2, 1.2))
+
+p2 <- ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+    geom_edge_link(size=0.4, alpha=0.1) +
+    geom_conn_bundle(data = get_con(from = from_head, to = to_head), alpha = 1, colour="#69b3a2", width=2, tension=0.9) +
+    geom_node_text(aes(x = x*1.01, y=y*1.01, filter = leaf, label=shortName, angle = angle, hjust=hjust), size=1.5, alpha=1) +
+    coord_fixed() +
+    theme_void() +
+    theme(
+      legend.position="none",
+      plot.margin=unit(c(0,0,0,0),"cm"),
+    ) +
+    expand_limits(x = c(-1.2, 1.2), y = c(-1.2, 1.2))
+
+p1 + p2
+```
+
+
+<u>Step 3</u>: Hierarchical edge bundling apply this technique to every adjacency connection of the dataset. Also, it does not show the hierarchy of the dataset to decrease the clutter as much as possible. It results in a smooth eye catching figure where connection get obvious and the clutter minimal. Here is an analogy suggested by the inventor of this technique:
+
+> ... as bundling your electrical wires together in order to reduce clutter, while fanning them out at their terminus in order to plus them in.
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.height=7, fig.width=7}
+# Make the plot
+ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
+    geom_conn_bundle(data = get_con(from = from, to = to), alpha = 0.1, colour="#69b3a2") +
+    geom_node_text(aes(x = x*1.01, y=y*1.01, filter = leaf, label=shortName, angle = angle, hjust=hjust), size=1.5, alpha=1) +
+    coord_fixed() +
+    theme_void() +
+    theme(
+      legend.position="none",
+      plot.margin=unit(c(0,0,0,0),"cm"),
+    ) +
+    expand_limits(x = c(-1.2, 1.2), y = c(-1.2, 1.2))
+
+```
+
+
+*Note*: This example uses the famous `flare` example provided in the [ggraph R library](https://github.com/thomasp85/ggraph/blob/master/R/data_flare.R).
+
+*Reference*: Hierarchical edge bundling is a method developped by: D. Holten 2006. [Hierarchical Edge Bundles: Visualization of Adjacency Relations in Hierarchical Data](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4015425). *IEEE Transactions on Visualization and Computer Graphics 12(5)*.
+
+
+
+
+
+# What for
+***
+
+Hierarchical edge bundling reduces visual clutter and also visualizes implicit adjacency edges between parent nodes that are the result of explicit adjacency edges between their respective child nodes. Furthermore, hierarchical edge bundling is a generic method which can be used in conjunction with existing tree visualization techniques.
+
+Here is an example showing the same dataset with and without the use of bundling. The use of straight line on the left results in a cluttered figure that makes impossible to read the connection. The use of bundling on the right makes a neat figure:
+
+<br><br>
+<center>
+<img src="IMG/bundle_compare.png" alt="img" width="600" height="700">
+</center>
+
+<br><br>
+
+
+
+*source*: [Holten 2006.](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4015425)
+
+
+
+
+
+
+# Variation {#variation}
+***
+
+Because I love this kind of graphic so much, I feel like displaying a few examples
+
+
+- Application of edge bundling on maps, with a method that do not even need a hierarchy: it uses a self-organizing approach to bundling. *Source*: Holten et al. 2009. [Force-Directed Edge Bundling for Graph Visualization](https://www.win.tue.nl/vis1/home/dholten/papers/forcebundles_eurovis.pdf).
+
+<br><br>
+<center>
+<img src="IMG/bundle_map.png" alt="img" width="800" height="900">
+</center>
+
+<br><br>
+
+- The [Eigen factor project](http://truth-and-beauty.net/projects/well-formed-eigenfactor) study citation patterns between scientific journals. *Moritz Stefaner* used this data to build beautiful visuals using the hierarchical edge bundling technique:
+
+<br>
+<center>
+<img src="IMG/bundle_eigen.png" alt="img" width="600" height="600">
+</center>
+
+
+# Related {#related}
+***
+
+<div class="row">
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/network.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/NetworkSmall.png">
+  <p class="mytitlerelated">Network</p>
+  <p class="mytextrelated">Represents relationships using nodes and edges.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/arc.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/ArcSmal.png">
+  <p class="mytitlerelated">Arc diagram</p>
+  <p class="mytextrelated">A subset of the network diagram where nodes are aligned and edges are arcs.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/sankey.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/SankeySmall.png">
+  <p class="mytitlerelated">Sankey diagram</p>
+  <p class="mytextrelated">A flow diagram in which the width of the arrows is shown proportionally to the flow quantity.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/chord.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/ChordSmall.png">
+  <p class="mytitlerelated">Chord diagram</p>
+  <p class="mytextrelated">A circular layout used to display weighted relationships between entities through arcs.</p>
+  </a>
+  </div>
+</div>
+
+
+
+# Build your own {#code}
+***
+
+The [R](https://r-graph-gallery.com/hierarchical-edge-bundling.html), [Python](https:/python-graph-gallery.com/hierarchical-edge-bundling/), [React](https://www.react-graph-gallery.com/hierarchical-edge-bundling) and [D3](https://d3-graph-gallery.com/bundle.html) graph galleries are 4 websites providing hundreds of chart example, always providing the reproducible code. Click the button below to see how to build the chart you need with your favorite programing language.
+
+<p>
+<a href="https://r-graph-gallery.com/hierarchical-edge-bundling.html" class="btn btn-primary">R graph gallery</a>
+<a href="https://python-graph-gallery.com/hierarchical-edge-bundling/" class="btn btn-primary">Python gallery</a>
+<a href="https://www.react-graph-gallery.com/hierarchical-edge-bundling" class="btn btn-primary">React gallery</a>
+<a href="https://d3-graph-gallery.com/bundle.html" class="btn btn-primary">D3 gallery</a>
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

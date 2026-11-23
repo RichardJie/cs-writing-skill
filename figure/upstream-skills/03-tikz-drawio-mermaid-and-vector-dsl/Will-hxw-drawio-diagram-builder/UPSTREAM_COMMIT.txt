@@ -1,0 +1,4 @@
+upstream_url: https://github.com/Will-hxw/drawio-diagram-builder
+commit_sha: a922507ccd51815f4e8764846d640a65b5fb6f7e
+license: MIT
+note: Moved 13 binary/heavy file(s) >500KB (13588.7 KB) out of staging.

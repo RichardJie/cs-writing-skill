@@ -1,0 +1,51 @@
+#import "@preview/cetz:0.5.3": canvas, draw
+#import draw: circle, content, line
+
+#set page(width: auto, height: auto, margin: 8pt, fill: none)
+#set text(size: 12pt)
+
+#let signal(t) = calc.sin(2 * calc.pi * t / 13)
+#let scale-x = .74
+#let scale-y = 2.6
+#let pt(t) = (t * scale-x, signal(t) * scale-y)
+#let (duration, n-samples) = (15, 12)
+#let sample-period = duration / (n-samples - 1)
+
+#canvas({
+  let arrow = (mark: (end: "stealth", fill: black, scale: .8), stroke: 1.4pt)
+
+  // axes (axis lines = middle)
+  line((0, -1.1 * scale-y), (0, 1.5 * scale-y), ..arrow, name: "y-axis")
+  line((0, 0), ((duration + 1) * scale-x, 0), ..arrow, name: "x-axis")
+  content("y-axis.end", [signal $x(t)$], anchor: "north-west", padding: (left: 4pt))
+  content("x-axis.end", [time $t$], anchor: "north-east", padding: (top: 4pt))
+
+  // continuous signal
+  line(..range(301).map(idx => pt(idx * duration / 300)), stroke: 1.1pt)
+
+  // sampled stems with dots
+  for idx in range(n-samples) {
+    let t = idx * sample-period
+    line((t * scale-x, 0), pt(t), stroke: 1.1pt)
+    circle(
+      pt(t),
+      radius: .09,
+      fill: red.darken(25%),
+      stroke: red.darken(60%) + .6pt,
+    )
+  }
+
+  // label the lowest sample
+  let lowest = pt(7 * sample-period)
+  content(
+    (rel: (0, -.2), to: lowest),
+    text(fill: red.darken(25%))[samples $x(n \/ f_s)$],
+    anchor: "north",
+  )
+
+  // sample-time tick labels on a shared baseline
+  for (idx, label) in ((1, $1 \/ f_s$), (2, $2 \/ f_s$), (3, $3 \/ f_s$), (4, $dots$)) {
+    content((idx * sample-period * scale-x, -.55), label, anchor: "base")
+  }
+  content((2.5 * sample-period * scale-x, -1.0), [$f_s$: sampling frequency], anchor: "north")
+})

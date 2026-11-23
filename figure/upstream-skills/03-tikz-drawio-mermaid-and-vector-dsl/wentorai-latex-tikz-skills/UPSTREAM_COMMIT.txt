@@ -1,0 +1,4 @@
+upstream_url: https://github.com/wentorai/research-plugins
+commit_sha: bf44b3cd617fa94c8a1b254c5d1987142ca3d631
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /skills/writing/latex/** to exclude heavy binary showcase/asset blobs.

@@ -1,0 +1,20 @@
+template: framework
+title: " "
+canvas:
+  width_in: 12.0
+  height_in: 6.75
+style:
+  base: chinese-journal
+nodes:
+  - id: source_preview
+    shape: image
+    image: assets/source_figure_blurred_light.png
+    x: 0.40
+    y: 0.34
+    w: 11.20
+    h: 6.04
+groups: []
+connectors: []
+exports:
+  dir: output
+  stem: research_framework_with_assets

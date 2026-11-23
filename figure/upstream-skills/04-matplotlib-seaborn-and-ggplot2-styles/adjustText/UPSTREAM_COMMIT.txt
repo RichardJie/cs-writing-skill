@@ -1,0 +1,4 @@
+Repository: https://github.com/Phlya/adjustText
+Branch: master
+Commit SHA: 92b0397b5de118151b788d5fb35aa7272f32c0ce
+License: MIT

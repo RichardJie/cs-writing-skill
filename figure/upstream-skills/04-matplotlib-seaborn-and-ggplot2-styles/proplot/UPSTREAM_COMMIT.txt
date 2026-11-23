@@ -1,0 +1,4 @@
+Repository: https://github.com/proplot-dev/proplot
+Branch: master
+Commit SHA: 0f4234f94ded49ee1b207d5e816d648e96b2388f
+License: MIT

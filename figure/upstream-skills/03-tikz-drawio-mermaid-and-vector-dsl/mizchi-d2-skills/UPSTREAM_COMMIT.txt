@@ -1,0 +1,4 @@
+upstream_url: https://github.com/mizchi/explainer
+commit_sha: 752da7c687e767c3efd8ea79f63c5f4f3d76e7b5
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /skills/d2-diagram/**, /skills/d2-slides/**, /docs/figure-cheatsheet/** to exclude heavy binary showcase/asset blobs.

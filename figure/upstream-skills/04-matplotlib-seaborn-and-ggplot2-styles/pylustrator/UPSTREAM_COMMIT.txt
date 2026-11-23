@@ -1,0 +1,4 @@
+Repository: https://github.com/rgerum/pylustrator
+Branch: main
+Commit SHA: b0341ee96cd3d11aab62e444ad6bf8b0abb83ce2
+License: GPL-3.0

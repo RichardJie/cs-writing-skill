@@ -1,0 +1,13 @@
+title: Deep Belief Network
+creator: Petar Veličković
+creator_url: http://petar-v.com
+url: https://github.com/PetarV-/TikZ/tree/86aee049f5355d77c598b936399e42caf8941e60/Deep%20belief%20network
+source: |
+  Tutorial on deep generative models
+date: 2026-06-10
+tags:
+  - machine learning
+  - neural networks
+  - generative modeling
+description: |
+  A compact generative deep belief network: the top hidden pair forms an undirected restricted Boltzmann machine, while downward directed connections generate the visible variables. Based on [Hinton et al. (2006)](https://www.cs.toronto.edu/~hinton/absps/fastnc.pdf).

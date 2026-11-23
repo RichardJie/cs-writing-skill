@@ -1,0 +1,4 @@
+Repository: https://github.com/JLSteenwyk/ggpubfigs
+Branch: master
+Commit SHA: 7cf2193ecb4eb31c387dc27ed276a3a9410ce73b
+License: MIT

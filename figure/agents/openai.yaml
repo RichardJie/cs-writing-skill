@@ -1,4 +1,4 @@
 interface:
-  display_name: "Scientific Figure Hub"
-  short_description: "Extensible academic figure generation hub routing publication-grade Python/R plots, 83-panel chart atlases, and FigureForge visual SVG editing (:nature, :figureforge, :python, :r, :qa)"
-  default_prompt: "Use $figure to design or generate a publication-grade scientific figure with editable vector exports and non-occluding layout."
+  display_name: "Scientific Figure & Diagram Directory"
+  short_description: "Curated scientific figure, architecture diagram, and data visualization directory indexing jing1312/nature-figure-skill, 124 open-source plotting/diagram repositories, and journal/scholar/community guides."
+  default_prompt: "Use $figure to locate and apply an open-source scientific plotting skill, architecture diagram toolkit, or journal figure specification."

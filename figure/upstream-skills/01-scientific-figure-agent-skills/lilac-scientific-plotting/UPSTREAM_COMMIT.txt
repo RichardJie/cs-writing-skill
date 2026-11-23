@@ -1,0 +1,6 @@
+﻿Repository: Lilac21325/scientific-plotting
+URL: https://github.com/Lilac21325/scientific-plotting
+Commit: a16100e734508221775dc94cfeb67e223e0887ec
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

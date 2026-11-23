@@ -1,0 +1,5 @@
+﻿Repository: https://github.com/holtzy/dataviz-caveat-flashcards
+Website: https://www.data-to-viz.com/caveats.html
+Author: Yan Holtz
+Commit SHA: bd142973dabeb5994a8cf51b44177bc4f0106450
+License: CC BY-NC 4.0 (see LICENSE)

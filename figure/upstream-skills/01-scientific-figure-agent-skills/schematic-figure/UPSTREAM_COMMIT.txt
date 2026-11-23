@@ -1,0 +1,6 @@
+﻿Repository: lgwrightlab/schematic-figure
+URL: https://github.com/lgwrightlab/schematic-figure
+Commit: 09d8b6e98d04b91de6e8b6632b3356b9fc237417
+Branch: main
+License: MIT (see LICENSE)
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\schematic-figure\: .claude\skills\schematic-figure\foundation\fonts\latinmodern-math.otf (733736 bytes); docs\launch.gif (1892331 bytes)

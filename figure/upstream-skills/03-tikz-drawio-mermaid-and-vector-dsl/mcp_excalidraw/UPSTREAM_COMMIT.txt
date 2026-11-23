@@ -1,0 +1,4 @@
+upstream_url: https://github.com/yctimlin/mcp_excalidraw
+commit_sha: 81720ac819d2325177cd6137c6ad41d52d0f5374
+license: MIT
+note: Moved 1 binary/heavy file(s) >500KB (2839.0 KB) out of staging.

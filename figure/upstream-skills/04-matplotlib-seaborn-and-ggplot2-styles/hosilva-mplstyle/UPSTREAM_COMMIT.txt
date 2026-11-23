@@ -1,0 +1,4 @@
+Repository: https://github.com/hosilva/mplstyle
+Branch: master
+Commit SHA: c3a0067c08b0300183d8a28e9a4ecf2af4a06ce4
+License: MIT

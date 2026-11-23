@@ -1,0 +1,4 @@
+Repository: https://github.com/BlakeRMills/MetBrewer
+Branch: main
+Commit SHA: 58839e5ac7c7d604c8704581f7b201a29986b814
+License: CC0-1.0

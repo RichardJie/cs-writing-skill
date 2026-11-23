@@ -1,0 +1,6 @@
+Repository: https://github.com/holtzy/data_to_viz
+Website: https://www.data-to-viz.com/
+Authors: Yan Holtz and Conor Healy
+Commit SHA: cba4155d0f54f097be0542f7dae2b3db8fee5281
+License: MIT License (see LICENSE)
+Contents: Pure UTF-8 RMarkdown source files for chart taxonomy (legacy/graph/*.Rmd), data visualization caveats (legacy/caveat/*.Rmd), web source metadata, README.md, AGENTS.md, and LICENSE (binary images/HTML build outputs and .git stripped).

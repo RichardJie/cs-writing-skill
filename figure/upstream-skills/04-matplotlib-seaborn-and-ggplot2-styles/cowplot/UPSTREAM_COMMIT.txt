@@ -1,0 +1,4 @@
+Repository: https://github.com/wilkelab/cowplot
+Branch: master
+Commit SHA: b18d820d3af26b749235c4e4bc18bf416fba88e1
+License: GPL-2.0

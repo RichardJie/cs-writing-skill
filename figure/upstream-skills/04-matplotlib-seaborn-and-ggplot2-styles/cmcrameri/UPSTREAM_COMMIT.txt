@@ -1,0 +1,4 @@
+Repository: https://github.com/callumrollo/cmcrameri
+Branch: main
+Commit SHA: 87197e141a2c451691ec53fadc6da4d017f79a4c
+License: MIT

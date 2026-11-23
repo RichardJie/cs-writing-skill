@@ -1,0 +1,6 @@
+﻿Repository: pengjunchi0/codex-visio-paper-figure-skill
+URL: https://github.com/pengjunchi0/codex-visio-paper-figure-skill
+Commit: bd6e7d22c2494b17cd13c8e1b17afb3567e4a7f6
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

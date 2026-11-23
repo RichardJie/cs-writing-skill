@@ -1,0 +1,6 @@
+﻿Repository: muzark/scientific-color-palettes
+URL: https://github.com/muzark/scientific-color-palettes
+Commit: 7aca8d32041f9d11228674a4bd2ef80a229b8b04
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

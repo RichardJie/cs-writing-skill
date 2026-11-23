@@ -1,0 +1,4 @@
+upstream_url: https://github.com/diegomarino/claude-toolshed
+commit_sha: 299c35f0fed2052e1fa26c50677c16e2aef65266
+license: MIT
+note: Sparse-checkout of /README.md, /plugins/d2/**, /plugins/mermaid/** to exclude heavy binary showcase/asset blobs.

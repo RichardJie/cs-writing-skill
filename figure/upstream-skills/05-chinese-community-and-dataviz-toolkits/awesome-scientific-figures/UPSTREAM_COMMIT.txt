@@ -1,0 +1,6 @@
+﻿Repository: BinSpa/awesome-scientific-figures
+URL: https://github.com/BinSpa/awesome-scientific-figures
+Commit: bae89aa414f9251c9c7ea6f6e5a077002ea4f970
+Branch: main
+License: CC0-1.0 (declared in README.md)
+Note: All upstream files <=500KB preserved verbatim.

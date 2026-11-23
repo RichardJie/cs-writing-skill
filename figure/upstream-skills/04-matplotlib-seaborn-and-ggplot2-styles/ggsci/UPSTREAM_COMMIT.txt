@@ -1,0 +1,4 @@
+Repository: https://github.com/nanxstats/ggsci
+Branch: master
+Commit SHA: 37b74f85e62680b9d4523b0b4c0d9bfa0403d299
+License: GPL-3.0

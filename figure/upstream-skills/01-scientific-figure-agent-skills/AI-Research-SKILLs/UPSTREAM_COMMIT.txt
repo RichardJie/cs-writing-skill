@@ -1,0 +1,6 @@
+﻿Repository: Orchestra-Research/AI-Research-SKILLs
+URL: https://github.com/Orchestra-Research/AI-Research-SKILLs
+Commit: 773a52944ba4747a18bd4ae9ade53fff041adcbc
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-checkout of 20-ml-paper-writing/academic-plotting/ + LICENSE & README.md.

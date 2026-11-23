@@ -1,0 +1,3 @@
+upstream_url: https://github.com/Agents365-ai/drawio-skill
+commit_sha: 77287b6452503d14faa255309f3c6ad5fb7e1df0
+license: MIT

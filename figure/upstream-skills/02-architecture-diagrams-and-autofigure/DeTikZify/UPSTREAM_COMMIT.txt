@@ -1,0 +1,3 @@
+upstream_url: https://github.com/potamides/DeTikZify
+commit_sha: 13ac429925f0125ce5117676450134f400499d0d
+license: Apache-2.0

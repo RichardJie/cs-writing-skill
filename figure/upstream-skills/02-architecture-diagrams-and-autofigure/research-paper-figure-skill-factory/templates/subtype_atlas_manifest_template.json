@@ -1,0 +1,47 @@
+{
+  "atlas_version": "2.0.5",
+  "generated_skill_slug": "",
+  "generated_skill_version": "",
+  "asset_root": "assets/subtype-atlas",
+  "default_display_order": [],
+  "display_markdown_template": "![{alt_text}]({image_path})",
+  "codex_display_rule": "Resolve image_path to an absolute filesystem path before embedding local images.",
+  "chatgpt_sources_display_rule": "Use source asset display or package-relative Markdown image embeds; record attempted_host_blocked when rendering is blocked.",
+  "required_abstract_decision_display_rule": "When a text turn explains or compares subtype, layout grammar, visual style, density, metaphor, modeling pattern, candidate scheme differences, or final content architecture, display a matching saved atlas/reference or non-target concept/modeling example image with Markdown syntax; if missing, record concept_example_required/status/role/trigger_reason and repair action.",
+  "required_visual_structure_display_rule": "When a text turn explains visual structure, layout skeleton, panel choreography, module topology, arrow grammar, candidate-board structure, second-round optimization geometry, or content architecture, display a matching saved atlas/reference or non-target visual-structure concept/modeling example image with Markdown syntax; prose-only or bullet-only descriptions do not count.",
+  "coverage_angles": [
+    "reader_question",
+    "narrative_role",
+    "logical_gap",
+    "visual_rhetoric",
+    "visual_grammar_layout",
+    "paper_slot",
+    "density_detail_level",
+    "visual_communication_art_style"
+  ],
+  "generation_route": {
+    "chatgpt_web": "Create image through ChatGPT Images 2.0",
+    "codex_priority": "$imagegen skill first",
+    "codex_fallback": "ChatGPT Images 2.0 API or another approved image-generation API"
+  },
+  "assets": [
+    {
+      "asset_id": "",
+      "classification_angle": "",
+      "subtype": "",
+      "image_path": "assets/subtype-atlas/boards/",
+      "thumbnail_path": "assets/subtype-atlas/thumbnails/",
+      "board_path": "assets/subtype-atlas/boards/",
+      "markdown_alt_text": "",
+      "markdown_embed": "![alt](assets/subtype-atlas/boards/example.png)",
+      "generation_route": "",
+      "build_time_or_id": "",
+      "intended_use": "",
+      "reference_role": "saved_atlas",
+      "abstract_decision_triggers_supported": [],
+      "visual_structure_triggers_supported": [],
+      "transferable_visual_attributes": [],
+      "limitations": []
+    }
+  ]
+}

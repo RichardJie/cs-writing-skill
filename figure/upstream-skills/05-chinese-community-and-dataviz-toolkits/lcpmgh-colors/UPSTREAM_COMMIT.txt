@@ -1,0 +1,5 @@
+repository: https://github.com/lcpmgh/colors
+commit_sha: 3d744402b1c00b4341a08652c3377941b6aeb639
+branch: main
+license: MIT
+stars_at_harvest: 848

@@ -1,0 +1,6 @@
+﻿Repository: vikast908/data-visualization-skill
+URL: https://github.com/vikast908/data-visualization-skill
+Commit: d7a14e7cf10d796896b095f44c18b9d8b488c017
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

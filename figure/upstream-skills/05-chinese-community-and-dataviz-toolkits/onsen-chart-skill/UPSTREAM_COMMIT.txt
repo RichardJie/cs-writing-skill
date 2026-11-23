@@ -1,0 +1,6 @@
+﻿Repository: onsen-ai/chart-skill
+URL: https://github.com/onsen-ai/chart-skill
+Commit: bbaf106318b7b3be3f7f3995090e9dbeea66bc3b
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

@@ -1,0 +1,3 @@
+upstream_url: https://github.com/fraserlove/nntikz
+commit_sha: 3dc29cfda3bd18db2d1e73830f95b4d0985e050f
+license: MIT

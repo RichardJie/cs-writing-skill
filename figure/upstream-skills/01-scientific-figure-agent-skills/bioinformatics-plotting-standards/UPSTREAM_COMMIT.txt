@@ -1,0 +1,6 @@
+﻿Repository: Rooneyxu/bioinformatics-plotting-standards
+URL: https://github.com/Rooneyxu/bioinformatics-plotting-standards
+Commit: 47c94d4859a14b393e4f5f973cead03b363c0a28
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/references/source/*.pdf). All checked-out files <=500KB preserved verbatim.

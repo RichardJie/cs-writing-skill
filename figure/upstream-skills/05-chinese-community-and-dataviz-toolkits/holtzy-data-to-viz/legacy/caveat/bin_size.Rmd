@@ -1,0 +1,97 @@
+---
+myimage1: "../img/mistake/bin_size.png"
+mytitle: "Play with your histogram bin size"
+pathSlug: "bin_size"
+output:
+  html_document:
+      template: template_caveat.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+<br><br>
+<div class="mycontent">
+A [histogram](https://www.data-to-viz.com/graph/histogram.html) takes as input a numeric variable and cuts it into several bins. The number of observations in each bin is represented by the height of the bar. It is a very common type of graphic and most tools select a bin size value by default.
+<br><br>
+However, this bin size choice can have a strong impact on the chart insight. Let's look at the distribution of [Airbnb night prices on the French Riviera](http://www.data-to-viz.com/story/OneNum.html):
+
+```{r, warning=FALSE, message=FALSE, fig.align="center"}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+library(kableExtra)
+options(knitr.table.format = "html")
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", header=TRUE)
+
+
+data %>%
+  filter( price<300 ) %>%
+  ggplot( aes(x=price)) +
+    stat_bin(breaks=seq(0,300,10), fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    ggtitle("Night price distribution of Airbnb appartements") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=12)
+    )
+```
+
+The price ranges between 10 and 300 euros, with most of the apartments ranging between 60 and 150 euros per night. In this chart, prices are cut in several 10 euro bins: between 0 and 10 euros a night, between 10 and 20, and so on. This is represented on the X-axis. Then, the number of apartments per bin is counted and represented by the Y-axis.
+
+<br>
+
+Let’s check what happens when prices are split into bins of 2 euros instead of 10:
+
+```{r, fig.align="center"}
+data %>%
+  filter( price<300 ) %>%
+  ggplot( aes(x=price)) +
+    stat_bin(breaks=seq(0,300,3), fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    ggtitle("Night price distribution of Airbnb appartements") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=12)
+    )
+```
+
+There is a huge difference between these two histograms. A few values are over-represented in the dataset (like 58, 64, 69, 75, 80...). This is definitely a signal you want to understand when analyzing your data.
+
+
+
+# Going further
+***
+
+- [Airbnb prices on the French Riviera](http://www.data-to-viz.com/story/OneNum.html): see the story that describes that kind of dataset.
+- Another example of differences by [AstroPy](http://docs.astropy.org/en/stable/visualization/histogram.html)
+- About histogram [bin width optimization](http://176.32.89.45/~hideaki/res/histogram.html)
+- Doing histograms in [R](https://www.r-graph-gallery.com/histogram/) and [Python](https://python-graph-gallery.com/histogram/)
+
+<br>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

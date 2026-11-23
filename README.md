@@ -41,19 +41,27 @@ cs-writing-skill/
 │   │   └── 05-disciplines-and-palettes/                # Discipline-specific slide templates & scientific color palettes
 │   ├── curated-guides/                                 # Source-attributed scholar, university & practitioner presentation guides
 │   └── agents/openai.yaml
-└── figure/                                             # Extensible academic & scientific figure generation hub
-    ├── SKILL.md                                        # Sub-skill registry, tag/intent router, guardrails & plug-in spec
-    ├── agents/openai.yaml
-    ├── nature-figure-skill/                            # :nature (default) — Python/R journal workflow + FigureForge studio
-    │   ├── SKILL.md                                    # Sub-skill entrypoint & route dispatcher
-    │   ├── README.md / README.zh-CN.md                 # Bilingual showcase, templates & quick start
+└── figure/                                             # Scientific figure & diagram curation directory + nature-figure-skill
+    ├── SKILL.md                                        # Pure classification & routing index across all figure skills & guides
+    ├── nature-figure-skill/                            # jing1312/nature-figure-skill — Python/R journal workflow + FigureForge studio
+    │   ├── README.md / README.zh-CN.md                 # Bilingual documentation, 83-panel chart atlases & quick start
     │   ├── LICENSE / DERIVATIVE_NOTICE.md              # MIT license & upstream attribution
-    │   ├── figureforge/                                # :figureforge — No-code SVG studio (22 templates, 16 palettes)
+    │   ├── figureforge/                                # Browser-based WYSIWYG SVG studio (22 templates, 16 palettes)
     │   ├── assets/                                     # 9 showcase SVG atlases (83 panels) + workflow diagrams
-    │   ├── skills/nature-figure/                       # Contract-first Python/R engine, 14 references & figures4papers demos
-    │   ├── skills/nature-*/                            # Bundled companion nature-* reference modules
-    │   └── scripts/                                    # Zero-dependency template, SVG & link/schema checks
-    └── <future-sub-skill>/                             # Plug-in slot for future schematic / TikZ / bio / 3D figure skills
+    │   ├── skills/nature-figure/                       # Contract-first Python/R plotting skill, 14 references & figures4papers demos
+    │   ├── skills/nature-*/                            # 8 companion nature-* workflow modules
+    │   └── scripts/                                    # Template, SVG & link/schema verification scripts
+    ├── upstream-skills/                                # 124 deduplicated verbatim open-source plotting, diagram & dataviz GitHub repos
+    │   ├── 01-scientific-figure-agent-skills/          # 30 scientific plotting, biomedical schematic & Origin/MATLAB/PyGMT skills
+    │   ├── 02-architecture-diagrams-and-autofigure/    # 20 PaperBanana, AutoFigure, FigGenie, FigCraft & ML architecture toolkits
+    │   ├── 03-tikz-drawio-mermaid-and-vector-dsl/      # 20 LaTeX TikZ/PGFPlots, Typst CeTZ, Draw.io, Mermaid, Excalidraw & D2 skills
+    │   ├── 04-matplotlib-seaborn-and-ggplot2-styles/   # 30 SciencePlots, tueplots, mplstyle sheets, colormaps & R ggplot2 packages
+    │   └── 05-chinese-community-and-dataviz-toolkits/  # 24 Chinese research community plotting/layout repos & Data-to-Viz toolkits
+    ├── curated-guides/                                 # Source-attributed journal specs, scholar classics & community figure guides
+    │   ├── SOURCES_CATALOG.md                          # Master provenance catalog (125 GitHub repos, Commit SHAs, Licenses, DOIs, URLs)
+    │   ├── by-journal-and-scholar-guides.md            # Nature/Science/Cell/PLOS/IEEE/ACM/CVPR/NeurIPS specs + Wilke, Holtz, Wong, Rougier
+    │   └── by-community-practical-guides.md            # Zhihu, sspai, ScienceNet, Reddit, HN & researcher blog figure workflows & prompts
+    └── agents/openai.yaml
 ```
 
 ---
@@ -65,7 +73,7 @@ cs-writing-skill/
 | **`plain`** | [plain/SKILL.md](plain/SKILL.md) | Explain difficult concepts clearly | Diagnose where understanding breaks, then walk one small domain-native numerical example step by step |
 | **`humanize`** | [humanize/SKILL.md](humanize/SKILL.md) | Remove AI tone from prose, apply `paper-boundaries` narrative framing, and index verified open-source de-AI skills & empirical guides | `:chinese` ([chinese.md](humanize/chinese.md)) for Chinese de-AI-ing; `:english` ([english.md](humanize/english.md)) for English de-slopping; `:paper-boundaries` ([paper-boundaries.md](humanize/paper-boundaries.md)) for press-conference principle paper framing; plus 74 vendored upstream skills & 6 source-linked guides |
 | **`cs-report-ppt`** | [cs-report-ppt/SKILL.md](cs-report-ppt/SKILL.md) | Conference paper presentation deck generator & curated academic presentation skill library | Transform paper PDFs into 14-slide figure-dominant 16:9 widescreen PPT decks with native OMML math, plus categorized upstream PPT/Beamer/Touying/Slidev/Marp skills and scholar guides |
-| **`figure`** | [figure/SKILL.md](figure/SKILL.md) | Extensible scientific & publication figure generation hub | Produce *Nature*-grade multi-panel Python/R vector bundles (`SVG` + `PDF` + `600 DPI TIFF`), pick from 83 chart-atlas panels, or prototype layouts in the no-code **FigureForge** SVG studio |
+| **`figure`** | [figure/SKILL.md](figure/SKILL.md) | Scientific figure, academic architecture diagram & data visualization curation directory | Index [`jing1312/nature-figure-skill`](figure/nature-figure-skill/README.md) ([`nature-figure`](figure/nature-figure-skill/skills/nature-figure/SKILL.md) Python/R workflow + **FigureForge** 83-panel SVG studio), 124 vendored open-source plotting/TikZ/Draw.io/AutoFigure skills, and source-linked journal, scholar & community guides |
 
 > **`paper-boundaries` Integration Note:** Standalone `paper-boundaries` (`发布会原则` / Press-Conference Principle) is integrated directly into `humanize` at [humanize/paper-boundaries.md](humanize/paper-boundaries.md) and invoked via `/humanize :paper-boundaries`.
 
@@ -73,7 +81,7 @@ The four skills are independent and orthogonal:
 - **`plain`** governs *how to explain and repair understanding with concrete domain-native examples*;
 - **`humanize`** governs *how to strip AI voice from prose (`:chinese` / `:english`), enforce non-defensive paper framing (`:paper-boundaries`), and route to verified open-source de-AI skills and primary literature*;
 - **`cs-report-ppt`** governs *how to transform papers into figure-dominant academic slide decks with vision-in-the-loop self-inspection and route to open-source presentation engines/guides*;
-- **`figure`** governs *how to design, plot, edit, and export submission-grade scientific figures and multi-panel composites via modular sub-skills*.
+- **`figure`** governs *how to locate and apply verified open-source scientific plotting skills, architecture diagram toolkits, and official journal/scholar figure specifications*.
 
 ---
 
@@ -110,17 +118,18 @@ Full commit-pinned provenance (GitHub URLs, 40-char Commit SHAs, Licenses, DOIs,
 
 ---
 
-## `figure/` Sub-Skill Hub & Routes
+## `figure/` Integrated Suite & Open-Source Curation Taxonomy
 
-`figure` ([figure/SKILL.md](figure/SKILL.md)) is an extensible **scientific figure dispatcher** hosting specialized plotting, schematic, and illustration sub-skills under `figure/<sub-skill-dir>/`. It currently integrates [`jing1312/nature-figure-skill`](https://github.com/jing1312/nature-figure-skill) at [figure/nature-figure-skill/SKILL.md](figure/nature-figure-skill/SKILL.md) ([LICENSE](figure/nature-figure-skill/LICENSE)):
+`figure` ([figure/SKILL.md](figure/SKILL.md)) indexes the verbatim upstream [`jing1312/nature-figure-skill`](https://github.com/jing1312/nature-figure-skill) suite ([README.md](figure/nature-figure-skill/README.md), [LICENSE](figure/nature-figure-skill/LICENSE)), **124** deduplicated open-source scientific plotting, diagramming, and visualization repositories under `figure/upstream-skills/`, and source-attributed journal/scholar/community guides cataloged in [figure/curated-guides/SOURCES_CATALOG.md](figure/curated-guides/SOURCES_CATALOG.md):
 
-| Route / Axis | Tags | Loaded Module(s) | Core Capabilities |
-|:---|:---|:---|:---|
-| **1. Nature Figure Workflow** *(Default)* | `:nature` *(default)*, `:plot`, `:contract` | [nature-figure-skill/SKILL.md](figure/nature-figure-skill/SKILL.md), [skills/nature-figure/SKILL.md](figure/nature-figure-skill/skills/nature-figure/SKILL.md), [figure-contract.md](figure/nature-figure-skill/skills/nature-figure/references/figure-contract.md) | Contract-first manuscript plotting: 1-sentence claim → 4 page archetypes → single-backend gate (`Python` or `R`) → non-occluding legends (`add_stat_strip`) → `save_pub_set` / `save_pub_r` (`SVG` + `PDF` + `600 DPI TIFF`) |
-| **2. Visual No-Code Studio** | `:figureforge` (`:editor`, `:nocode`, `:canvas`) | [figureforge/README.md](figure/nature-figure-skill/figureforge/README.md), [nature-figure-skill/README.md](figure/nature-figure-skill/README.md) | Browser-based **FigureForge** infinite canvas & WYSIWYG SVG editor: 22 publication-grade templates, 16 series-linked palettes, 83 remixable panels, 1-click `SVG`/`PDF`/`TIFF`/`PNG`/`PPTX` export |
-| **3. Backend & Demo Tracks** | `:python` (`:matplotlib`), `:r` (`:ggplot2`) | [api.md](figure/nature-figure-skill/skills/nature-figure/references/api.md), [common-patterns.md](figure/nature-figure-skill/skills/nature-figure/references/common-patterns.md), [demos.md](figure/nature-figure-skill/skills/nature-figure/references/demos.md), [r-workflow.md](figure/nature-figure-skill/skills/nature-figure/references/r-workflow.md) | `apply_publication_style()` (`5–7 pt` at `89/183 mm`, `svg.fonttype='none'`, `pdf.fonttype=42`), semantic `PALETTE` & `PALETTE_NMI_PASTEL`, 9 `figures4papers` demo projects, and `ggplot2`+`patchwork`+`ComplexHeatmap` R scaffolds |
-| **4. Chart Selection, 83-Panel Atlas & QA** | `:select` (`:chart-type`), `:atlas`, `:qa` (`:audit`) | [figure-selection.md](figure/nature-figure-skill/skills/nature-figure/references/figure-selection.md), [atlas-gallery.md](figure/nature-figure-skill/skills/nature-figure/references/atlas-gallery.md), [qa-contract.md](figure/nature-figure-skill/skills/nature-figure/references/qa-contract.md) | Task-to-chart routing, 9 SVG showcase atlases (`Base`/`Pro`/`Bio`/`Extra`/`Plus`/`Ultra`/`Max`/`Nova`/`Apex` — 83 panels), and pre-submission typography/statistics/blot/vector QA |
-| **5. Future Sub-Skill Slots** | `:arch`/`:tikz`, `:bio`, `:3d`, `:interactive` *(extensible)* | See §5 in [figure/SKILL.md](figure/SKILL.md) | 3-step plug-in architecture (`figure/<new-skill-dir>/SKILL.md`) for adding schematic, `TikZ`, biomedical illustration, and 3D figure skills as regular Git-tracked directories |
+| Classification Axis | Local Upstream Directory / Entrypoint | Source-Attributed Curated Guide(s) (`figure/curated-guides/`) |
+|:---|:---|:---|
+| **0. Flagship Nature Figure & FigureForge Suite** | [nature-figure-skill/README.md](figure/nature-figure-skill/README.md) · [skills/nature-figure/SKILL.md](figure/nature-figure-skill/skills/nature-figure/SKILL.md) · [figureforge/README.md](figure/nature-figure-skill/figureforge/README.md) · [figure-contract.md](figure/nature-figure-skill/skills/nature-figure/references/figure-contract.md) · [atlas-gallery.md](figure/nature-figure-skill/skills/nature-figure/references/atlas-gallery.md) · [qa-contract.md](figure/nature-figure-skill/skills/nature-figure/references/qa-contract.md) | [SOURCES_CATALOG.md](figure/curated-guides/SOURCES_CATALOG.md) · [by-journal-and-scholar-guides.md](figure/curated-guides/by-journal-and-scholar-guides.md) |
+| **1. Scientific Figure Agent Skills** | `figure/upstream-skills/01-scientific-figure-agent-skills/` (30 repos) | [by-journal-and-scholar-guides.md](figure/curated-guides/by-journal-and-scholar-guides.md) · [by-community-practical-guides.md](figure/curated-guides/by-community-practical-guides.md) |
+| **2. Architecture Diagrams & AutoFigure** (`PaperBanana` / `AutoFigure` / `FigGenie` / `FigCraft` / `PlotNeuralNet`) | `figure/upstream-skills/02-architecture-diagrams-and-autofigure/` (20 repos) | [by-community-practical-guides.md](figure/curated-guides/by-community-practical-guides.md) |
+| **3. TikZ, Draw.io, Mermaid & Vector DSLs** (`TikZ` / `PGFPlots` / `CeTZ` / `Draw.io` / `Mermaid` / `Excalidraw` / `D2`) | `figure/upstream-skills/03-tikz-drawio-mermaid-and-vector-dsl/` (20 repos) | [by-community-practical-guides.md](figure/curated-guides/by-community-practical-guides.md) |
+| **4. Matplotlib, Seaborn & ggplot2 Styles** (`SciencePlots` / `tueplots` / `cmcrameri` / `ggsci` / `cowplot` / `patchwork`) | `figure/upstream-skills/04-matplotlib-seaborn-and-ggplot2-styles/` (30 repos) | [by-journal-and-scholar-guides.md](figure/curated-guides/by-journal-and-scholar-guides.md) |
+| **5. Chinese Community & Dataviz Toolkits** (`MLNLP-World` / `guanyingc` / `lcpmgh/colors` / `From Data to Viz` / `AntV`) | `figure/upstream-skills/05-chinese-community-and-dataviz-toolkits/` (24 repos) | [by-community-practical-guides.md](figure/curated-guides/by-community-practical-guides.md) · [by-journal-and-scholar-guides.md](figure/curated-guides/by-journal-and-scholar-guides.md) |
 
 ---
 
@@ -149,15 +158,14 @@ Use **slash commands** in the MIRASIM chat input:
 | `/humanize :english` | Humanize English — pattern catalog, em-dash ban, direct-statement rules |
 | `/humanize :paper-boundaries` | Revise, compress, or restructure paper narrative under the press-conference principle (`发布会原则`) |
 | `/cs-report-ppt` | Create a 14-slide figure-dominant academic presentation deck from a paper PDF |
-| `/figure` / `/figure :nature :python` | Generate *Nature*-grade multi-panel scientific plots (`SVG` + `PDF` + `600 DPI TIFF`) via contract-first Python or R pipelines |
-| `/figure :figureforge` / `/figure :select` | Launch no-code SVG layout templates in FigureForge or recommend chart families from result tables |
+| `/figure` | Route to `nature-figure-skill` (`Python`/`R` workflow & **FigureForge** studio), 124 upstream plotting/diagram skills, and journal/scholar/community figure guides |
 
 Natural-language triggers also work, for example:
 - *"Use plain to explain what attention is actually computing"*
 - *"humanize :chinese — remove AI voice from this Chinese paragraph"*
 - *"humanize :english — remove AI tells from this README"*
 - *"humanize :paper-boundaries — revise this abstract and experiment discussion"*
-- *"figure :nature :python — turn this ablation CSV into a 183mm two-column Nature multi-panel figure"*
+- *"Use figure to turn this ablation CSV into a 183mm two-column Nature multi-panel figure"*
 
 ### Note on `SKILL.md` Descriptions
 
@@ -187,7 +195,7 @@ Mention the skill by name or invoke explicitly:
 - `$plain`
 - `$humanize :english` / `$humanize :chinese` / `$humanize :paper-boundaries`
 - `$cs-report-ppt`
-- `$figure :nature :python` / `$figure :nature :r` / `$figure :figureforge`
+- `$figure`
 
 ---
 

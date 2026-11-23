@@ -1,0 +1,6 @@
+﻿Repository: Alto-R/nature-figure-craft
+URL: https://github.com/Alto-R/nature-figure-craft
+Commit: 48824bbd658ee610f62dc05d1dfdfce2c913096f
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

@@ -1,0 +1,48 @@
+name: research-paper-figure-skill-factory
+version: "2.0.5"
+summary: >-
+  Research-paper figure Skill Factory for building evidence-backed specialized
+  figure-making skills with saved subtype/style illustration atlases, mandatory
+  candidate-image bridges, required visual-structure image embeds,
+  required abstract-decision concept/example display, paper-local
+  best-practice second rounds, and target-paper image isolation.
+important_rules:
+  - First trigger of the factory must be STARTUP_PLAN_ONLY and show S0/B1-B9/P1-P6/P6b/P6b-IMAGE/P6c/P7-P9 before analysis.
+  - Generated specialized skills must show a startup plan and all available saved subtype/style atlas boards on first trigger when those assets exist; no target-paper analysis or target-paper image generation happens in that first reply.
+  - Showing saved atlas boards means emitting actual Markdown image embeds, not only listing paths or describing the files.
+  - In Codex desktop, generated skills must resolve package-local atlas paths to absolute filesystem paths before embedding local images.
+  - In ChatGPT web Sources, generated skills must attempt source-asset display or package-relative Markdown image embeds and record host-blocked rendering if images cannot render.
+  - B1-B9 are the Skill Builder layer; P1-P6/P6b/P6b-IMAGE/P6c/P7-P9 are the Figure Production layer used by generated specialized skills.
+  - B5 must define taxonomy coverage across reader question, narrative role, logical gap, visual rhetoric, visual grammar/layout, paper slot, density/detail level, and visual communication art style.
+  - B6 must create and save the subtype/style illustration atlas before or while creating the specialized skill blueprint.
+  - After B6 saves atlas assets, the next factory text reply must embed the saved atlas boards with Markdown image syntax and record the display state.
+  - Generated specialized skills must package atlas assets under assets/subtype-atlas/manifest.json, assets/subtype-atlas/boards/, assets/subtype-atlas/thumbnails/, and references/subtype-illustration-atlas.md.
+  - Atlas boards should combine multiple subtype illustrations into labeled composite boards; when many subtypes exist, use hierarchical overview and per-angle boards.
+  - Text replies may embed already-saved package-local atlas/reference images.
+  - Text replies that explain or compare subtype, layout grammar, visual style, density, metaphor, modeling pattern, candidate scheme differences, or final content architecture must embed a relevant saved reference image or non-target concept/modeling example image, or record the missing asset plus repair action.
+  - Generated skills must not describe visual structure, layout skeleton, panel choreography, module topology, arrow grammar, candidate-board structure, second-round optimization geometry, or final content architecture with prose/bullets only; the text reply must embed a saved reference or non-target concept/modeling structure image when technically possible.
+  - If the visual structure preview would be paper-specific, the generated skill must defer it to P5/P6b-IMAGE/P8 IMAGE_ONLY and embed only a generic structure/reference image in text.
+  - Target-paper candidate images, draft figures, final figures, and revisions must never be embedded inside a prose reply; they must use dedicated IMAGE_ONLY turns.
+  - Inline non-target concept/example images must be recorded as non_target_reference or concept_example and must not count as candidate boards or set candidate_image_batch_id.
+  - If a text reply discusses subtype, layout, visual grammar, density, style, metaphor, modeling pattern, candidate differences, or final content architecture, it must display the relevant saved atlas board/thumbnail or non-target concept/example image when available; if missing, record concept_example_required, concept_example_status, concept_example_role, and concept_example_trigger_reason.
+  - A generated skill cannot be production-locked if startup/style/layout examples only list atlas paths and do not include actual `![alt](...)` image embeds.
+  - ChatGPT web must use Create image through ChatGPT Images 2.0 when building atlas assets or live candidate/final images.
+  - Codex must use `$imagegen` first for atlas assets, candidate boards, draft candidates, and final visuals; if unavailable, use ChatGPT Images 2.0 API or another approved image-generation API.
+  - Generated specialized skills must include P4 TEXT_ONLY visual candidate-board setup, P5 IMAGE_ONLY diverse first-round target-paper candidate-board generation, P6 TEXT_ONLY first-round review/current-best selection, P6b TEXT_ONLY paper-local best-practice divergence setup, P6b-IMAGE IMAGE_ONLY second-round variant generation, and P6c TEXT_ONLY final direction selection.
+  - After any multi-option text reply in a generated skill, the first recommended next prompt must ask the user to generate/display multiple diverse first-round candidate images or schematic boards, normally 6.
+  - The first round should maximize high-level diversity to establish direction; the second round should optimize the selected direction around paper-local modules, evidence/case anchors, labels, panel transitions, color semantics, callouts, and reviewer readability.
+  - Default generated figure-making skills to 6 text candidates and 6 image candidates unless the user explicitly requests another count.
+  - Generated skills must not move directly from 4-6 text candidates, layout/style-axis setup, or prompt alternatives to final prompt/final image/caption unless the user explicitly skips image candidates.
+  - Generated skills must not move directly from P6 first-round selection to P7/P8; P6b/P6b-IMAGE/P6c are required unless the user explicitly overrides and the limitation is recorded.
+  - Every TEXT_ONLY reply must show the current plan, default recommendation, current state and products, all steps plus current position, current-turn outputs, cumulative outputs, and next-question help.
+  - Always include the fallback prompt `请使用**<当前skill名称>**，根据当前状态，提供下一步提问建议。`.
+  - Literature acquisition must be legal/open/user-authorized only.
+  - If local PDFs, a paper index, or retrieval manifest already exist, B3 must enumerate the full relevant candidate set and B4 must process all accessible relevant PDFs as far as feasible.
+  - Record corpus coverage counts, skipped reasons, and label/multi-label coverage; representative rendered pages are audit aids only.
+  - Never use SVG, Mermaid, TikZ, Graphviz, HTML/CSS, canvas, matplotlib, or code-rendered files as generated visual outputs or fallbacks.
+  - IMAGE_ONLY responses are for target-paper candidate/final/revision generation only and must contain no prose, no state footer, and no captions.
+  - Generated skills must handle valid user requests even when the user does not follow the recommended prompt wording.
+  - After handling any free-form or off-recommended user request, generated skills must map the result to the closest original workflow step and update current state.
+  - Every text reply must record user_request_interpreted_action, workflow_step_before_user_request, workflow_step_after_user_request, state_transition_reason, and off_recommended_prompt_handling.
+  - Every text reply must record concept_example_required/status/role/trigger_reason, visual_structure_image_required/status/role/trigger_reason, and best_practice_divergence_status/axes/second_round_candidate_batch_id/selected_second_round_candidate when those gates are applicable.
+  - If a user jumps ahead to target-paper image generation in a text turn, map the request to the closest TEXT_ONLY setup step and make the next action the required IMAGE_ONLY step; do not generate or embed target-paper images in the text reply.

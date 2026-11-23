@@ -1,0 +1,194 @@
+---
+myimage: "Joyplot150.png"
+pathSlug: "ridgeline"
+mytitle: "Ridgeline plot"
+output:
+  html_document:
+      self_contained: false
+      mathjax: default
+      lib_dir: libs
+      template: template_datatoviz.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+
+<div class="mycontent">
+
+
+
+# Definition {#definition}
+***
+
+A Ridgeline plot (sometimes called Joyplot) shows the distribution of a numeric value for several groups. Distribution can be represented using [histograms](http://www.data-to-viz.com/graph/histogram.html) or [density plots](http://www.data-to-viz.com/graph/density.html), all aligned to the same horizontal scale and presented with a slight overlap.
+
+
+<br>
+
+Here is an example showing how people [perceive probability](http://www.data-to-viz.com/story/OneNumOneCatSeveralObs.html). On the [/r/samplesize](https://www.reddit.com/r/SampleSize/) thread of reddit, questions like *What probability would you assign to the phrase “Highly likely”* were asked. Answers between 0 and 100 were recorded, and here is the distribution for each question:
+
+
+```{r, fig.align='center', fig.height=6, fig.width=8, warning=FALSE, message=FALSE}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+library(viridis)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/zonination/perceptions/master/probly.csv", header=TRUE, sep=",")
+data <- data %>%
+  gather(key="text", value="value") %>%
+  mutate(text = gsub("\\.", " ",text)) %>%
+  mutate(value = round(as.numeric(value),0)) %>%
+  filter(text %in% c("Almost Certainly","Very Good Chance","We Believe","Likely","About Even", "Little Chance", "Chances Are Slight", "Almost No Chance"))
+
+library(ggridges)
+
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(y=text, x=value,  fill=text)) +
+    geom_density_ridges(alpha=0.6, bandwidth=4) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+
+**Disclaimer**: This idea originally comes from a publication of the [CIA](https://www.cia.gov/library/center-for-the-study-of-intelligence/csi-publications/books-and-monographs/psychology-of-intelligence-analysis/art15.html) which resulted in this [figure](https://www.cia.gov/library/center-for-the-study-of-intelligence/csi-publications/books-and-monographs/psychology-of-intelligence-analysis/fig18.gif/image.gif). Then, [Zoni Nation](https://github.com/zonination) cleaned the reddit dataset and built [graphics with R](https://github.com/zonination/perceptions).
+
+
+# What for
+***
+
+- Ridgeline plots make sense when the number of group to represent is `medium to high`, and thus a classic window separation would take to much space. Indeed, the fact that groups overlap each other allows to use space more efficiently. If you have less than ~6 groups, dealing with other [distribution plots](http://www.data-to-viz.com/#portfolio) is probably better.
+
+- It works well when there is a clear pattern in the result, like if there is an obvious ranking in groups. Otherwise group will tend to overlap each other, leading to a messy plot not providing any insight.
+
+
+
+# Variation
+***
+
+- The above example is a ridgeline plot using a set of density plots. It is possible to use histograms as well:
+```{r, fig.align='center', fig.height=5, fig.width=7, warning=FALSE, message=FALSE}
+data %>%
+  mutate(text = fct_reorder(text, value)) %>%
+  ggplot( aes(y=text, x=value,  fill=text)) +
+    geom_density_ridges(alpha=0.6, stat="binline", bins=20) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    xlab("") +
+    ylab("Assigned Probability (%)")
+```
+
+
+- It is possible to color depending on the numeric variable instead of the categoric one. (code from the [ridgeline R package](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html) by [Claus O. Wilke](https://github.com/clauswilke) )
+```{r, fig.align='center', fig.height=5, fig.width=7, warning=FALSE, message=FALSE}
+ggplot(lincoln_weather, aes(x = `Mean Temperature [F]`, y = `Month`, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis(name = "Temp. [F]", option = "C") +
+  labs(title = 'Temperatures in Lincoln NE in 2016') +
+  theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    )
+```
+
+- See more variations in the [R graph gallery](https://www.r-graph-gallery.com/ridgeline-plot/).
+
+# Common mistakes {#mistake}
+***
+
+- As with histogram or density plot, [play with bin size / bandwidth argument](http://www.data-to-viz.com/caveat/bin_size.html).
+- Think about [ordering groups](http://www.data-to-viz.com/caveat/order_data.html) in a smart way.
+- Ridgeline plot works well when there is a `clear pattern` to discover since it hides a part of the data where the overlap takes place.
+
+
+
+# Related {#related}
+***
+
+<div class="row">
+  <div class="col-sm-3">
+  <a href="density.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/DensitySmall.png">
+  <p class="mytitlerelated">Density</p>
+  <p class="mytextrelated">Very close from an histogram. Show a density of distribution instead of bars</p>
+  </a>
+  </div>
+  <div class="col-sm-3">
+  <a href="histogram.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/HistogramSmall.png">
+  <p class="mytitlerelated">Histogram</p>
+  <p class="mytextrelated">Represent the value of entities using bars of various length. Use it if you have a large dataset.</p>
+  </a>
+  </div>
+  <div class="col-sm-3">
+  <a href="https://www.data-to-viz.com/caveat/boxplot.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/Box1Small.png">
+  <p class="mytitlerelated">Boxplot</p>
+  <p class="mytextrelated">Summarize the distribution of several numeric variables using boxes. Use it if you have a limited dataset size.</p>
+  </a>
+  </div>
+  <div class="col-sm-3">
+  <a href="violin.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/ViolinSmall.png">
+  <p class="mytitlerelated">Violin</p>
+  <p class="mytextrelated">Show the density of several numeric variables. Use it with a large amount of data</p>
+  </a>
+  </div>
+</div>
+
+
+
+
+# Build your own {#code}
+***
+
+The [R](https://www.r-graph-gallery.com/ridgeline-plot.html), [Python](https://www.python-graph-gallery.com/ridgeline/), [React](https://www.react-graph-gallery.com/ridgeline) and [D3](https://d3-graph-gallery.com/ridgeline.html) graph galleries are 4 websites providing hundreds of chart example, always providing the reproducible code. Click the button below to see how to build the chart you need with your favorite programing language.
+
+<p>
+<a href="https://www.r-graph-gallery.com/ridgeline-plot.html" class="btn btn-primary">R graph gallery</a>
+<a href="https://python-graph-gallery.com/ridgeline/" class="btn btn-primary">Python gallery</a>
+<a href="https://www.react-graph-gallery.com/ridgeline" class="btn btn-primary">React gallery</a>
+<a href="https://d3-graph-gallery.com/ridgeline.html" class="btn btn-primary">D3 gallery</a>
+</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

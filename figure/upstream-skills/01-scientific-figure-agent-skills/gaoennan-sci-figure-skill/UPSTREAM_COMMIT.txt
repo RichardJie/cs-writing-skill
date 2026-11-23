@@ -1,0 +1,6 @@
+﻿Repository: gaoennan/sci-figure-skill
+URL: https://github.com/gaoennan/sci-figure-skill
+Commit: bed2cfe474132e7e73a94e739d0eb6d86f8dd604
+Branch: main
+License: MIT (see LICENSE)
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\gaoennan-sci-figure-skill\: reference\overview.png (1581678 bytes)

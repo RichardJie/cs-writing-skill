@@ -1,0 +1,6 @@
+﻿Repository: Gerry2024-hub/Gerry2024-hub-python-origin-plotting-skill
+URL: https://github.com/Gerry2024-hub/Gerry2024-hub-python-origin-plotting-skill
+Commit: eb8ddadc294d0178c9bdf6204aa9db3f9a874ff2
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

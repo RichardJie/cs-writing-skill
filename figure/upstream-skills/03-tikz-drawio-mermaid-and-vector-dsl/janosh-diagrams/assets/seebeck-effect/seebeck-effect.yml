@@ -1,0 +1,6 @@
+title: Seebeck Effect
+tags:
+  - physics
+  - solid state physics
+  - electrodynamics
+description: The Seebeck effect creates a voltage across a conductor or semiconductor subjected to a temperature gradient. In this thermoelectric generator, electrons in the n-type leg and holes in the p-type leg both diffuse from the hot heat source to the cold heat sinks. Carriers piling up at the cold end charge it negatively in the n leg and positively in the p leg, so the internal electric fields, pointing from + to −, are opposite in the two legs and their voltages add up in series and drive a current $J$ through the load resistor. This effect enables [thermoelectric devices](../zt-vs-n) that measure temperature and generate electricity from waste heat.

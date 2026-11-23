@@ -1,0 +1,4 @@
+upstream_url: https://github.com/opentikz/opentikz
+commit_sha: 359befbf8e8af7ce08e7e387b2c2a198e0ca735d
+license: MIT (code) / CC0-1.0 (content)
+note: Moved standalone env file(s) (requirements.txt) per global Conda hygiene policy.

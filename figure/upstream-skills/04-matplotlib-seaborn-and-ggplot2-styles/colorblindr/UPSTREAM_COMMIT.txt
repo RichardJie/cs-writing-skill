@@ -1,0 +1,4 @@
+Repository: https://github.com/clauswilke/colorblindr
+Branch: master
+Commit SHA: 90d64f8fc50bee7060be577f180ae019a9bbbb84
+License: MIT

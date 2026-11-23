@@ -1,0 +1,4 @@
+upstream_url: https://github.com/llmsresearch/paperbanana
+commit_sha: 87e01fd8aba2b3bc55abbe9b8826ff73f5696797
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /pyproject.toml, /.claude/skills/**, /prompts/**, /paperbanana/**, /mcp_server/**, /configs/**, /integrations/**, /scripts/** to exclude heavy binary showcase/asset blobs.

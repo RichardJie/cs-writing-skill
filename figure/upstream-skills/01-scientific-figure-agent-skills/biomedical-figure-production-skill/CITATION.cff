@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this workflow, please cite the repository release."
+title: "Biomedical Figure Production Skill"
+type: software
+authors:
+  - family-names: "Wang"
+    given-names: "Jinglin"
+repository-code: "https://github.com/wangjinglin0905-gif/biomedical-figure-production-skill"
+url: "https://github.com/wangjinglin0905-gif/biomedical-figure-production-skill"
+license: MIT
+version: 1.0.0
+date-released: 2026-08-01
+

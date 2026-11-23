@@ -1,0 +1,11 @@
+title: Feynman Diagrams Loop Regulator
+description: Two one-loop Feynman diagrams contributing to the [loop corrections](../propagator-fluctuations) of a propagator. Each loop carries momentum q₀ between two vertices with coupling g and consists of two propagators with mass terms m₁², m₂² and width terms γ₁², γ₂². The diagrams differ only in where the [regulator insertion](../regulated-and-unregulated-propagators) (circled cross) sits, which is the lower m₂² propagator in the first diagram and the upper m₁² propagator in the second.
+
+tags:
+  - physics
+  - quantum field theory
+  - Feynman diagrams
+  - loop corrections
+  - propagators
+  - quantum fluctuations
+  - regulator insertion

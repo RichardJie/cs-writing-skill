@@ -1,0 +1,13 @@
+title: CycleGAN
+creator: Petar Veličković
+creator_url: http://petar-v.com
+url: https://github.com/PetarV-/TikZ/tree/86aee049f5355d77c598b936399e42caf8941e60/CycleGAN
+source: |
+  Tutorial on generative adversarial networks
+date: 2026-06-10
+tags:
+  - machine learning
+  - generative modeling
+  - gan
+description: |
+  [CycleGAN](https://junyanz.github.io/CycleGAN/) trains two generators $G_{AB}$ and $G_{BA}$ between unpaired domains A and B. A [discriminator](../generative-adversarial-network) $D_B$ tells real B samples from translated ones, while a cycle-consistency loss requires $G_{BA}(G_{AB}(\vec a)) \approx \vec a$. Only the A → B → A half is shown; the full model mirrors it with a second discriminator $D_A$ and the B → A → B cycle.

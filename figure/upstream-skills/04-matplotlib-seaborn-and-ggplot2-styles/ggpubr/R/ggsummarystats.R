@@ -1,0 +1,483 @@
+#' @include utilities.R ggpar.R
+#' @importFrom rstatix get_summary_stats
+NULL
+#' GGPlot with Summary Stats Table Under the Plot
+#'
+#' @description Create a ggplot with summary stats (n, median, mean, iqr) table
+#'   under the plot. Read more: \href{https://www.datanovia.com/learn/data-visualization/ggpubr/summary-stats-labels}{Summary Statistics on a Plot in R (ggpubr)}.
+#' @details \code{ggsummarystats()} returns a compound object (a list of ggplots
+#'   of class \code{"ggsummarystats"}), not a single ggplot, so \code{p +
+#'   theme()} does \strong{not} restyle it. Theme it in one of three ways:
+#'   \itemize{
+#'   \item \strong{At build time} - pass \code{ggtheme =} to the builder (applied
+#'   to both the main plot and the summary table).
+#'   \item \strong{Per sub-plot} - the elements \code{$main.plot} (the plot) and
+#'   \code{$summary.plot} (the summary table) are ordinary, editable ggplots:
+#'   \code{p$main.plot <- p$main.plot + theme_bw(); p}.
+#'   \item \strong{In one call} - \code{\link{style_summarystats}(p, main = ,
+#'   table = )} adds ggplot components to the main plot and/or the summary table
+#'   and returns the updated object.
+#'   }
+#'
+#'   The summary table is drawn on the categories the plot itself was drawn on,
+#'   so its columns sit under the boxes they describe. It therefore reports the
+#'   groups the plot draws, and only those: a group excluded by \code{select = },
+#'   \code{remove = } or \code{order = } gets no column, and
+#'   \code{$summary.plot$data} holds only
+#'   the groups drawn, with its x column a factor over those categories. A group
+#'   the plot draws but has no summary row - for example all its \code{y} values
+#'   missing - keeps its slot with the column left blank, rather than shifting
+#'   every later column along. This does not apply to a plot whose x axis is
+#'   continuous - an integer or \code{Date} x under \code{\link{ggline}()} or
+#'   \code{\link{ggbarplot}()}, or any builder called with
+#'   \code{numeric.x.axis = TRUE} - nor to facets with \code{scales = "free_x"}, where
+#'   one set of categories cannot describe every panel.
+#' @inheritParams ggboxplot
+#' @param digits integer indicating the number of decimal places (round) to be
+#'   used.
+#' @param table.font.size the summary table font size.
+#' @param position Position adjustment, either as a string, or the result of a
+#'   call to a position adjustment function.
+#' @param angle numeric value specifying the rotation angle (in degrees) of the
+#'   summary table text. Default is 0.
+#' @param summaries summary stats to display in the table. Possible values are
+#'   those returned by the function \code{\link[rstatix]{get_summary_stats}()},
+#'   including: \code{"n", "min", "max",  "median",  "q1", "q2", "q3", "mad",
+#'   "mean", "sd", "se", "ci"}.
+#' @param ggfunc a ggpubr function, including: ggboxplot, ggviolin, ggdotplot,
+#'   ggbarplot, ggline, etc. Can be any other ggplot function that accepts the
+#'   following arguments \code{data, x, color, fill, palette, ggtheme,
+#'   facet.by}.
+#' @param free.panels logical. If TRUE, create free plot panels when the
+#'   argument \code{facet.by} is specified.
+#' @param labeller Character vector. An alternative to the argument
+#'  \code{short.panel.labs}. Possible values are one of "label_both" (panel
+#'  labelled by both grouping variable names and levels) and "label_value"
+#'  (panel labelled with only grouping levels).
+#' @param ... other arguments passed to the function \code{\link{ggpar}()},
+#'   \code{\link{facet}()} or \code{\link{ggarrange}()} when printing the plot.
+#' @seealso \code{\link{ggtexttable}}.
+#'  Read more: \href{https://www.datanovia.com/learn/data-visualization/ggpubr/summary-stats-labels}{Summary Statistics on a Plot in R (ggpubr)}.
+#' @examples
+#' # Data preparation
+#' # ::::::::::::::::::::::::::::::::::::::::::::::::
+#' data("ToothGrowth")
+#' df <- ToothGrowth
+#' df$dose <- as.factor(df$dose)
+#' # Add random QC column
+#' set.seed(123)
+#' qc <- rep(c("pass", "fail"), 30)
+#' df$qc <- as.factor(sample(qc, 60))
+#' # Inspect the data
+#' head(df)
+#'
+#'
+#' # Basic summary stats
+#' # ::::::::::::::::::::::::::::::::::::::::::::::::
+#' # Compute summary statistics
+#' summary.stats <- df %>%
+#'   group_by(dose) %>%
+#'   get_summary_stats(type = "common")
+#' summary.stats
+#'
+#' # Visualize summary table
+#' ggsummarytable(
+#'   summary.stats,
+#'   x = "dose", y = c("n", "median", "iqr"),
+#'   ggtheme = theme_bw()
+#' )
+#'
+#'
+#' # Create plots with summary table under the plot
+#' # ::::::::::::::::::::::::::::::::::::::::::::::::
+#' # Basic plot
+#' ggsummarystats(
+#'   df,
+#'   x = "dose", y = "len",
+#'   ggfunc = ggboxplot, add = "jitter"
+#' )
+#'
+#' # Color by groups
+#' ggsummarystats(
+#'   df,
+#'   x = "dose", y = "len",
+#'   ggfunc = ggboxplot, add = "jitter",
+#'   color = "dose", palette = "npg"
+#' )
+#'
+#' # Create a barplot
+#' ggsummarystats(
+#'   df,
+#'   x = "dose", y = "len",
+#'   ggfunc = ggbarplot, add = c("jitter", "median_iqr"),
+#'   color = "dose", palette = "npg"
+#' )
+#'
+#' # Facet
+#' # ::::::::::::::::::::::::::::::::::::::::::::::::
+#' # Specify free.panels = TRUE for free panels
+#' ggsummarystats(
+#'   df,
+#'   x = "dose", y = "len",
+#'   ggfunc = ggboxplot, add = "jitter",
+#'   color = "dose", palette = "npg",
+#'   facet.by = c("supp", "qc"),
+#'   labeller = "label_both"
+#' )
+#'
+#' @describeIn ggsummarystats Create a table of summary stats
+#' @export
+ggsummarytable <- function(data, x, y, digits = 0, size = 3, color = "black", palette = NULL,
+                           facet.by = NULL, labeller = "label_value", position = "identity",
+                           angle = 0, ggtheme = theme_pubr(), ...) {
+  if (missing(ggtheme) & !is.null(facet.by)) {
+    ggtheme <- theme_pubr(border = TRUE)
+  }
+  if (is.null(names(y))) names(y) <- y
+  y_values <- as.vector(y)
+
+  df <- as.data.frame(data)
+  df$x <- df[[x]]
+  if (color %in% colnames(df)) {
+    if (missing(position)) position <- position_dodge(0.8)
+    group <- color
+  } else {
+    group <- 1
+  }
+
+  df <- df %>%
+    mutate(across(where(is.double), ~ round(.x, digits))) %>%
+    unite(col = "label", !!!syms(y_values), sep = "\n") %>%
+    mutate(y = paste(names(y), collapse = "\n"))
+  p <- ggplot(data, aes(x, y)) +
+    geom_exec(
+      geom_text,
+      data = df,
+      label = "label", size = size, color = color, group = group,
+      position = position, angle = angle
+    )
+  p <- ggpar(p, ggtheme = ggtheme, palette = palette, xlab = x, ...)
+  if (!is.null(facet.by)) p <- facet(p, facet.by = facet.by, labeller = labeller, ...)
+  p + rremove("ylab")
+}
+
+
+#' @describeIn ggsummarystats Create a ggplot with a summary stat table under the plot.
+#' @export
+ggsummarystats <- function(data, x, y, summaries = c("n", "median", "iqr"),
+                           ggfunc = ggboxplot,
+                           color = "black", fill = "white", palette = NULL,
+                           facet.by = NULL, free.panels = FALSE, labeller = "label_value",
+                           heights = c(0.80, 0.20), digits = 0, table.font.size = 3,
+                           ggtheme = theme_pubr(), ...) {
+  if (missing(ggtheme) & !is.null(facet.by)) {
+    ggtheme <- theme_pubr(border = TRUE)
+  }
+
+  env <- c(as.list(environment()), list(...))
+  # Sugar: `comparisons =` implies the comparison-figure builder ggcompare(),
+  # unless `ggfunc` was given explicitly. Without this, `comparisons` would fall
+  # into `...` and be silently dropped. `comparisons = NULL` leaves env unchanged.
+  if (missing(ggfunc) && !is.null(env$comparisons)) {
+    env$ggfunc <- ggcompare
+  }
+  if (is.null(facet.by)) {
+    results <- do.call(ggsummarystats_core, env)
+  } else {
+    if (free.panels) {
+      results <- do.call(ggsummarystats_free_facet, env)
+    } else {
+      results <- do.call(ggsummarystats_core, env)
+    }
+  }
+  results
+}
+
+
+#' @method print ggsummarystats
+#' @param x an object of class \code{ggsummarystats}.
+#' @param heights a numeric vector of length 2, specifying the heights of the
+#'   main and the summary table, respectively.
+#' @rdname ggsummarystats
+#' @export
+print.ggsummarystats <- function(x, heights = c(0.80, 0.20), ...) {
+  res <- ggarrange(plotlist = x, heights = heights, align = "v", ncol = 1)
+  print(res)
+  invisible(res)
+}
+
+#' @method print ggsummarystats_list
+#' @param legend character specifying legend position. Allowed values are one of
+#'   c("top", "bottom", "left", "right", "none"). To remove the legend use
+#'   legend = "none".
+#' @param x a list of \code{ggsummarystats}.
+#' @rdname ggsummarystats
+#' @export
+print.ggsummarystats_list <- function(x, heights = c(0.80, 0.20), legend = NULL, ...) {
+  # Create a common legend, if legend exists
+  legend.grob <- get_legend(x[[1]]$main.plot, position = legend)
+  has.legend <- !is.null(legend.grob)
+  remove_legend <- function(ggsummarystats) {
+    ggsummarystats[[1]] <- ggsummarystats[[1]] + theme(legend.position = "none")
+    ggsummarystats
+  }
+  if (has.legend) {
+    x <- map(x, remove_legend)
+  }
+  # Combining each ggsummarystats
+  x <- x %>%
+    map(
+      function(x, ...) {
+        ggarrange(plotlist = x, ...)
+      },
+      heights = heights, align = "v", ncol = 1
+    )
+  # Combine the list of ggsumarystats
+  res <- ggarrange(plotlist = x, legend = legend, legend.grob = legend.grob)
+  # Add legend if exist
+  print(res)
+  invisible(res)
+}
+
+
+ggsummarystats_core <- function(data, x, y, summaries = c("n", "median", "iqr"),
+                                ggfunc = ggboxplot,
+                                color = "black", fill = "white", palette = NULL,
+                                ggtheme = theme_pubr(), heights = c(0.80, 0.20),
+                                facet.by = NULL, free.panels = FALSE, labeller = "label_value",
+                                digits = 0, table.font.size = 3, ...) {
+  groups <- c(x, color, fill, facet.by) %>%
+    unique() %>%
+    intersect(colnames(data))
+  summary.stats <- suppressWarnings(
+    data %>%
+      group_by(!!!syms(groups)) %>%
+      get_summary_stats(!!y)
+  )
+  # No need to repeat the panel label on the table
+  table.facet.by <- facet.by
+  if (free.panels) table.facet.by <- NULL
+
+  main.plot <- ggfunc(
+    data,
+    x = x, y = y, color = color, fill = fill,
+    palette = palette,
+    ggtheme = ggtheme,
+    facet.by = facet.by, labeller = labeller, ...
+  )
+  # The table is built from its own frame, so it trains its own x scale. Whenever
+  # that scale orders the categories differently from the plot's - dplyr returns
+  # group keys sorted, while the builders factor x in the order the groups appear
+  # - every column sits under the wrong box, silently. Move the table's x onto the
+  # categories the plot ACTUALLY drew, so the two cannot disagree.
+  cats <- .plot_x_categories(main.plot)
+  keep.empty <- FALSE
+  if (!is.null(cats) && x %in% colnames(summary.stats)) {
+    keep <- !is.na(match(as.character(summary.stats[[x]]), cats))
+    # If nothing matches, the two key spaces are not what we think they are:
+    # leave the table exactly as released rather than blank it.
+    if (any(keep)) {
+      summary.stats <- summary.stats[keep, , drop = FALSE]
+      # as.character() states the coercion factor() would do anyway, and matches
+      # how ggplot2's discrete scale maps values: match(as.character(x), limits).
+      # exclude = NULL is load-bearing: get_limits() keeps an NA category, and
+      # without it factor() drops NA from the levels, so every column from the NA
+      # group onward rotates onto the wrong box - the very bug being fixed.
+      # ordered = is.ordered(.) because the class picks the default discrete
+      # scale: ggplot2 gives an ordered factor scale_*_ordinal (viridis) and an
+      # unordered one scale_*_hue. Dropping it recoloured the table's numbers
+      # away from the boxes they sit under, so the composite's own colour key
+      # disagreed with itself.
+      summary.stats[[x]] <- factor(
+        as.character(summary.stats[[x]]), levels = cats, exclude = NULL,
+        ordered = is.ordered(summary.stats[[x]])
+      )
+      keep.empty <- !all(cats %in% as.character(summary.stats[[x]]))
+    }
+  }
+
+  summary.plot <- ggsummarytable(
+    summary.stats,
+    x = x, y = summaries,
+    color = color, palette = palette, legend = "none",
+    ggtheme = ggtheme,
+    facet.by = table.facet.by, labeller = labeller,
+    digits = digits, size = table.font.size
+  ) +
+    clean_table_theme()
+  # Only when a category the plot drew has no summarised row - a group whose y is
+  # entirely missing - does the table need telling to keep the empty slot. Adding
+  # a scale is avoided otherwise: a user's own scale_x_discrete() would replace it
+  # and silently restore the misalignment, and $summary.plot is documented as
+  # editable. The factor levels above carry the order, where nothing can undo it.
+  if (keep.empty) {
+    summary.plot <- summary.plot + ggplot2::scale_x_discrete(drop = FALSE)
+  }
+
+  plots <- list(
+    main.plot = main.plot,
+    summary.plot = summary.plot
+  )
+  class(plots) <- c("ggsummarystats", "list")
+  plots
+}
+
+
+# The categories the main plot's x scale actually trained on, or NULL when the
+# table cannot follow it. Reading the BUILT scale is the whole point: it reports
+# what was drawn, so it distinguishes a dropped level from a kept one - which
+# levels() of the input frame cannot - and it answers "discrete or continuous?"
+# per builder without this function having to know anything about the builders.
+#
+# NULL (leave the table exactly as released) when: the plot will not build; the
+# x scale is continuous (numeric.x.axis, and integer/Date under the builders that
+# do not factor them - the table cannot express a continuous axis); or the facets
+# use free x scales, where one set of categories cannot describe every panel.
+#
+# ggplot2::layer_scales() is the exported equivalent of this lookup, but it builds
+# the plot a second time and cannot report how many x scales there are, which is
+# half the test below.
+.plot_x_categories <- function(p) {
+  built <- tryCatch(
+    suppressMessages(suppressWarnings(ggplot2::ggplot_build(p))),
+    error = function(e) NULL
+  )
+  if (is.null(built)) {
+    return(NULL)
+  }
+  scales.x <- built$layout$panel_scales_x
+  if (length(scales.x) != 1) {
+    return(NULL)
+  }
+  if (!isTRUE(scales.x[[1]]$is_discrete())) {
+    return(NULL)
+  }
+  as.character(scales.x[[1]]$get_limits())
+}
+
+# Build one panel label per row of a nested frame, from that row's own
+# grouping key, so the label cannot drift away from the data beside it. Mirrors
+# rstatix's labellers: "label_value" joins the key values with ", ";
+# "label_both" prefixes each with "<variable>:".
+#
+# Levels follow the ROW order, which is the order the groups appear in the data
+# and therefore the order the panels are drawn in. That is deliberately NOT what
+# df_unite_factors() does - it arrange()s first, so its levels are sorted - and
+# it is the reason a title used to be able to name a different panel from the one
+# it sat on. Only one level is ever present in a given sub-plot, so the level set
+# is not drawn; it is the label VALUES that must track the rows.
+.panel_label <- function(grouped, groups, labeller = "label_value") {
+  # A facet.by that resolves to no grouping column at all - character(0), or ""
+  # which groups by nothing - still yields one panel, labelled "". Drop such
+  # entries rather than building a zero-length label that cannot be assigned back.
+  groups <- groups[vapply(
+    groups, function(g) length(grouped[[g]]) == nrow(grouped), logical(1)
+  )]
+  if (!length(groups)) {
+    return(factor(rep("", nrow(grouped))))
+  }
+  values <- lapply(groups, function(g) as.character(grouped[[g]]))
+  if (identical(labeller, "label_both")) {
+    values <- Map(function(g, v) paste0(g, ":", v), groups, values)
+  }
+  # Join by folding rather than do.call(paste, values): the facet variables name
+  # the list, and do.call would hand those names to paste() as arguments, so a
+  # column called `sep`, `collapse` or `recycle0` collided with paste()'s own
+  # formals - two errored and the third silently blanked every label. A fold
+  # cannot reach a formal by name, so the whole class goes away.
+  # paste() on the first element too, not just between elements: it is what turns
+  # a missing group into the string "NA", which is how such a panel has always
+  # been titled. Reduce() alone would return a single vector untouched and leave
+  # the label NA, which factor() then drops instead of levelling.
+  labels <- paste(values[[1]])
+  for (v in values[-1]) labels <- paste(labels, v, sep = ", ")
+  factor(labels, levels = unique(labels))
+}
+
+ggsummarystats_free_facet <- function(data, x, y, facet.by, labeller = "label_value", ...) {
+  # `labeller` used to be validated only as a side effect of looking the function
+  # up, which failed with whatever the lookup happened to raise. It is checked
+  # here instead, so the same inputs are still refused and say why.
+  if (!is.character(labeller) || length(labeller) != 1L ||
+      !labeller %in% c("label_value", "label_both")) {
+    stop(
+      "`labeller` should be one of \"label_value\" or \"label_both\".",
+      call. = FALSE
+    )
+  }
+  # Normalise the way rstatix's own df_get_var_names() does - unique(), and drop
+  # names - so a duplicated facet.by does not nest two columns of the same name
+  # and a named one does not nest the key under that name.
+  groups <- unique(unname(facet.by))
+  # Nest, and build the panel label from the grouping keys sitting beside each
+  # nested frame. That pairing is the point: a label built from a sorted copy of
+  # the rows and assigned back to the unsorted frame is how a panel came to be
+  # titled with another group's name while drawing this one's data.
+  #
+  # df_split_by() would do the nesting, build its own label and stamp it onto
+  # each frame - and all three of those results were then overwritten here. Only
+  # the nesting was ever wanted, so only the nesting is asked for; that also
+  # keeps this path independent of what the labeller does with an empty grouping
+  # vector.
+  data.grouped <- rstatix::df_nest_by(data, vars = groups)
+  panel <- .panel_label(data.grouped, groups, labeller)
+  data.grouped$panel <- panel
+  data.grouped$data <- map2(
+    data.grouped$data, as.character(panel),
+    function(d, lab) {
+      d[["panel"]] <- factor(lab, levels = levels(panel))
+      d
+    }
+  )
+  data.grouped <- data.grouped %>%
+    mutate(
+      plots = map(data, ggsummarystats_core, x = x, y = y, facet.by = "panel", ...)
+    )
+  plots <- data.grouped$plots
+  names(plots) <- data.grouped$panel
+  class(plots) <- c("ggsummarystats_list", "list")
+  plots
+}
+
+
+#' Restyle a ggsummarystats Composite
+#' @description Adds ggplot components (themes, labels, scales, ...) to the
+#'   sub-plots of a \code{\link{ggsummarystats}()} object and returns the updated
+#'   object, so the whole composite can be restyled in one call. This is a
+#'   convenience wrapper around editing the \code{$main.plot} and
+#'   \code{$summary.plot} elements directly.
+#' @param p a \code{"ggsummarystats"} object.
+#' @param main a ggplot component (or a list of components) added to the main
+#'   plot (\code{$main.plot}), e.g. \code{theme_bw()} or
+#'   \code{list(theme_bw(), labs(title = "My title"))}.
+#' @param table a ggplot component (or list of components) added to the summary
+#'   table (\code{$summary.plot}).
+#' @return the updated \code{"ggsummarystats"} object.
+#' @seealso \code{\link{ggsummarystats}}.
+#' @examples
+#' data("ToothGrowth")
+#' df <- ToothGrowth
+#' df$dose <- as.factor(df$dose)
+#' p <- ggsummarystats(df, x = "dose", y = "len",
+#'   ggfunc = ggboxplot, color = "dose", palette = "npg")
+#'
+#' # Restyle the main plot in one call
+#' style_summarystats(p, main = list(theme_bw(), labs(title = "Tooth growth")))
+#' @export
+style_summarystats <- function(p, main = NULL, table = NULL) {
+  if (!inherits(p, "ggsummarystats")) {
+    stop("`p` must be a `ggsummarystats` object (from ggsummarystats()).",
+      call. = FALSE)
+  }
+  add_all <- function(plot, additions) {
+    if (is.null(additions)) return(plot)
+    if (inherits(additions, "gg") || !is.list(additions)) {
+      additions <- list(additions)
+    }
+    for (a in additions) plot <- plot + a
+    plot
+  }
+  p$main.plot <- add_all(p$main.plot, main)
+  p$summary.plot <- add_all(p$summary.plot, table)
+  p
+}

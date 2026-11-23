@@ -1,0 +1,167 @@
+#' Magic Number: Points to Millimeters
+#' @noRd
+PT_TO_MM <- 0.352778 # nolint: object_name_linter
+
+charopts <- function(x) {
+  toString(sprintf("\\code{\"%s\"}", x))
+}
+
+# copied from ggplot2
+"%||%" <- function(a, b) {
+  if (!is.null(a)) a else b # nolint: coalesce_linter. This defines %||% (base R has it from 4.4.0).
+}
+
+# copied from ggplot2
+ggname <- function(prefix, grob) {
+  grob$name <- grobName(grob, prefix)
+  grob
+}
+
+# rescaler for continuous_scale() that maps `mid` to the midpoint of `to`,
+# for use with palettes that aren't ggplot2::scale_*_gradient2()'s 3-stop
+# low/mid/high palette (e.g. multi-stop diverging gradients)
+mid_rescaler <- function(mid) {
+  function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
+    scales::rescale_mid(x, to, from, mid)
+  }
+}
+
+# Markdown list of option values, for inline R in roxygen.
+md_optlist <- function(x) {
+  paste0("`\"", as.character(x), "\"`", collapse = ", ")
+}
+
+#' Warn about shape palettes using pch codes derived from Unicode symbols
+#'
+#' Some shape palettes use pch codes generated from Unicode glyphs (see
+#' `data-raw/build.R`'s `utf_8_to_pch()`), identifiable as pch < -255 (the
+#' base R negative-pch encoding). These can fail to render with a
+#' low-level, hard-to-diagnose error (e.g. "conversion failure ... in
+#' 'mbcsToSbcs'") on a non-UTF-8 locale, or with a font/device that lacks
+#' the glyph. Warn early with an actionable message instead.
+#' @noRd
+warn_unicode_pch <- function(pch) {
+  if (any(pch < -255, na.rm = TRUE) && !isTRUE(l10n_info()[["UTF-8"]])) {
+    cli::cli_warn(c(
+      "This shape palette uses pch codes derived from Unicode symbols, and your R session's locale is not UTF-8.",
+      "i" = "Rendering may fail with a low-level error (e.g. \"conversion failure ... in 'mbcsToSbcs'\").",
+      "i" = "Try a UTF-8 locale, or a Cairo-based graphics device (e.g. cairo_pdf(), agg_png())."
+    ))
+  }
+}
+
+# `call` is forwarded so the error names the palette the caller invoked rather
+# than this helper.
+check_pal_n_negative <- function(n, call = rlang::caller_env()) {
+  if (n < 0) {
+    cli::cli_abort("{.arg n} must be a non-negative integer, not {n}.", call = call)
+  }
+}
+
+check_ggplot <- function(plot, arg = rlang::caller_arg(plot), call = rlang::caller_env()) {
+  if (!ggplot2::is_ggplot(plot)) {
+    cli::cli_abort("{.arg {arg}} must be a ggplot object, not {.obj_type_friendly {plot}}.", call = call)
+  }
+}
+
+# `layer` indexes the built layer data, so it must be a single whole number
+# within range.
+check_layer <- function(layer, n_layers, call = rlang::caller_env()) {
+  rlang::check_number_whole(layer, min = 1, call = call)
+  if (layer > n_layers) {
+    cli::cli_abort(
+      "{.arg layer} must be at most {n_layers}, the number of layers in {.arg plot}, not {layer}.",
+      call = call
+    )
+  }
+}
+
+# Arguments after `...` used to be positional. Now that `...` comes first, an
+# old positional call would silently pass its values on as scale options (e.g.
+# `name`), so reject unnamed arguments instead.
+check_dots_named <- function(..., call = rlang::caller_env()) {
+  nms <- rlang::names2(rlang::enexprs(...))
+  if (all(nzchar(nms))) {
+    return(invisible())
+  }
+  position <- which(!nzchar(nms)) # nolint: object_usage_linter (used in the message below)
+  cli::cli_abort(
+    c(
+      "Arguments in {.arg ...} must be named.",
+      "x" = "Unnamed {cli::qty(position)}argument{?s} in position{?s} {position}."
+    ),
+    call = call
+  )
+}
+
+check_pal_n <- function(n, max_n) {
+  check_pal_n_negative(n, call = rlang::caller_env())
+  if (n > max_n) {
+    cli::cli_warn("This palette can handle a maximum of {max_n} values. You have supplied {n}.")
+  }
+}
+
+#' `scales::manual_pal()` with the package's own check on `n`
+#'
+#' `manual_pal()` selects its values with `seq_len(n)`, which fails for a
+#' negative `n` with "argument must be coercible to non-negative integer" --- a
+#' message that names nothing the caller passed. Palettes written around
+#' `check_pal_n()` already reject a negative `n` by naming the argument, so
+#' wrap `manual_pal()` to report the same thing. The maximum-`n` warning is
+#' left to `manual_pal()`.
+#'
+#' @noRd
+manual_pal_checked <- function(values, type = NULL) {
+  f <- manual_pal(values, type = type)
+  fun <- function(n) {
+    check_pal_n_negative(n)
+    f(n)
+  }
+  scales::new_discrete_palette(fun, attr(f, "type"), attr(f, "nlevels"))
+}
+
+#' Extract colors from ggthemes data
+#'
+#' @param path A character vector of the path in `ggthemes_data`.
+#' @param colors A character vector of color names.
+#' @noRd
+get_colors <- function(path, colors) {
+  x <- ggthemes::ggthemes_data[[path]]
+  unname(x[["value"]][x[["name"]] %in% colors])
+}
+
+# Make a theme's own palettes the defaults for discrete scales, so that
+# `p + theme_x()` draws in the theme's colours without `scale_*_x()`. Explicit
+# scales still take precedence. NULL leaves that aesthetic's palette unset.
+theme_palettes <- function(colour, fill = colour, shape = NULL, linetype = NULL) {
+  theme(
+    palette.colour.discrete = theme_pal_fallback(colour, scales::pal_hue()),
+    palette.fill.discrete = theme_pal_fallback(fill, scales::pal_hue()),
+    palette.shape.discrete = theme_pal_fallback(shape, scales::pal_shape()),
+    palette.linetype.discrete = theme_pal_fallback(linetype, scales::pal_linetype())
+  )
+}
+
+# A theme palette is applied implicitly, so running out of values must not
+# drop data the way an explicit scale_*() does. With more levels than the
+# palette has, use ggplot2's default palette for that aesthetic instead.
+theme_pal_fallback <- function(pal, fallback) {
+  if (is.null(pal)) {
+    return(NULL)
+  }
+  max_n <- attr(pal, "max_n") %||% scales::palette_nlevels(pal)
+  if (is.na(max_n)) {
+    return(pal)
+  }
+  function(n) {
+    if (n <= max_n) {
+      return(pal(n))
+    }
+    cli::cli_warn(c(
+      "The theme's palette has {max_n} value{?s}, but {n} are needed.",
+      "i" = "Using ggplot2's default palette instead.",
+      "i" = "Add a {.code scale_*()} to choose another palette."
+    ))
+    fallback(n)
+  }
+}

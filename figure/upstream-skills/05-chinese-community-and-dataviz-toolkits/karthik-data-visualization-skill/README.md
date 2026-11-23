@@ -1,0 +1,179 @@
+# Karthik Data Visualization Skills
+
+Skills for Claude Code and Codex that make charts, tables and data stories the way I make them: one claim per chart, direct labels instead of legends, colour only where it means something, no chart furniture that isn't earning its keep, and a render-and-look check before anything is called done.
+
+There is an optional local MCP server that does the arithmetic for colour assignment and rounding. The skills work without it.
+
+## Start here
+
+Pick the entry point that matches what you have.
+
+| You have | Ask your agent to use | What happens |
+|---|---|---|
+| Data and a chart in mind | `karthik-data-visualization` | Builds the chart in the house style, renders it, and checks the export. Pulls in `dataviz-selector` if the form isn't settled. |
+| An existing chart (image or code) that isn't working | `dataviz-fix` | Diagnoses it, rebuilds a real image, revises from your feedback until you accept it. |
+| A dataset and a loose question | `dataviz-orchestrator` | Pins down the metric and denominator, cleans the data, finds the story, then builds and checks the chart. |
+| A chart someone else made | `dataviz-critique` | Says what works, what misleads, and what to change. |
+| A table to format | `karthik-table-style` | Alignment, rounding, emphasis and in-cell bars or shading. |
+
+For a single chart, `karthik-data-visualization` on its own is the whole thing.
+
+Install in two commands (details in [Quick start](#quick-start)):
+
+```bash
+git clone https://github.com/skthewimp/karthik-data-visualization-skill.git
+cd karthik-data-visualization-skill && ./sync.sh --no-pull --surface claude   # or: --surface codex
+```
+
+R with `ggplot2` and `ragg` is the preferred renderer. Python and Matplotlib work as a fallback, but only with the typography, palette and spacing set deliberately; default Matplotlib output fails these skills.
+
+## How the pieces fit
+
+```text
+dataset -> analysis-planner -> data-cleaning -> selector -> data-visualization (+ annotations) -> critique
+chart image -> fix: critique + selector -> data-visualization -> inspect -> your feedback -> accept
+```
+
+`dataviz-orchestrator` owns the first sequence, `dataviz-fix` the second. Each loads only the skills the job needs.
+
+## Skill map
+
+**Start points**
+- [`karthik-data-visualization`](docs/skills/karthik-data-visualization.md) - chart craft: typography, direct labels, colour, axes, whitespace, export check.
+- [`dataviz-fix`](docs/skills/dataviz-fix.md) - repair an existing chart through a feedback loop, then learn only reusable lessons.
+- [`dataviz-orchestrator`](docs/skills/dataviz-orchestrator.md) - dataset and loose question to finished visual story.
+- [`dataviz-critique`](docs/skills/dataviz-critique.md) - chart critique and redesign pressure.
+
+**Choosing and checking**
+- [`dataviz-selector`](docs/skills/dataviz-selector.md) - which form fits the claim, including when a table beats a chart.
+- [`dataviz-eval`](docs/skills/dataviz-eval.md) - send/revise verdict on a rendered chart, with every problem ranked. Only when you ask for one.
+
+**Craft details**
+- [`dataviz-color`](docs/skills/dataviz-color.md) - choose and assign colours for this chart; brand first, then accessibility.
+- [`dataviz-precision`](docs/skills/dataviz-precision.md) - how many digits to show, set by the spread of the numbers.
+- [`chart-annotations`](docs/skills/chart-annotations.md) - choose, rank, word and place annotations without clutter.
+- [`chart-explainer`](docs/skills/chart-explainer.md) - the two lines that travel with a chart in an email or notebook.
+- [`karthik-table-style`](docs/skills/karthik-table-style.md) - tables as visualizations.
+- [`karthik-powerpoint-style`](docs/skills/karthik-powerpoint-style.md) - claim-first, sparse analytical slides.
+
+**Before the chart**
+- [`dataset-question-generator`](docs/skills/dataset-question-generator.md) - good questions from a raw dataset.
+- [`karthik-analysis-planner`](docs/skills/karthik-analysis-planner.md) - turn a fuzzy question into metric, denominator, comparison and falsifiers.
+- [`karthik-data-cleaning`](docs/skills/karthik-data-cleaning.md) - inspect, clean in context, inspect again.
+
+**R style**
+- [`karthik-r-analysis-style`](docs/skills/karthik-r-analysis-style.md) - how an exploratory R notebook is written.
+- [`karthik-r-code-style`](docs/skills/karthik-r-code-style.md) - how R code is laid out.
+
+## Repository layout
+
+```text
+.
+├── <skill>/{codex,claude}/SKILL.md   # 17 skills, one folder each, a SKILL.md per client
+├── dataviz_mcp/                      # Optional local stdio MCP: colour, precision
+├── docs/                             # Human docs, one page per skill
+├── sync-skills.py                    # Install Codex or Claude skill surfaces
+└── sync.sh                           # Pull + install wrapper
+```
+
+Every public folder has a README. No generated `dist/` tree is committed.
+
+## Quick start
+
+Clone the repository and choose the skill surface for your client:
+
+```bash
+git clone https://github.com/skthewimp/karthik-data-visualization-skill.git
+cd karthik-data-visualization-skill
+
+./sync.sh --no-pull --surface codex   # Codex
+# or
+./sync.sh --no-pull --surface claude  # Claude Code
+```
+
+Install the MCP package into your existing Python environment:
+
+```bash
+python3 -m pip install -e .
+MCP_PYTHON="$(python3 -c 'import sys; print(sys.executable)')"
+```
+
+Register it with Codex:
+
+```bash
+codex mcp add karthik-dataviz -- "$MCP_PYTHON" -m dataviz_mcp
+codex mcp get karthik-dataviz
+```
+
+Or register it with Claude Code:
+
+```bash
+claude mcp add-json --scope user karthik-dataviz \
+  "{\"type\":\"stdio\",\"command\":\"$MCP_PYTHON\",\"args\":[\"-m\",\"dataviz_mcp\"]}"
+claude mcp get karthik-dataviz
+```
+
+Start a new client session after installation so it loads both the skill text and MCP tools. No daemon is required; the client starts the stdio process when needed.
+
+### Skill installation details
+
+```bash
+./sync.sh
+```
+
+This pulls latest changes and installs every skill to `~/.codex/skills/<skill>` and `~/.claude/skills/<skill>`.
+
+To install without pulling:
+
+```bash
+./sync.sh --no-pull
+```
+
+To validate metadata without installing:
+
+```bash
+./sync.sh --no-pull --validate-only
+```
+
+To install one surface only:
+
+```bash
+./sync.sh --no-pull --surface codex
+./sync.sh --no-pull --surface claude
+```
+
+## MCP tools
+
+The MCP server is optional. The skills work without it; the tools turn two by-eye decisions into arithmetic. Analytical and visual judgement stays in the skills, and charts are rendered and checked by looking at the export.
+
+| tool | what it computes |
+|---|---|
+| `recommend_colours` | which colour goes to which series, from brand or source colours, the background, a focal series and colour meanings |
+| `recommend_precision` | one uniform rounding place for a column, from its spread |
+
+See [`docs/mcp.md`](docs/mcp.md) for the boundary between tools and skills, and [`dataviz_mcp/README.md`](dataviz_mcp/README.md) for installation, client registration and tool parameters.
+
+## Development notes
+
+- [`AGENTS.md`](AGENTS.md) contains the maintainer-only validation and publish rule. It does not apply to third-party clones or forks.
+- Source skills live in `<skill>/{codex,claude}/SKILL.md`.
+- `sync-skills.py` discovers every root-level directory containing both surface files.
+- `sync-skills.py --validate-only` checks frontmatter without copying files.
+- For a localized fix, run the affected test files, optionally narrowed with `-k`:
+  `python3 -m pytest -q dataviz_mcp/tests/test_precision.py`. Prose-only edits need metadata
+  validation, not tests. See [AGENTS.md](AGENTS.md) for check selection.
+- `python3 -m pytest -q` runs the full MCP suite in about a second.
+- Extend an existing test when it already builds the same scenario. Keep separate cases for
+  distinct failure modes; avoid wording snapshots and tests that merely repeat implementation constants.
+- No generated `dist/` output is committed.
+- Keep README files in public folders. They are navigation aids for newcomers and should be updated when layout changes.
+
+## Session notes and writeups
+
+- [`CHANGELOG.md`](CHANGELOG.md) - release-style summary of public repo changes.
+- [`DEVLOG.md`](DEVLOG.md) - session notes with prompts and work done.
+- [`docs/blog/building-the-dataviz-selector-skill.md`](docs/blog/building-the-dataviz-selector-skill.md)
+
+## License
+
+MIT.

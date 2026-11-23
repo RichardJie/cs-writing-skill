@@ -1,0 +1,6 @@
+﻿Repository: Dsadd4/AgentFigureGallery
+URL: https://github.com/Dsadd4/AgentFigureGallery
+Commit: 0b55f26fd575a00b5ebacb619d953b0a008e0126
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/assets/packs/, /spaces/, /docs/assets/). Moved >500KB files to Desktop\待删除\fig-src-1-heavy-binaries\AgentFigureGallery\: examples\plot_type_examples\figures\microscopy_panel_example.pdf (567177 bytes); examples\plot_type_examples\figures\microscopy_panel_example.png (708914 bytes); examples\plot_type_examples\figures\microscopy_panel_example.svg (855166 bytes); examples\plot_type_examples\figures\multi_panel_figure_example.pdf (829754 bytes); examples\plot_type_examples\figures\multi_panel_figure_example.png (1069009 bytes); examples\plot_type_examples\figures\multi_panel_figure_example.svg (1160791 bytes); examples\plot_type_examples\figures\spatial_map_example.png (648334 bytes)

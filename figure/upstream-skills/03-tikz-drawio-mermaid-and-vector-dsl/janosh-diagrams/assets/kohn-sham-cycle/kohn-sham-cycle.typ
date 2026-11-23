@@ -1,0 +1,143 @@
+#import "@preview/cetz:0.5.3": canvas, draw
+#import draw: content, line, on-layer, rect
+
+#set page(width: auto, height: auto, margin: 8pt, fill: none)
+#set text(size: 12pt)
+
+#canvas({
+  // top edge of the dashed enclosure; its bottom follows the last box (drawn below)
+  let enclosure-top = (0, 3.25)
+
+  let box-style = (
+    frame: "rect",
+    stroke: .5pt,
+    fill: rgb("#DCDCDC"),
+    padding: 8pt,
+    width: 15em,
+  )
+
+  let arrow-style = (mark: (end: "stealth", fill: black, scale: .5), stroke: 1pt)
+
+  // Initial density box
+  content(
+    (rel: (0, 1.25), to: enclosure-top),
+    [Supply initial density guess\ $rho_"init" (arrow(r))$ to Kohn-Sham equations],
+    ..box-style,
+    fill: rgb("#c6aa0c").lighten(60%),
+    width: 20em,
+    name: "initial",
+    padding: (3pt, 2em, 0),
+    radius: 1em,
+  )
+
+  // Each box hangs below its predecessor and receives an arrow from it. A plain-language
+  // name sits above each equation.
+  let named(title, body) = align(center)[#title\ #body]
+  let parent = "initial"
+  for (name, offset, body) in (
+    (
+      "potential",
+      -1.6,
+      named(
+        [effective potential: Hartree\ + exchange-correlation + external],
+        $v_s (arrow(r))=v_H (arrow(r)) + v_"xc" (arrow(r)) + v_"ext" (arrow(r))$,
+      ),
+    ),
+    (
+      "hamiltonian",
+      -0.6,
+      named(
+        [Kohn-Sham Hamiltonian],
+        $hat(H)_"KS"=-frac(planck^2, 2m)arrow(nabla)^2 + v_s (arrow(r))$,
+      ),
+    ),
+    (
+      "schrodinger-eq",
+      -0.6,
+      named(
+        [solve for orbitals $phi_i$ and energies $E_i$],
+        $hat(H)_"KS" phi_i (arrow(r))= E_i phi_i (arrow(r))$,
+      ),
+    ),
+    (
+      "density",
+      -0.6,
+      named(
+        [new density from occupations $f_i$],
+        $rho (arrow(r))=sum_(i=1)^n f_i |phi_i (arrow(r))|^2$,
+      ),
+    ),
+    ("criterion", -0.6, [Convergence criterion satisfied?]),
+  ) {
+    content(
+      (rel: (0, offset), to: parent + ".south"),
+      body,
+      ..box-style,
+      anchor: "north",
+      name: name,
+    )
+    parent = name
+  }
+
+  rect(
+    (-4.4, enclosure-top.at(1)),
+    ((4.4, 0), "|-", (rel: (0, -0.45), to: "criterion.south")),
+    stroke: (dash: "dashed"),
+    name: "enclosure",
+    radius: 5pt,
+  )
+  on-layer(1, content(
+    "enclosure.north",
+    text(weight: "bold", size: 16pt)[Kohn-Sham method],
+    frame: "rect",
+    stroke: .5pt,
+    fill: rgb("#cdd3da"),
+    padding: 3pt,
+  ))
+
+  // Final energy box
+  content(
+    (rel: (0, -1.5), to: "enclosure.south"),
+    [Use $rho_"final" (arrow(r))$ to evaluate total energy functional\
+      $E_(V_"ext")[rho] = T_(e,s)[phi_i {rho}] + V_(e e,H) [rho] + E_"xc" [rho] + V_"eI" [rho]$],
+    ..box-style,
+    fill: rgb("#54aef8").lighten(30%),
+    width: 20em,
+    name: "energy",
+    padding: (4pt, 2em, 1pt),
+  )
+
+  for (start, end) in (
+    "initial",
+    "potential",
+    "hamiltonian",
+    "schrodinger-eq",
+    "density",
+    "criterion",
+  ).windows(2) {
+    line(start, end, ..arrow-style)
+  }
+  line("criterion", "energy", ..arrow-style, name: "converged-yes")
+
+  // Yes/No labels
+  content(
+    (rel: (0.1, 0), to: "converged-yes.60%"),
+    [Yes],
+    frame: "rect",
+    stroke: none,
+    anchor: "west",
+    padding: (3pt, 2pt),
+  )
+
+  // No feedback loop: its corners follow the boxes' vertical centers at x = 3.6.
+  line(
+    "criterion.east",
+    ((3.6, 0), "|-", "criterion"),
+    ((3.6, 0), "|-", "potential"),
+    "potential.east",
+    ..arrow-style,
+    name: "converged-no",
+  )
+  // beside the loop's vertical return line, just above the convergence box's corner
+  content(("converged-no.pt-1", 12%, "converged-no.pt-2"), [No], anchor: "west", padding: 3pt)
+})

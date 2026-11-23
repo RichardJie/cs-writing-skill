@@ -1,0 +1,13 @@
+{
+  "name": "chart-skills",
+  "description": "Chart skills for AI agents: choose the right chart, build a pie chart with percentages that total 100, pick colorblind-safe colors, chart from a spreadsheet, make circle graphs for school, size charts for slides, label them, audit them and cite their numbers",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ryan Doyle",
+    "url": "https://www.pie-chart-generator.com?ref=chart-skills"
+  },
+  "homepage": "https://github.com/rdoyle99/chart-skills",
+  "repository": "https://github.com/rdoyle99/chart-skills",
+  "license": "MIT",
+  "skills": "./skills"
+}

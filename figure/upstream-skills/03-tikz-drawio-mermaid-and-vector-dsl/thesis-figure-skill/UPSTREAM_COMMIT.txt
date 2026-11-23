@@ -1,0 +1,4 @@
+upstream_url: https://github.com/0xE1337/thesis-figure-skill
+commit_sha: ffe6d07c7d4bfd7429d2e2437198013fb8e6f27a
+license: MIT
+note: Moved 8 binary/heavy file(s) >500KB (5349.9 KB) out of staging. Moved standalone env file(s) (skills/thesis-figure-skill/references/eval/requirements.txt) per global Conda hygiene policy.

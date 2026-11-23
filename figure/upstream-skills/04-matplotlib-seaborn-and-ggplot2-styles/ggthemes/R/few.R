@@ -1,0 +1,160 @@
+# nolint start
+#' Color palettes from Few's "Show Me the Numbers"
+#'
+#' Qualitative color palettes from Stephen Few (2012)
+#' *Show Me the Numbers*. There are three palettes:
+#' Light, Medium, and Dark. Each palette comprises nine colors:
+#' gray, blue, orange, green, pink, brown, purple, yellow, red.
+#' For `n = 1`, gray is used. For `n > 1`, the eight non-gray
+#' colors are used.
+#'
+#'
+#' Use the light palette for filled areas, such as bar charts.
+#' Use the medium palette for points and lines.
+#' Use the dark palette for highlighting specific points
+#' or for small and thin lines and points.
+#'
+#' @references
+#' Few, S. (2012) *Show Me the Numbers: Designing Tables and Graphs to Enlighten*.
+#' 2nd edition. Analytics Press.
+#'
+#' ["Practical Rules for Using Color in Charts"](https://www.perceptualedge.com/articles/visual_business_intelligence/rules_for_using_color.pdf).
+#'
+#' @returns A palette function. It takes the number of colors `n` and returns a character vector of `n`
+#'   hex colors, and can be used as the `palette` argument of [ggplot2::discrete_scale()].
+#' @export
+#' @param palette One of `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$few$colors))`.
+#' @family color few
+#' @example inst/examples/ex-few_pal.R
+# nolint end
+few_pal <- function(palette = "Medium") {
+  # palette_name is used inside the cli_abort() glue string below, which
+  # object_usage_linter can't see into.
+  palette_name <- palette # nolint: object_usage_linter
+  palette <- ggthemes::ggthemes_data$few$colors[[palette]]
+  if (is.null(palette)) {
+    cli::cli_abort(
+      "{.arg palette} must be one of {.val {names(ggthemes::ggthemes_data$few$colors)}}, not {.val {palette_name}}."
+    )
+  }
+  ## The first value, gray, is used for non-data parts.
+  values <- palette[["value"]]
+  max_n <- length(values) - 1L
+  f <- function(n) {
+    check_pal_n(n, max_n)
+    if (n == 1L) {
+      values[[1L]]
+    } else {
+      unname(values[seq_len(n) + 1L])
+    }
+  }
+  attr(f, "max_n") <- length(values) - 1L
+  f
+}
+
+#' Color scales from Stephen Few
+#'
+#' See [few_pal()].
+#'
+#' @inheritParams ggplot2::scale_colour_hue
+#' @inheritParams few_pal
+#' @family color few
+#' @rdname scale_few
+#' @returns A ggplot2 scale object.
+#' @export
+#' @example inst/examples/ex-scale_few.R
+scale_colour_few <- function(palette = "Medium", ...) {
+  discrete_scale("colour", palette = few_pal(palette), ...)
+}
+
+#' @export
+#' @rdname scale_few
+scale_color_few <- scale_colour_few
+
+#' @export
+#' @rdname scale_few
+scale_fill_few <- function(palette = "Light", ...) {
+  discrete_scale("fill", palette = few_pal(palette), ...)
+}
+
+#' Theme based on Few's "Practical Rules for Using Color in Charts"
+#'
+#' Theme based on the rules and examples from Stephen Few's
+#' *Show Me the Numbers* and "Practical Rules for Using Color in Charts".
+#'
+#' @references
+#' Few, S. (2012) *Show Me the Numbers: Designing Tables and Graphs to Enlighten*.
+#' 2nd edition. Analytics Press.
+#'
+#' Stephen Few, "Practical Rules for Using Color in Charts",
+#' <https://www.perceptualedge.com/articles/visual_business_intelligence/rules_for_using_color.pdf>.
+#'
+#' @inheritParams ggplot2::theme_bw
+#' @family themes few
+#' @returns A ggplot2 theme object (class `theme`).
+#' @section Palettes:
+#' The theme sets [few_pal()] for discrete color and fill scales and
+#' [few_shape_pal()] for shape as the default palettes, so a plot draws in the
+#' theme's colors without a matching scale. A `scale_*()` added to the plot
+#' still takes precedence.
+#' @export
+#' @example inst/examples/ex-theme_few.R
+theme_few <- function(base_size = 12, base_family = "") {
+  gray <- "#4D4D4D"
+  black <- "#000000"
+  theme_bw(base_size = base_size, base_family = base_family) +
+    theme(
+      line = element_line(colour = gray),
+      rect = element_rect(fill = "white", colour = NA),
+      text = element_text(colour = black),
+      axis.ticks = element_line(colour = gray),
+      legend.key = element_rect(colour = NA),
+      ## Examples do not use grid lines
+      panel.border = element_rect(colour = gray),
+      panel.grid = element_blank(),
+      strip.background = element_rect(fill = "white", colour = NA)
+    ) +
+    theme_palettes(few_pal(), shape = few_shape_pal())
+}
+
+#' Shape palette from "Show Me the Numbers" (discrete)
+#'
+#' Shape palette from Stephen Few's "Show Me the Numbers".
+#' The shape palette consists of five shapes: circle, square, triangle, plus,
+#' times.
+#'
+#' @references Few, S. (2012)
+#'   *Show Me the Numbers: Designing Tables and Graphs to Enlighten*,
+#'   Analytics Press, p. 208.
+#'
+#' @returns A palette function. It takes the number of shapes `n` and returns an integer vector of `n`
+#'   shape (`pch`) codes, and can be used as the `palette` argument of
+#'   [ggplot2::discrete_scale()].
+#' @export
+#' @family shapes few
+#' @example inst/examples/ex-few_shape_pal.R
+few_shape_pal <- function() {
+  # Already font-independent before 6.1.0 -- all five shapes have a base pch --
+  # so this palette gains no `unicode` argument.
+  new_shape_pal(ggthemes::ggthemes_data[["few"]][["shapes"]])
+}
+
+#' Scales for shapes from "Show Me the Numbers"
+#'
+#' `scale_shape_few()` maps discrete variables to up to five easily
+#' discernible shapes. It is based on the shape palette suggested in
+#' Few (2012).
+#'
+#' @param ... Common [ggplot2::discrete_scale()] parameters.
+#' @references Few, S. (2012)
+#'   *Show Me the Numbers: Designing Tables and Graphs to Enlighten*,
+#'   Analytics Press, p. 208.
+#' @seealso [few_shape_pal()] for the shape palette that this
+#'   scale uses.
+#' @returns A ggplot2 scale object.
+#' @export
+#' @family shapes few
+#' @example inst/examples/ex-scale_shape_few.R
+scale_shape_few <- function(...) {
+  discrete_scale("shape", palette = few_shape_pal(), ...)
+}

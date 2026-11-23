@@ -1,0 +1,387 @@
+# Palette names that ggthemes used before they were corrected to match the
+# names Tableau itself uses. Mapping is deprecated-name -> canonical name.
+tableau_deprecated_palettes <- c(
+  "Red-Blue-Brown" = "Blue-Red-Brown",
+  "Classic Area-Brown" = "Classic Area Brown"
+)
+
+# Resolve a possibly-deprecated palette name to its canonical name, warning when
+# a deprecated name is used.
+tableau_resolve_palette <- function(palette) {
+  if (length(palette) == 1L && palette %in% names(tableau_deprecated_palettes)) {
+    canonical <- unname(tableau_deprecated_palettes[[palette]])
+    deprecate_warn(
+      "7.0.0",
+      I(paste0("The Tableau palette name \"", palette, "\"")),
+      I(paste0("the name \"", canonical, "\""))
+    )
+    return(canonical)
+  }
+  palette
+}
+
+# nolint start
+#' Tableau color palettes (discrete)
+#'
+#' Color palettes used in [Tableau](https://www.tableau.com/).
+#'
+#' @details Tableau provides three types of color palettes:
+#' `"regular"` (discrete, qualitative categories),
+#' `"ordered-sequential"`, and `"ordered-diverging"`.
+#'
+#' The default palette, `"Tableau 10"`, has the same colors as base R's
+#' `palette.colors(palette = "Tableau 10")`.
+#'
+#' - `"regular"`: `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$tableau[["color-palettes"]][["regular"]]))`.
+#' - `"ordered-diverging"`: `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$tableau[["color-palettes"]][["ordered-diverging"]]))`.
+#' - `"ordered-sequential"`: `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$tableau[["color-palettes"]][["ordered-sequential"]]))`.
+#'
+#' @returns A palette function. It takes the number of colors `n` and returns a character vector of `n`
+#'   hex colors, and can be used as the `palette` argument of [ggplot2::discrete_scale()].
+#' @export
+#' @param palette A string, the palette name. See Details for available
+#'   palettes.
+#' @param type The type of palette, one of:
+#'   * `"regular"`, the default: discrete, qualitative palettes.
+#'   * `"ordered-sequential"`: sequential palettes.
+#'   * `"ordered-diverging"`: diverging palettes.
+#' @param direction If `1` (the default), use the original order of
+#'   colors. If `-1`, reverse the order.
+#'
+#' @references
+#' <http://vis.stanford.edu/color-names/analyzer/>
+#'
+#' Maureen Stone, 'Designing Colors for Data' (slides), at the
+#' International Symposium on Computational Aesthetics in Graphics,
+#' Visualization, and Imaging, Banff, AB, Canada, June 22, 2007.
+#'
+#' Heer, Jeffrey and Maureen Stone, 2012 'Color Naming Models for
+#' Color Selection, Image Editing and Palette Design', ACM Human
+#' Factors in Computing Systems (CHI)
+#' <http://vis.stanford.edu/files/2012-ColorNameModels-CHI.pdf>.
+#'
+#' @family color tableau
+#' @example inst/examples/ex-tableau_color_pal.R
+# nolint end
+tableau_color_pal <- function(
+  palette = "Tableau 10",
+  type = c(
+    "regular",
+    "ordered-sequential",
+    "ordered-diverging"
+  ),
+  direction = 1
+) {
+  type <- match.arg(type)
+  palette <- tableau_resolve_palette(palette)
+  palettes <- ggthemes::ggthemes_data[["tableau"]][["color-palettes"]][[type]]
+  if (!palette %in% names(palettes)) {
+    cli::cli_abort("{.arg palette} must be one of {.val {names(palettes)}}, not {.val {palette}}.")
+  }
+  values <- palettes[[palette]][["value"]]
+  max_n <- length(values)
+  f <- function(n) {
+    check_pal_n(n, max_n)
+    values <- values[seq_len(n)]
+    if (direction < 0) {
+      values <- rev(values)
+    }
+    values
+  }
+  attr(f, "max_n") <- length(values)
+  f
+}
+
+#' @export
+#' @rdname tableau_color_pal
+tableau_colour_pal <- tableau_color_pal
+
+#' Tableau color scales (discrete)
+#'
+#' Categorical (qualitative) color scales used in Tableau.
+#' Use the function [scale_colour_gradient_tableau()] for the sequential
+#' and [scale_colour_gradient2_tableau()] for the diverging continuous
+#' color scales from Tableau.
+#'
+#' @param palette Palette name. See [tableau_color_pal()]
+#'   for available palettes.
+#' @inheritParams tableau_color_pal
+#' @param ... Other arguments passed on to [ggplot2::discrete_scale()].
+#' @family color tableau
+#' @rdname scale_color_tableau
+#' @returns A ggplot2 scale object.
+#' @export
+#' @seealso [tableau_color_pal()] for references.
+#' @example inst/examples/ex-scale_color_tableau.R
+scale_colour_tableau <- function(palette = "Tableau 10", ..., type = "regular", direction = 1) {
+  check_dots_named(...)
+  discrete_scale("colour", palette = tableau_color_pal(palette, type, direction), ...)
+}
+
+#' @export
+#' @rdname scale_color_tableau
+scale_fill_tableau <- function(palette = "Tableau 10", ..., type = "regular", direction = 1) {
+  check_dots_named(...)
+  discrete_scale("fill", palette = tableau_color_pal(palette, type, direction), ...)
+}
+
+#' @export
+#' @rdname scale_color_tableau
+scale_color_tableau <- scale_colour_tableau
+
+#' Tableau shape palettes (discrete)
+#'
+#' Shape palettes used by
+#' [Tableau](https://www.tableau.com/).
+#'
+#' Not all of Tableau's shape palettes are included, and these are not exact.
+#' Shape palettes in Tableau expose images for
+#' use as markers, so some are groups of related symbols rather than shapes
+#' chosen to be told apart.
+#'
+#' @note
+#'
+#' Supported values by palette, with the default `unicode = FALSE` and with
+#' `unicode = TRUE`:
+#'
+#' | `palette`        | `FALSE` | `TRUE` |
+#' |------------------|--------:|-------:|
+#' | `"default"`      |       8 |     10 |
+#' | `"filled"`       |       6 |     10 |
+#' | `"proportions"`  |       2 |      5 |
+#' | `"kpi"`          |       5 |      6 |
+#' | `"arrows"`       |       - |      8 |
+#' | `"thin-arrows"`  |       - |      8 |
+#' | `"gender"`       |       - |      9 |
+#' | `"weather"`      |       - |      6 |
+#' | `"bug-tracking"` |       - |      4 |
+#'
+#' Shapes with no base pch equivalent -- the sideways triangles, the solid
+#' star, the partially filled circles, the check mark, arrows, signs and
+#' pictographs -- are dropped rather than approximated by a different shape.
+#' The palettes marked `-` keep fewer than two shapes that way, so they need
+#' `unicode = TRUE`.
+#'
+#' `"proportions"` encodes *fill fraction*, which base pch cannot
+#' express at all, so only its empty and full circles survive; they remain
+#' meaningful as a two-value scale. To encode a proportion, map `alpha`
+#' or `fill` instead, or use `unicode = TRUE`.
+#'
+#' With `unicode = TRUE`, the font from [register_shapes_font()] draws every
+#' shape of `"default"`, `"filled"`, `"proportions"`, `"kpi"`, `"arrows"` and
+#' `"thin-arrows"`, and the sign shapes of `"gender"`, at a common size. The
+#' pictographs -- `"weather"`, `"bug-tracking"` and the restroom signs of
+#' `"gender"` -- come from the device font, which may draw them as colour
+#' emoji.
+#'
+#' @returns A palette function. It takes the number of shapes `n` and returns an integer vector of `n`
+#'   shape (`pch`) codes, and can be used as the `palette` argument of
+#'   [ggplot2::discrete_scale()].
+#' @export
+#' @param palette Palette name. One of `"default"`, `"filled"`,
+#'   `"proportions"`, `"kpi"`, `"arrows"`, `"thin-arrows"`, `"gender"`,
+#'   `"weather"` or `"bug-tracking"`.
+#' @inheritParams cleveland_shape_pal
+#' @family shapes tableau
+#' @example inst/examples/ex-tableau_shape_pal.R
+tableau_shape_pal <- function(
+  palette = c(
+    "default",
+    "filled",
+    "proportions",
+    "kpi",
+    "arrows",
+    "thin-arrows",
+    "gender",
+    "weather",
+    "bug-tracking"
+  ),
+  unicode = FALSE
+) {
+  palette <- rlang::arg_match(palette)
+  check_unicode(unicode)
+  shapes <- ggthemes::ggthemes_data$tableau[["shape-palettes"]][[palette]]
+  safe_n <- sum(!is.na(shapes[["pch"]]))
+  # A one-shape palette is no palette, and an empty one fails only later, as
+  # a warning about `n`, far from the argument that caused it.
+  if (!unicode && safe_n < 2L) {
+    cli::cli_abort(c(
+      "{.arg unicode} must be {.code TRUE} for Tableau shape palette {.val {palette}}.",
+      "i" = "{safe_n} of its {nrow(shapes)} shapes {cli::qty(safe_n)}ha{?s/ve} a font-independent pch."
+    ))
+  }
+  new_shape_pal(shapes, unicode = unicode)
+}
+
+#' Tableau shape scales
+#'
+#' See [tableau_shape_pal()] for details.
+#'
+#' @returns A ggplot2 scale object.
+#' @export
+#' @inheritParams tableau_shape_pal
+#' @inheritParams ggplot2::scale_x_discrete
+#' @family shapes tableau
+#' @example inst/examples/ex-scale_shape_tableau.R
+scale_shape_tableau <- function(palette = "default", ..., unicode = FALSE) {
+  discrete_scale(
+    "shape",
+    palette = tableau_shape_pal(palette, unicode = unicode),
+    ...
+  )
+}
+
+# nolint start
+#' Tableau color gradient palettes (continuous)
+#'
+#' Gradient color palettes using the diverging and sequential continuous color
+#' palettes in Tableau. See [tableau_color_pal()] for discrete color
+#' palettes.
+#'
+#' @param palette Palette name. For each `type`:
+#'   - `"ordered-sequential"`: `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$tableau[["color-palettes"]][["ordered-sequential"]]))`.
+#'   - `"ordered-diverging"`: `r ggthemes:::md_optlist(names(ggthemes::ggthemes_data$tableau[["color-palettes"]][["ordered-diverging"]]))`.
+#' @param type The type of palette, one of:
+#'   * `"ordered-sequential"`, the default: sequential palettes.
+#'   * `"ordered-diverging"`: diverging palettes.
+#' @param ... Arguments passed to `tableau_gradient_pal`.
+#' @family color tableau
+#'
+#' @returns A palette function. It takes a numeric vector `x` of values between 0 and 1 and returns a character
+#'   vector of hex colors interpolated along the palette, for use as the `palette` argument of
+#'   [ggplot2::continuous_scale()].
+#' @export
+#' @example inst/examples/ex-tableau_seq_gradient_pal.R
+# nolint end
+tableau_gradient_pal <- function(palette = "Blue", type = "ordered-sequential") {
+  type <- match.arg(type, c("ordered-sequential", "ordered-diverging"))
+  palette <- tableau_resolve_palette(palette)
+  palettes <- ggthemes::ggthemes_data[["tableau"]][["color-palettes"]][[type]]
+  if (!is.character(palette) || length(palette) != 1L || !palette %in% names(palettes)) {
+    cli::cli_abort("{.arg palette} must be one of {.val {names(palettes)}}, not {.val {palette}}.")
+  }
+  scales::gradient_n_pal(colours = palettes[[palette]][["value"]])
+}
+
+#' @export
+#' @rdname tableau_gradient_pal
+tableau_seq_gradient_pal <- function(palette = "Blue", ...) {
+  rlang::check_dots_empty()
+  tableau_gradient_pal(palette = palette, type = "ordered-sequential")
+}
+
+#' @export
+#' @rdname tableau_gradient_pal
+tableau_div_gradient_pal <- function(palette = "Orange-Blue Diverging", ...) {
+  rlang::check_dots_empty()
+  tableau_gradient_pal(palette = palette, type = "ordered-diverging")
+}
+
+#' Tableau sequential color scales (continuous)
+#'
+#' Continuous color scales using the sequential color palettes in Tableau.
+#' See [scale_colour_tableau()] for Tableau discrete color scales,
+#' and [scale_colour_gradient2_tableau()] for diverging color
+#' scales.
+#'
+#' @returns A ggplot2 scale object.
+#' @export
+#' @inheritParams tableau_seq_gradient_pal
+#' @inheritParams ggplot2::scale_colour_hue
+#' @param guide Type of legend. Use `"colourbar"` for a continuous
+#'   color bar, or `"legend"` for a discrete color legend.
+#' @family color tableau
+#' @rdname scale_colour_gradient_tableau
+#' @example inst/examples/ex-scale_colour_gradient_tableau.R
+#' @importFrom ggplot2 continuous_scale
+scale_colour_gradient_tableau <- function(
+  palette = "Blue",
+  ...,
+  na.value = "grey50", # nolint: object_name_linter
+  guide = "colourbar"
+) {
+  continuous_scale("colour", palette = tableau_seq_gradient_pal(palette), na.value = na.value, guide = guide, ...)
+}
+
+#' @export
+#' @rdname scale_colour_gradient_tableau
+scale_fill_gradient_tableau <- function(
+  palette = "Blue",
+  ...,
+  na.value = "grey50", # nolint: object_name_linter
+  guide = "colourbar"
+) {
+  continuous_scale("fill", palette = tableau_seq_gradient_pal(palette), na.value = na.value, guide = guide, ...)
+}
+
+#' @export
+#' @rdname scale_colour_gradient_tableau
+scale_color_gradient_tableau <- scale_colour_gradient_tableau
+
+#' @export
+#' @rdname scale_colour_gradient_tableau
+scale_color_continuous_tableau <- scale_colour_gradient_tableau
+
+#' @export
+#' @rdname scale_colour_gradient_tableau
+scale_colour_continuous_tableau <- scale_colour_gradient_tableau # nolint: object_length_linter.
+
+#' @export
+#' @rdname scale_colour_gradient_tableau
+scale_fill_continuous_tableau <- scale_fill_gradient_tableau
+
+#' Tableau diverging color scales (continuous)
+#'
+#' Continuous color scales using the diverging color scales in Tableau.
+#' See [scale_colour_tableau()] for Tableau discrete color scales,
+#' and [scale_colour_gradient_tableau()] for sequential color scales.
+#'
+#' @inheritParams tableau_div_gradient_pal
+#' @inheritParams ggplot2::scale_colour_hue
+#' @inheritParams scale_colour_gradient_tableau
+#' @param midpoint The data value that corresponds to the middle color of the
+#'   diverging palette.
+#' @family color tableau
+#' @returns A ggplot2 scale object.
+#' @export
+#' @rdname scale_colour_gradient2_tableau
+#' @example inst/examples/ex-scale_colour_gradient2_tableau.R
+scale_colour_gradient2_tableau <- function(
+  palette = "Orange-Blue Diverging",
+  ...,
+  midpoint = 0,
+  na.value = "grey50", # nolint: object_name_linter
+  guide = "colourbar"
+) {
+  continuous_scale(
+    "colour",
+    palette = tableau_div_gradient_pal(palette),
+    na.value = na.value,
+    guide = guide,
+    rescaler = mid_rescaler(mid = midpoint),
+    ...
+  )
+}
+
+#' @export
+#' @rdname scale_colour_gradient2_tableau
+scale_fill_gradient2_tableau <- function(
+  palette = "Orange-Blue Diverging",
+  ...,
+  midpoint = 0,
+  na.value = "grey50", # nolint: object_name_linter
+  guide = "colourbar"
+) {
+  continuous_scale(
+    "fill",
+    palette = tableau_div_gradient_pal(palette),
+    na.value = na.value,
+    guide = guide,
+    rescaler = mid_rescaler(mid = midpoint),
+    ...
+  )
+}
+
+#' @export
+#' @rdname scale_colour_gradient2_tableau
+scale_color_gradient2_tableau <- scale_colour_gradient2_tableau

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/janosh/diagrams
+commit_sha: 7a79b3114e201fad9b6785e936eab859d1bc8c12
+license: MIT
+note: Sparse-checkout of /license, /readme.md, /citation.cff, /pyproject.toml, /scripts/**, /assets/**/*.tex, /assets/**/*.typ, /assets/**/*.yml, /assets/**/*.py to exclude heavy binary showcase/asset blobs.

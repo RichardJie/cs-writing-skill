@@ -1,0 +1,45 @@
+{
+  "name": "c4-model-skill",
+  "owner": {
+    "name": "Cherif Toujeni",
+    "email": "toujeni.cherif@gmail.com"
+  },
+  "metadata": {
+    "description": "Claude Code marketplace distributing the c4m plugin — interactive C4 architecture diagramming (Simon Brown's model).",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "c4m",
+      "description": "Interactive C4 architecture diagrams (Simon Brown's model). Slash commands: /c4m:auto, /c4m:design, /c4m:code, /c4m:prose, /c4m:review, /c4m:update. Negotiable format (Mermaid / Structurizr / PlantUML) and destination (filesystem or MCP — Notion, Linear, Drive).",
+      "version": "2.0.0",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/c4-model"
+      ],
+      "commands": [
+        "./commands"
+      ],
+      "author": {
+        "name": "Cherif Toujeni",
+        "email": "toujeni.cherif@gmail.com"
+      },
+      "homepage": "https://github.com/cheriftj/c4-model-skill",
+      "repository": "https://github.com/cheriftj/c4-model-skill",
+      "license": "MIT",
+      "keywords": [
+        "c4-model",
+        "architecture",
+        "diagrams",
+        "mermaid",
+        "structurizr",
+        "plantuml",
+        "documentation",
+        "simon-brown",
+        "skill",
+        "claude-code"
+      ]
+    }
+  ]
+}

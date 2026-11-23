@@ -1,0 +1,5 @@
+repository: https://github.com/huashu996/PPT-Framework-Skill
+commit_sha: 01f51d69c93975771074dc563cade221151b90f6
+branch: main
+license: See upstream repository / README
+stars_at_harvest: 57

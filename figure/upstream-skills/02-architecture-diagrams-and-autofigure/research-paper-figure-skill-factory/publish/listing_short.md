@@ -1,0 +1,1 @@
+Build reusable research-paper figure-making skills with evidence-backed taxonomy, saved subtype/style atlases, required visual-structure image embeds, required concept examples for abstract decisions, and two-round multi-image candidate selection.

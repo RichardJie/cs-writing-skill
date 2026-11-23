@@ -1,0 +1,273 @@
+## 45 degrees in radians
+FORTY_FIVE <- base::pi / 4 # nolint: object_name_linter
+
+calc_slopes <- function(x, y, cull = FALSE) {
+  dx <- abs(diff(x))
+  dy <- diff(y)
+  s <- dy / dx
+  touse <- if (cull) {
+    abs(s) > 0 & is.finite(s)
+  } else {
+    is.finite(s)
+  }
+  list(
+    s = s[touse],
+    dx = dx[touse],
+    dy = dy[touse],
+    Rx = diff(range(x)),
+    Ry = diff(range(y))
+  )
+}
+
+#' Bank slopes to 45 degrees
+#'
+#' Calculate the optimal aspect ratio of a line graph by banking the
+#' slopes to 45 degrees as suggested by W.S. Cleveland. This
+#' maximizes the ability to visually differentiate differences in
+#' slope. This function will calculate the optimal aspect ratio for
+#' a line plot using any of the methods described in Heer and Agrawala
+#' (2006). In their review of the methods they suggest using median
+#' absolute slope banking (`"ms"`), which produces aspect ratios which
+#' are generally the median of the various methods provided here.
+#'
+#' # Methods
+#'
+#' As written, all of these methods calculate the aspect ratio (x
+#' /y), but [bank_slopes()] will return (y / x) to be compatible
+#' with [ggplot2::coord_fixed()].
+#'
+#' **Median Absolute Slopes Banking**
+#'
+#' Let the aspect ratio be \eqn{\alpha = \frac{w}{h}}{alpha = w / h}
+#' then the median absolute slop banking is the
+#' \eqn{\alpha}{alpha} such that,
+#' \deqn{
+#'   median \left| \frac{s_i}{\alpha} \right| = 1
+#' }{
+#'  median |s_i / alpha|
+#' }
+#'
+#' Let \eqn{R_z = z_{max} - z_{min}}{R_z = z_max - z_min} for \eqn{z = x, y},
+#' and \eqn{M = median \| s_i \|}{M = median | s_i |}. Then,
+#' \deqn{
+#' \alpha = M \frac{R_x}{R_y}
+#' }{
+#' alpha = M R_x / R_y
+#' }
+#'
+#' **Average Absolute Slope Banking**
+#'
+#' Let the aspect ratio be \eqn{\alpha = \frac{w}{h}}{alpha = w/h}.
+#' then the mean absolute slope banking is the
+#' \eqn{\alpha}{alpha} such that,
+#' \deqn{
+#'   mean \left| \frac{s_i}{\alpha} \right| = 1
+#' }{
+#'  mean |s_i / alpha| = 1
+#' }
+#'
+#' **Average Absolute Orientation Banking**
+#'
+#' Rather than averaging the slopes themselves, this method averages the
+#' *orientation* (angle) of each segment, since perceived slope
+#' differences are more closely related to angle than to the raw ratio
+#' \eqn{dy/dx}{dy/dx}. Let \eqn{s'_i = s_i R_x / R_y}{s'_i = s_i * Rx / Ry}
+#' be the range-normalized slopes. Then \eqn{\alpha}{alpha} is chosen such
+#' that,
+#' \deqn{
+#'   mean \left| \arctan \left( \frac{s'_i}{\alpha} \right) \right| = \frac{\pi}{4}
+#' }{
+#'  mean |atan(s'_i / alpha)| = pi / 4
+#' }
+#' This has no closed-form solution and is found numerically with
+#' [stats::uniroot()].
+#'
+#' **Weighted Average Absolute Orientation Banking**
+#'
+#' This is the weighted version of Average Absolute Orientation Banking from
+#' Heer and Agrawala (2006). Each segment's absolute orientation is weighted
+#' by its length in display space, so both the orientation and its weight
+#' depend on \eqn{\alpha}. With \eqn{s'_i}{s'_i} as above and segment run
+#' \eqn{dx_i}{dx_i}, \eqn{\alpha}{alpha} is chosen such that,
+#' \deqn{
+#'   \frac{\sum_i \left|\arctan(s'_i / \alpha)\right|
+#'   dx_i \sqrt{1 + (s'_i / \alpha)^2}}
+#'   {\sum_i dx_i \sqrt{1 + (s'_i / \alpha)^2}} = \frac{\pi}{4}
+#' }{
+#' sum(|atan(s'_i / alpha)| * dx_i * sqrt(1 + (s'_i / alpha)^2)) /
+#'   sum(dx_i * sqrt(1 + (s'_i / alpha)^2)) = pi / 4
+#' }
+#' This has no closed-form solution and is found numerically with
+#' [stats::uniroot()].
+#'
+#' All of these methods consider the entirety of the data at once, so they
+#' accentuate local features and can obscure larger-scale trends. Heer and
+#' Agrawala (2006) address this with multi-scale banking, which uses spectral
+#' analysis to identify the frequency scales present in the data and banks
+#' each one separately; see [bank_slopes_multiscale()] and
+#' [bank_plot_multiscale()].
+#'
+#' @param x A numeric vector of x values.
+#' @param y A numeric vector of y values.
+#' @param cull If `TRUE` (the default), drop segments with a slope of 0 or `Inf` before banking.
+#' @param method The banking method, one of:
+#'   * `"ms"`, the default: median absolute slope.
+#'   * `"as"`: average absolute slope.
+#'   * `"ao"`: average absolute orientation.
+#'   * `"was"`: weighted average absolute orientation.
+#' @param weight `r lifecycle::badge("deprecated")` No longer used, but kept
+#'   for backwards compatibility.
+#' @param ... `r lifecycle::badge("deprecated")` No longer used, but kept for
+#'   backwards compatibility.
+#'
+#' @references
+#' Cleveland, W. S., M. E. McGill, and R. McGill. The Shape Parameter
+#' of a Two-Variable Graph.  Journal of the American Statistical
+#' Association, 83:289-300, 1988
+#'
+#' Heer, Jeffrey and Maneesh Agrawala, 2006. 'Multi-Scale Banking to 45'
+#' IEEE Transactions On Visualization And Computer Graphics.
+#'
+#' Cleveland, W. S. 1993. 'A Model for Studying Display Methods of Statistical
+#' Graphs.' Journal of Computational and Statistical Graphics.
+#'
+#' Cleveland, W. S. 1994. The Elements of Graphing Data, Revised Edition.
+#'
+#' @returns A number, the aspect ratio `y / x`, for use as `ratio` in
+#'   [ggplot2::coord_fixed()].
+#'
+#' @seealso [lattice::banking()], [bank_plot()] to bank
+#' a `ggplot` using its own data, and
+#' [bank_slopes_multiscale()] to bank each frequency scale in the
+#' data separately.
+#' @export
+#' @importFrom stats median uniroot
+#' @example inst/examples/ex-bank_slopes.R
+bank_slopes <- function(x, y, cull = TRUE, weight = NULL, method = c("ms", "as", "ao", "was"), ...) {
+  method <- rlang::arg_match(method)
+  fun <- bank_slopes_funs[[method]]
+  # Heer produces functions with the target alpha = w/h = x/y
+  xyrat <- fun(calc_slopes(x, y, cull = cull), ...)
+  # but coord_fixed ratio is the aspect ratio y/x
+  1 / xyrat
+}
+
+#' Bank a plot's own data to 45 degrees
+#'
+#' A convenience wrapper around [bank_slopes()] that extracts
+#' `x`/`y` directly from an already-specified `ggplot`, so
+#' you do not have to separately reconstruct the plotted vectors by hand.
+#' It builds `plot` with [ggplot2::ggplot_build()], computes
+#' the banking ratio from one layer's fully resolved data (i.e. after
+#' stats, position adjustments, and faceting have been applied), and
+#' returns `plot + coord_fixed(ratio = ...)` (see [ggplot2::coord_fixed()]).
+#'
+#' Segments are never averaged across a group or facet panel boundary:
+#' slopes are computed within each combination of `group` and
+#' `PANEL` and then combined, so a line plot with multiple series (or
+#' facets) is banked correctly rather than picking up spurious slopes
+#' between the end of one line and the start of the next.
+#'
+#' Note that [ggplot2::coord_fixed()] applies a single ratio to
+#' every panel, so faceted plots are banked using the combined data from
+#' all panels rather than a ratio tailored to each one individually.
+#'
+#' @param plot A `ggplot` object.
+#' @param method,cull,... Passed to [bank_slopes()].
+#' @param layer Integer. Which layer of `plot` to extract `x`/
+#' `y` from. Defaults to the first layer.
+#'
+#' @returns The `plot`, with [ggplot2::coord_fixed()] added.
+#' @seealso [bank_slopes()]
+#' @export
+#' @examples
+#' library(ggplot2)
+#' x <- seq_along(sunspot.year)
+#' y <- as.numeric(sunspot.year)
+#' p <- ggplot(data.frame(x = x, y = y), aes(x = x, y = y)) +
+#'   geom_line()
+#' bank_plot(p)
+bank_plot <- function(plot, method = c("ms", "as", "ao", "was"), cull = TRUE, layer = 1, ...) {
+  check_ggplot(plot)
+  method <- rlang::arg_match(method)
+  built <- ggplot2::ggplot_build(plot)
+  check_layer(layer, length(built$data))
+  data <- built$data[[layer]]
+  check_bank_plot_data(data)
+
+  splits <- split(data, interaction(data$PANEL, data$group, drop = TRUE))
+  slopes <- lapply(splits, function(d) calc_slopes(d$x, d$y, cull = cull))
+  combined <- list(
+    s = unlist(lapply(slopes, `[[`, "s"), use.names = FALSE),
+    dx = unlist(lapply(slopes, `[[`, "dx"), use.names = FALSE),
+    dy = unlist(lapply(slopes, `[[`, "dy"), use.names = FALSE),
+    Rx = diff(range(data$x)),
+    Ry = diff(range(data$y))
+  )
+  xyrat <- bank_slopes_funs[[method]](combined, ...)
+  plot + ggplot2::coord_fixed(ratio = 1 / xyrat)
+}
+
+# `fn` names the function the user called, since `bank_plot_multiscale()`
+# shares this check.
+check_bank_plot_data <- function(data, fn = "bank_plot") {
+  missing <- setdiff(c("x", "y"), names(data))
+  if (length(missing) > 0) {
+    cli::cli_abort(c(
+      "The layer data is missing required column(s): {.field {missing}}.",
+      "i" = "{.fn {fn}} needs both {.field x} and {.field y}."
+    ))
+  }
+  invisible(data)
+}
+
+bank_slopes_funs <- list()
+
+bank_slopes_funs[["ms"]] <-
+  function(slopes, ...) {
+    median(abs(slopes$s)) * slopes$Rx / slopes$Ry
+  }
+
+bank_slopes_funs[["as"]] <-
+  function(slopes, ...) {
+    mean(abs(slopes$s)) * slopes$Rx / slopes$Ry
+  }
+
+bank_slopes_funs[["ao"]] <-
+  function(slopes, ...) {
+    s <- slopes$s * slopes$Rx / slopes$Ry
+    if (length(s) == 0 || !all(is.finite(s))) {
+      return(NaN)
+    }
+    f <- function(alpha) mean(abs(atan(s / alpha))) - FORTY_FIVE
+    pivot <- median(abs(s))
+    if (pivot == 0) {
+      pivot <- 1
+    }
+    uniroot(f, interval = c(pivot / 1e6, pivot * 1e6))$root
+  }
+
+bank_slopes_funs[["was"]] <-
+  function(slopes, ...) {
+    s <- slopes$s * slopes$Rx / slopes$Ry
+    if (length(s) == 0 || !all(is.finite(s))) {
+      return(NaN)
+    }
+    if (all(s == 0)) {
+      return(NaN)
+    }
+    pivot <- median(abs(s))
+    if (pivot == 0) {
+      pivot <- 1
+    }
+    f <- function(alpha) {
+      orientation <- abs(atan(s / alpha))
+      length <- slopes$dx * sqrt(1 + (s / alpha)^2)
+      sum(orientation * length) / sum(length) - FORTY_FIVE
+    }
+    uniroot(
+      f,
+      interval = c(pivot / 1e6, pivot * 1e6),
+      tol = sqrt(.Machine$double.eps)
+    )$root
+  }

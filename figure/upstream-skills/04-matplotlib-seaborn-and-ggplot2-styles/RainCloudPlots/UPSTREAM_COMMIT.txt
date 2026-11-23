@@ -1,0 +1,4 @@
+Repository: https://github.com/RainCloudPlots/RainCloudPlots
+Branch: master
+Commit SHA: 4ceeb06dc5bd5b9911e7147d1b0b452c4c2f9b1d
+License: MIT

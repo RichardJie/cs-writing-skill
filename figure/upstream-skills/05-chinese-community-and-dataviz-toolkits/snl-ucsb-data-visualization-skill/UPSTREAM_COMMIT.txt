@@ -1,0 +1,6 @@
+﻿Repository: SNL-UCSB/data-visualization-skill
+URL: https://github.com/SNL-UCSB/data-visualization-skill
+Commit: a867e9582ef3b735b47fd66f0697cef141373907
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

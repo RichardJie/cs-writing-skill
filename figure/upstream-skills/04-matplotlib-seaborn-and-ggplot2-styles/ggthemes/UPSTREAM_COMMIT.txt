@@ -1,0 +1,4 @@
+Repository: https://github.com/jrnold/ggthemes
+Branch: main
+Commit SHA: b6796686404eb66ece238376eb11c0e6ebc0db51
+License: GPL-2.0

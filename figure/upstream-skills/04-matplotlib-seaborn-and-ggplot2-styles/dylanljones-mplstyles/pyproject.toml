@@ -1,0 +1,82 @@
+
+# -- Project metadata ------------------------------------------------------------------
+
+[project]
+name = "mplstyles"
+description = "Matplotlib styles"
+readme = "README.md"
+authors = [
+    {name = "Dylan Jones", email = "dylanljones94@gmail.com"},
+]
+license = {file = "LICENSE"}
+dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+    "numpy",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+test = [
+    "hypothesis>=6.0.0",
+    "pytest>=6.2.0",
+    "pytest-cov",
+]
+
+
+# -- Build -----------------------------------------------------------------------------
+
+[build-system]
+requires = [
+    "setuptools >= 61.0.0",
+    "setuptools_scm[toml] >= 4",
+    "setuptools_scm_git_archive",
+    "wheel >= 0.37.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+platforms = ["any"]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.setuptools_scm]
+
+write_to = "mplstyles/_version.py"
+git_describe_command = "git describe --dirty --tags --long --match * --first-parent"
+
+
+# -- Ruff ------------------------------------------------------------------------------
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".idea",
+    "__pycache__",
+    "build",
+    "dist",
+    ".ruff_cache",
+    "*/_version.py",
+]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]  # Enable Pyflakes (`F`) and pycodestyle (`E`) codes by default.
+ignore = [
+    "E203",  # Whitespace before ':'
+]
+fixable = ["ALL"]  # Allow fix for all enabled rules (when `--fix`) is provided.
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"*__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

@@ -1,0 +1,6 @@
+﻿Repository: yiyanli123/biorender-mechanism-figures-skill
+URL: https://github.com/yiyanli123/biorender-mechanism-figures-skill
+Commit: 148cd05d86e757246a9caa3538ceb8cc316e1c90
+Branch: main
+License: No LICENSE file in upstream repository
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\biorender-mechanism-figures-skill\: assets\tumor-immune-microenvironment-preview.png (1463403 bytes)

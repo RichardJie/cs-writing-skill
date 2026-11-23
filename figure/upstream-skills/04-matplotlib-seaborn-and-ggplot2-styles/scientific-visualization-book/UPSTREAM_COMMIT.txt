@@ -1,0 +1,4 @@
+Repository: https://github.com/rougier/scientific-visualization-book
+Branch: master
+Commit SHA: 62fa569f30333c817c13e4dc757877c1192fd15a
+License: CC-BY-NC-SA-4.0 (text) / BSD-2-Clause (code)

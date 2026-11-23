@@ -1,0 +1,6 @@
+﻿Repository: dazhiyang/scientific-plotting-skill
+URL: https://github.com/dazhiyang/scientific-plotting-skill
+Commit: 980cbf9328b4224268dd5fff99c1f2f8158e69cc
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

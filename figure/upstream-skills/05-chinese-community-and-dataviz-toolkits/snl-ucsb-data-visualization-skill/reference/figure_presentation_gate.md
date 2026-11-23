@@ -1,0 +1,353 @@
+# Figure Presentation Gate — the single output-verified figure/table audit
+
+> The ONE place for every mandatory figure- and table-presentation rule. This is to figures what
+> `paper-writing/author_profile/gate_mechanical.md` (M1–M18) is to prose: a numbered, non-negotiable
+> checklist with a **runnable verification procedure**. Run it before any figure or table is reported
+> "done," and again in any red-team/polish pass.
+>
+> **The core discipline: verify in the COMPILED OUTPUT, not the source and not the browser.**
+> A figure defect (wrapped table header, wasted whitespace, a baked-in title, a font mismatch, a
+> missing figure number, stray color) is visual. It is invisible in the `.qmd`/`.tex` source and can
+> render differently in a browser than in the print PDF the reader gets. So the gate is satisfied
+> only by: render → rasterize the figure's page → open the image → look. **Report what you saw and on
+> which page ("inspected p.28, Fig 6.4: header on one line, no right-margin gap"), not "looks good."**
+> A mental pass is not a run. A browser preview is not a run.
+
+This gate holds the checks a rendered page can catch. Data-honesty and interpretation checks (does
+the figure support the claim, is the scale honest, is a bar-of-means hiding the distribution) live in
+`/viz analyze`'s Tukey/Tufte lenses. Positive "how to build it" guidance lives in the Execute mode
+and `reference/matplotlib_defaults.py`.
+
+---
+
+## Refinement mode — fast (one-off) vs deep (adversarial red/blue-team)
+
+Many gate items are **parametric**: table column-width ratios, figure font sizes, box/canvas
+dimensions, node spacing, legend placement. There is rarely a closed-form "right" value — the good
+value is the one that, in the *compiled* output, leaves neither wasted whitespace nor spillover. Pick
+a mode:
+
+- **Fast (one-off) — default.** Compute a sensible value once (widths ∝ content per T3, font from the
+  F4 size arithmetic), render, verify, ship. Right for a single figure or a quick pass.
+- **Deep (iterative, adversarial) — opt in for a shipped deliverable** (book chapter, camera-ready).
+  Do NOT trust the first value. Run a red/blue-team loop:
+  1. **Blue team** proposes parameter values and renders.
+  2. **Red team** adversarially inspects the *rendered PDF* for BOTH failure directions at once —
+     residual whitespace (a column or margin wider than its content) AND spillover (a wrapped header, a
+     mid-word break, an axis label over the ticks, an oversized/ragged box) — and proposes a counter-move.
+  3. Repeat until neither team can improve it (convergence), not until it merely "looks fine" on pass 1.
+     A single pass tends to fix one direction and miss the other.
+  Drive it with `/loop` (iterate to convergence) and, when available, an independent `codex` critic as a
+  second red team, so the final params are not one model's one-off preference. Log what converged and why.
+
+Use the deep mode for whitespace/column-width optimization and figure parametric choices whenever the
+figure or table is part of a shipped artifact.
+
+---
+
+## F0. Declare the target medium FIRST (it sets two defaults)
+
+Before auditing, state the medium. It parameterizes exactly two rules — **color (F6)** and **font
+family (F4)** — everything else is universal.
+
+| Profile | Color default (F6) | Font family (F4) | Figure/table numbering |
+|:--|:--|:--|:--|
+| **Book / PDF (Quarto)** — this project's default | **Grayscale.** Color only when it carries information grayscale + markers/line-styles cannot. | Match the **compiled PDF body** (serif — Latin Modern). Use an **installed** serif in figures (`"Times New Roman", Times, serif`); do NOT request the HTML theme font (Source Sans / Inter) — it is not installed and silently falls back to SF Pro. Verify with `pdffonts` (F4). | Quarto floats: `#fig-…` / `#tbl-…` + caption |
+| **Conference paper (LaTeX)** | One colorblind-safe scheme allowed; still grayscale-distinguishable via markers + line styles. | The paper's body serif (Times). | `\label{fig:…}` / `\label{tab:…}` + `\caption` |
+
+If the medium is unstated and a `.qmd`/`_quarto.yml` is present, assume **Book / PDF**. If `.tex`,
+assume **Conference paper**.
+
+---
+
+## Part A — Universal figure rules (every figure, every medium)
+
+Each rule states the requirement, then a wrong→right, then how to verify it.
+
+**F1. Verified in the compiled output.** The figure has been rendered to the final PDF, the page
+rasterized (`pdftoppm -png -f P -l P`), and the image opened and read. No figure is "done" on a
+source edit or a browser preview alone.
+- ✗ "Edited the SVG, looks right." → ✓ "Rendered `ch06_transport_v1.pdf`, rasterized p.12, opened
+  `p12.png`: v14 pipe fills the column, no title bar, boxes tight."
+- **Verify:** the audit block at the bottom. Report the page number and what you saw.
+
+**F2. Numbered and captioned.** Every figure is a numbered float with a caption. This includes
+**mermaid diagrams and inline SVGs**, which do NOT get a number unless you wrap them. A bare
+```` ```{mermaid} ```` block or a raw `<svg>` renders as an unnumbered orphan.
+- ✗ ```` ```{mermaid}\nflowchart TD ... ``` ```` (no label, no caption) → ✓ wrap it so it becomes
+  `#fig-dependency-chain` with a caption (see the mermaid-float recipe in Part C).
+- **Verify:** grep for bare blocks (audit block, check D); confirm "Figure N.k" prints under it in
+  the PDF.
+
+**F3. No title inside the figure.** The caption is the title. Remove titles baked at the top of the
+artwork: matplotlib `ax.set_title(...)` / `fig.suptitle(...)`, an SVG `<text>` heading, a mermaid
+`title` line. A title inside the figure duplicates the caption and eats vertical space.
+- ✗ SVG top row: `<text ...>Bandwidth-Delay Product (BDP)…</text>` → ✓ delete it; the caption
+  already says it.
+- **Verify:** grep SVG for a top-anchored `<text>`; scan the rasterized page for a heading above the
+  artwork.
+
+**F4. Font size = body text; ONE font family, and it must MATCH THE COMPILED BODY, and it must be
+INSTALLED.** Figure text sits at body size (a label should look the same size as running text), every
+figure uses the **same** family, and that family matches the body font **of the compiled target** —
+not the font you think the document uses. Two traps that a naive check misses:
+- **Trap 1 — wrong target font.** A book's HTML theme font (e.g., Source Sans) is usually NOT its PDF
+  body font. A LaTeX PDF renders body text in a serif (Latin Modern / Computer Modern) regardless of
+  the CSS theme. Determine the body font *empirically* from the compiled file (`pdffonts`), then match
+  the figure to THAT. A sans figure on a serif PDF body is the classic mismatch.
+- **Trap 2 — silent fallback.** An SVG/mermaid that requests a font which is **not installed** for the
+  renderer (Quarto rasterizes diagrams through headless Chromium) renders in a *substitute* — on macOS
+  usually `.SFNS` / SF Pro — while the source still says the pretty name. Grepping `font-family` shows
+  the *requested* font and is blind to this. The figure looks fine on size, wrong on family.
+- ✗ SVG sets `font-family: "Source Sans 3"` (not installed) → renders SF Pro sans over a Latin Modern
+  serif body; three families fight on one page → ✓ SVG sets `"Times New Roman", Times, serif` (an
+  installed serif that matches the serif PDF body); `pdffonts` shows only body + Times, no `.SFNS`.
+- **Verify (three steps, all required):**
+  1. `pdffonts output.pdf` → note the dominant body font (its serif/sans class is what figures match).
+  2. `fc-match "<requested figure font>"` → confirm it resolves to itself, not a fallback (proves it is
+     installed for the renderer). `fc-match "Latin Modern Roman"` returning Verdana means NOT installed.
+  3. After render, `pdffonts output.pdf` again → confirm NO unexpected substitute font (`.SFNS`,
+     `SFPro`, `system-ui`, `Verdana` when you asked for a serif) appears. Its presence = a fallback fired.
+  Eyeball label size against body on the rasterized page as well.
+- **Trap 3 — the SVG-canvas size illusion.** A `font-size` in SVG units is NOT points. The rendered
+  point size is `svg_font_px × (placed_width / viewBox_width)`. A hand-authored SVG on a 1000–1200 unit
+  canvas placed at ~5 in scales by ~0.3, so a "13px" label renders at ~4–5 pt — half body size and hard
+  to read — even though 13 "looks normal" in the source. **Compute the target:** to hit ~11 pt body over
+  a 1000-unit canvas at 5 in, set ~30 px; over a 1200-unit canvas, ~34 px. Check EVERY figure on the
+  rasterized page, not just one — a chapter mixes matplotlib (points, correct) with hand-SVGs (units,
+  usually too small), and fixing one figure while leaving the siblings tiny is its own inconsistency.
+
+**F5. No oversized boxes; no wasted whitespace; peer boxes are UNIFORM.** The canvas/viewBox is
+cropped to content; boxes are sized to their text (not a fixed oversized default); there is no large
+empty margin, especially on the right of flowcharts and pipe diagrams; and **a set of peer boxes
+(the stages of a pipeline, the nodes of a chain) are all the SAME width and height** so the eye is
+not distracted by ragged sizing. Whitespace is deliberate, not leftover.
+- ✗ a `flowchart TD` with a wide empty right third; an SVG `viewBox` 200px taller than the drawing;
+  four chain boxes each auto-sized to their own label so all four differ in width → ✓ tighten
+  `nodeSpacing`/`rankSpacing`, crop the `viewBox` to the bounding box, and give peer boxes one common
+  width (size to the longest label). **Mermaid cannot force uniform node width** — when peers must be
+  uniform, author the diagram as an SVG (or TikZ) with an explicit shared box size rather than fighting
+  mermaid's content-sizing.
+- **Verify:** on the rasterized page, the artwork should touch (near) all four inner margins of its
+  float; flag any band of empty pixels wider than one line of text; confirm peer boxes share one
+  width and height.
+
+**F6. Grayscale-first (Book profile) / one scheme (Paper profile).** Pick ONE color scheme and keep
+it identical across ALL figures. Under the Book profile that scheme is grayscale; introduce a hue
+only when it encodes information that grayscale plus distinct markers and line styles cannot. Never
+use red/green/blue as decorative node fills.
+- ✗ mermaid `classDef failure fill:#d94a4a` / `fix fill:#4ad94a` / `constraint fill:#4a90d9` → ✓ a
+  grayscale ramp: fills `#e8e8e8` / `#c8c8c8` / `#f4f4f4` with a `#333` stroke and black text; encode
+  the failure-vs-fix distinction by shape or border weight, not hue.
+- **Verify:** grep mermaid/SVG for non-gray hex fills; confirm on the page that a grayscale print is
+  still readable.
+
+**F7. Legible at print size; axis labels clear of the ticks; no unexplained jargon.** Readable at the
+intended column width (single ≈ 3.5 in, double ≈ 7 in, book text column per the theme). No overlapping
+tick labels, no text colliding with a box edge, no 2-pt lines that vanish. Two specific traps:
+- **Axis title vs tick numbers.** An axis title placed too close to the tick row runs over the numbers.
+  ✗ `Time (RTTs)` baseline 15 px below a 26 px tick row → they overlap → ✓ leave a full line of clearance
+  (the title sits below the tick numbers, not on them). Check both axes on the rasterized page.
+- **Spell out jargon for the reader the figure targets.** An axis or box label is read cold, without the
+  surrounding prose that defined the term. Prefer the spelled-out form for a teaching figure.
+  ✗ y-axis `cwnd (packets)` → ✓ `congestion window (packets)`. (Keep the terse token only where space is
+  truly binding and the term is defined right beside the figure.)
+- **Verify:** read the rasterized page at 100%; if a label is unreadable or an abbreviation would stop
+  an unversed reader, fix it. Confirm each axis title has clear space from its tick numbers.
+
+**F8. Interpretive caption.** The caption states the takeaway, not just the axes/parts. It should be
+readable standalone by someone skimming figures.
+- ✗ "Figure 6.4: BDP pipe diagram." → ✓ "Figure 6.4: Below the bandwidth-delay product the pipe runs
+  underfilled and capacity is wasted; above it the buffer overflows into queuing delay."
+- **Verify:** read the caption alone — does it carry a claim?
+
+**F9. Caption layout: flush-left, full-width, no hanging indent.** The default LaTeX caption format is
+`hang` — every continuation line is indented under the label ("Figure 6.4:"), wasting the whole left
+column on multi-line captions, and short captions get centered. For a text-heavy book this is visible
+wasted whitespace on every wrapped caption.
+- ✗ continuation lines indented under the label; single-line captions centered → ✓ flush-left, running
+  the full text width. In Quarto/LaTeX, add to the header:
+  `\usepackage{caption}\captionsetup{format=plain, justification=raggedright, singlelinecheck=false, margin=0pt}`
+  (put it in `_quarto.yml`'s pdf `include-in-header` for the whole book, or the chapter YAML for a
+  standalone render).
+- **Verify:** on the rasterized page, every caption's second and later lines start at the same left
+  margin as the first, and short captions are left-aligned, not centered.
+
+---
+
+## Part B — Data figures (matplotlib / seaborn) — additional rules
+
+**D1. Lab rcParams, no `sns.set_theme()` in production.** Use the `plt.rcParams.update({...})` block
+from Execute mode / `reference/matplotlib_defaults.py`. `sns.set_theme()` overrides rcParams (fonts →
+sans, grid → pink, spines → all on) — the #1 style violation. Import seaborn for its functions only.
+
+**D2. Axis labels with units; no chartjunk.** Both axes labeled with units; top/right spines off;
+grid dotted and light; no 3-D, no drop shadows, no gradient fills, no background fill.
+
+**D3. No bar-of-means where a distribution is the story.** A bar chart of means hides variance and
+modality. Prefer CDF/ECDF, box, or violin unless the mean is genuinely the whole point.
+
+**D4. Grayscale-distinguishable series.** Even in the Paper profile, series differ by marker AND line
+style, not color alone, so the figure survives grayscale printing (this is F6 applied to data).
+
+*(The full data-figure craft — golden-ratio sizing, legend placement, log-scale checks — stays in
+Execute mode and the Tufte lens of `/viz analyze`. D1–D4 are the mandatory subset.)*
+
+---
+
+## Part C — Diagram figures (mermaid / inline SVG) — additional rules
+
+These artifacts are where the Book profile most often breaks, because the theme defaults fight the
+design system.
+
+**G1. Make it a numbered float (this is F2 for diagrams).** A bare mermaid block has no number. Wrap
+it. **Quarto mermaid-float recipe:**
+
+````markdown
+::: {#fig-dependency-chain}
+```{mermaid}
+flowchart TD
+    ...
+```
+The IP datagram's three properties cascade into the constraints every transport design inherits.
+:::
+````
+
+The `#fig-…` div id gives the number; the trailing line is the caption. Reference it with
+`@fig-dependency-chain`. (Alternatively render the diagram to a `.svg` asset and `![caption](...
+){#fig-…}`, which also lets you hand-tighten the artwork — preferred when the box sizing needs work.)
+
+**G2. Grayscale `classDef` (this is F6 for mermaid).** Replace colored `classDef` fills with one
+grayscale ramp used across every diagram in the chapter. Encode categorical meaning (failure vs fix
+vs constraint) by border weight or shape, keeping fills gray:
+- ✗ `classDef failure fill:#d94a4a,stroke:#8a2c2c,color:white`
+- ✓ `classDef failure fill:#eeeeee,stroke:#333,stroke-width:2px,color:#111`
+       `classDef fix fill:#dddddd,stroke:#333,color:#111`
+       `classDef constraint fill:#f6f6f6,stroke:#888,stroke-dasharray:3 2,color:#111`
+
+**G3. Tighten spacing (this is F5 for mermaid).** Set `nodeSpacing`/`rankSpacing` via the init
+directive so boxes are close but not touching, and no empty right band remains:
+`%%{init: {'flowchart': {'nodeSpacing': 24, 'rankSpacing': 30}}}%%`. Prefer `TD` over `LR` when the
+chain is long and would otherwise run off the right margin.
+
+**G4. Font = body (this is F4 for diagrams).** Do not hand-set a different `font-family`/`font-size`
+inside an SVG or via mermaid `themeCSS`. Let it inherit the book body face, or set it explicitly to
+that face at body size so all diagrams match.
+
+**G5. No baked-in title (this is F3 for diagrams).** No mermaid `---\ntitle: …\n---` frontmatter and
+no top `<text>` heading in a hand-authored SVG. Caption only.
+
+---
+
+## Part D — Tables — mandatory rules
+
+**T1. Numbered and captioned.** Every table is a numbered float. In Quarto, add a caption line with a
+`#tbl-…` id so it renders "Table N.k" and is cross-referenceable with `@tbl-…`.
+- ✗ a bare pipe table with no caption → ✓ add `: Pioneer diagnoses across the transport arc. {#tbl-pioneer-diagnosis}`
+  immediately under the table.
+- **Verify:** confirm "Table N.k" prints in the PDF.
+
+**T2. No column header wrapping across lines.** A header cell that wraps ("Sce-nario", "Band-width")
+signals the column is too narrow or the header too long. Shorten/abbreviate the header, widen the
+column, or split the table — so every header sits on one line.
+- ✗ a 5-column BDP table whose headers hyphenate and wrap → ✓ rename headers to fit
+  ("BW", "RTT", "BDP", "Regime", "Effect") and/or drop a column.
+- **Verify:** on the rasterized page, read every header cell — each must occupy exactly one line.
+
+**T3. Column widths proportional to content, floored at the longest word.** The failure mode is
+"spillover and whitespace at once": a short-label column (e.g. `Layer`) is given the same width as a
+long-text column, so the label column wastes space while the text column wraps. Set each column's width
+**proportional to its content**, but **floor every column at its longest single word** so a short column
+never breaks mid-word (`Environ-`/`ment`).
+- Mechanism (Pandoc/Quarto pipe tables): the separator dash counts set relative column widths. Make
+  `dashes_i ∝ width_i`, where `width_i = max(longest_word_i, allocated_share_i)` and the allocated share
+  distributes the leftover line width (after every column gets its longest word) proportional to
+  `max_content_i − longest_word_i`.
+- ✗ `|:------|:------|:------|` (equal) on a Layer/What-has/What-missing table → ✓ `|:------|:-----------------|:-------------|`
+  (narrow Layer, wide middle). If one cell is genuinely too long for any split, shorten the cell or the
+  header (e.g. `TCP Answer After Jacobson (1988)` → `TCP Answer (1988)`) rather than let it wrap.
+- This is a **parametric** choice — see the red/blue-team refinement note at the top: a one-off ratio is
+  fast but often locally suboptimal; the deep mode iterates render→inspect→adjust until neither residual
+  whitespace nor spillover can be reduced.
+- **Verify:** scan the page for columns with large empty right space, and for any cell whose key term
+  wrapped to line 2; confirm no header or short-label cell breaks mid-word.
+
+**T4. No bad page break.** A table must not split awkwardly across a page boundary (header on one
+page, body on the next; or a 6-row table straddling two pages). Keep it together, move it, or split
+it deliberately.
+- **Verify:** confirm the whole table sits on one page in the PDF, or breaks at an intended row with
+  the header repeated.
+
+**T5. Booktabs rules only.** Horizontal rules only (top/mid/bottom); no vertical rules, no full grid.
+
+---
+
+## Part E — The audit block (RUN THIS; do not eyeball)
+
+Two halves. **A** is greppable pre-screening (catches the source-level tells fast). **B** is the
+mandatory render-and-inspect that actually satisfies F1 — greps cannot see whitespace, wrapping, or
+font size.
+
+```bash
+# ============ A. Source pre-screen (fast; catches obvious violations) ============
+FILE=ch06_transport_v1.qmd   # or sections/*.tex for the Paper profile
+
+# ── F2/G1: bare mermaid blocks with NO surrounding #fig- float (each hit = an unnumbered orphan) ──
+grep -n '```{mermaid}' "$FILE"
+#   For each hit, confirm a `#fig-` id appears within ~3 lines above (the ::: {#fig-…} opener).
+
+# ── F6/G2: non-grayscale fills in mermaid/SVG (each hex that isn't #RRGGBB with R==G==B is suspect) ──
+grep -noE 'fill:#[0-9a-fA-F]{6}|fill="#[0-9a-fA-F]{6}"' "$FILE" assets/figures/*.svg
+#   Gray means the three byte pairs are equal (#e8e8e8). Anything else is color — justify or fix.
+
+# ── F3/G5: baked-in titles ──
+grep -n '^title:\|set_title\|suptitle' "$FILE" assets/figures/*.py
+grep -n '<text' assets/figures/*.svg | head   # inspect the top-anchored one for a heading
+
+# ── F4/G4: font drift inside SVGs (should all name the SAME face at the SAME size) ──
+grep -nohE 'font-family:[^;"}]*|font-family="[^"]*"' assets/figures/*.svg "$FILE" | sort | uniq -c
+#   Then for EACH distinct requested family, confirm it is actually installed (else it falls back):
+#     fc-match "Source Sans 3"      # if this returns a DIFFERENT family, the font is NOT installed
+#     fc-match "Times New Roman"    # should return Times New Roman itself
+#   And confirm the family CLASS (serif/sans) matches the compiled body font (see the pdffonts step
+#   in half B). A sans figure font on a serif PDF body is rule F4's classic failure.
+
+# ── T1: pipe tables missing a #tbl- caption (count tables vs count captions) ──
+grep -cE '^\|' "$FILE"; grep -c '#tbl-' "$FILE"   # every table block should have one #tbl-
+
+# ============ B. Render-and-inspect (MANDATORY — this is what satisfies F1) ============
+cd cs176c-book
+quarto render "$FILE" --to pdf         # standalone chapter render
+#   F4 font check on the compiled PDF: list embedded fonts, spot the body font, and catch fallbacks.
+pdffonts output.pdf
+#     - The dominant body font (e.g., LMRoman* = Latin Modern serif) sets the class figures must match.
+#     - A substitute font (.SFNS / SFPro / system-ui / an unexpected Verdana) appearing means some
+#       figure requested a font the renderer did not have and it silently fell back. Fix the SVG/mermaid
+#       to a family that (a) is installed (fc-match) and (b) matches the body class, then re-render.
+#   Find each figure/table's page (search the PDF text or scan the outline), then for page P:
+pdftoppm -png -r 150 -f P -l P ch06_transport_v1.pdf /tmp/ch06_p          # -> /tmp/ch06_p-PP.png
+#   OPEN each PNG and read it. For every figure and table, confirm and REPORT:
+#     F2/T1  the "Figure N.k" / "Table N.k" label is present
+#     F3/G5  no title bar above the artwork
+#     F4/G4  label size ≈ body size; one family throughout
+#     F5/G3  boxes tight; no empty right band; float margins snug
+#     F6/G2  reads correctly in grayscale
+#     T2     every table header cell on ONE line
+#     T3/T4  no over-wide columns; no bad page break
+```
+
+**Report format (paste into the audit summary / AUDIT_LEDGER):**
+
+```
+Figure/Table gate — <file> @ <commit>
+  Source pre-screen: bare mermaids=N (all wrapped? Y/N) · color fills=N (justified/fixed) ·
+                     baked titles=N · font-drift variants=N · tables=N / captions=N
+  PDF inspection (render p.<pages>):
+    Fig 6.1 (dependency chain), p.12 — number ✓ · no title ✓ · grayscale ✓ · boxes tight ✓ · font=body ✓
+    Tbl 6.3 (pioneer diagnosis), p.13 — number ✓ · headers 1 line ✓ · no page split ✓
+    ...
+  Result: <clean | N items open> — every item fixed or explicitly justified, with the page shown.
+```
+
+"Clean" means every gate item is verified on a rendered page, with the page number cited — not
+"audited," not "looks good."

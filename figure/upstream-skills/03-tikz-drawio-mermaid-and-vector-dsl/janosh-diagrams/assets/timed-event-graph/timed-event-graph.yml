@@ -1,0 +1,15 @@
+title: Timed Event Graph
+creator: Kreijstal
+creator_url: https://github.com/kreijstal
+date: 2025-04-21
+tags:
+  - petri net
+  - timed event graph
+  - event graph
+  - discrete event system
+  - process modeling
+  - concurrency
+  - graphs
+  - automation
+description: |
+  A Timed Event Graph, the class of [Petri nets](https://www.informatik.uni-hamburg.de/TGI/PetriNets/faq/) in which every place has exactly one input and one output transition. Bars are transitions (events) and circles are places annotated with their holding times $\tau$ and $\rho$. Two stages each fork into parallel places between their input and output transitions, and the single token in the feedback place $\tau_{60}$ initially enables the input transition and recirculates from the output back to the input, closing the cycle.

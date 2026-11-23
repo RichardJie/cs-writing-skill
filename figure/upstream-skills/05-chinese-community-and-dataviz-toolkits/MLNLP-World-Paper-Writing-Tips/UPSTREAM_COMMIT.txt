@@ -1,0 +1,5 @@
+repository: https://github.com/MLNLP-World/Paper-Writing-Tips
+commit_sha: 50712564062249b28b8493ebdc35f8b3a3b88512
+branch: main
+license: See upstream repository / README
+stars_at_harvest: 4718

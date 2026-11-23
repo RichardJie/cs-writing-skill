@@ -1,0 +1,5 @@
+repository: https://github.com/icebird1998/drawio-scientific-illustrator
+commit_sha: 9bbeca93ffd134a29bfc90023f22c65359efe584
+branch: main
+license: MIT
+stars_at_harvest: 1473

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this skill suite in academic work, please cite the repository."
+title: "Scientific Figure Skills"
+type: software
+authors:
+  - family-names: "Gul"
+    given-names: "Enes"
+abstract: "An agent skill suite for Claude Code and OpenAI Codex that plans, renders, audits, and packages publication-grade scientific figures with project-local memory, renderer registries, dependency planning, visual QA, multi-panel layout audits, text layout intelligence, and dry-run agentic orchestration."
+keywords:
+  - scientific visualization
+  - scientific figures
+  - Claude Code skills
+  - Codex skills
+  - agent skills
+  - reproducible research
+  - manuscript figures
+repository-code: "https://github.com/enesgul23/scientific-figure-skills"
+license: MIT
+version: "0.9.0"
+date-released: "2026-09-04"

@@ -1,0 +1,4 @@
+upstream_url: https://github.com/imxv/Pretty-mermaid-skills
+commit_sha: e234ab73c2992f03c36db04fd55ebb90abca9c45
+license: MIT
+note: Moved 1 binary/heavy file(s) >500KB (808.7 KB) out of staging.

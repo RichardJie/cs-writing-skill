@@ -1,0 +1,6 @@
+﻿Repository: enesgul23/scientific-figure-skills
+URL: https://github.com/enesgul23/scientific-figure-skills
+Commit: df72094211b860580e25275b2cc668a0aba0b9d9
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

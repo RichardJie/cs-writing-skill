@@ -1,0 +1,4 @@
+Repository: https://github.com/mpetroff/accessible-color-cycles
+Branch: master
+Commit SHA: a7e0fcfed28f4ba6393a6e99bc7ab8694e5253fe
+License: MIT

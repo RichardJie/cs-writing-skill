@@ -1,0 +1,6 @@
+﻿Repository: tvhahn/matplotlib-skill
+URL: https://github.com/tvhahn/matplotlib-skill
+Commit: d2c16820c3a5eb0e3c540f882dbe60fab2b084a6
+Branch: master
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/data/raw/, /docs/gallery/). All checked-out files <=500KB preserved verbatim.

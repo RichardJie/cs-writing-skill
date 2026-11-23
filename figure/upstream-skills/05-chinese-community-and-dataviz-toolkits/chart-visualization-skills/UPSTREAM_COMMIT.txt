@@ -1,0 +1,6 @@
+﻿Repository: antvis/chart-visualization-skills
+URL: https://github.com/antvis/chart-visualization-skills
+Commit: a105fa12a9fa41fccccc2eba7f4b34973628f5d3
+Branch: master
+License: MIT (see LICENSE)
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\chart-visualization-skills\: eval\cases\g2-dataset-174.json (1790456 bytes); eval\cases\g6-dataset-100.json (514968 bytes)

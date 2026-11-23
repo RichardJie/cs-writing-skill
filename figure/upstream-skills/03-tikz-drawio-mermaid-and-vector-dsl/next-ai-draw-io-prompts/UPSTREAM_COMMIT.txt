@@ -1,0 +1,4 @@
+upstream_url: https://github.com/DayuanJiang/next-ai-draw-io
+commit_sha: 9534a668e3bd53f9c08aa5b8d2d77f409ccd09d4
+license: Apache-2.0
+note: Sparse-checkout of /LICENSE, /README.md, /lib/system-prompts.ts, /lib/validation-prompts.ts, /packages/mcp/**, /docs/** to exclude heavy binary showcase/asset blobs.

@@ -1,0 +1,10 @@
+title: Regular vs Bayes NN
+tags:
+  - machine learning
+  - neural networks
+  - Bayesian
+  - statistics
+  - deep learning
+  - probability
+description: |
+  Comparison between [regular neural networks](../multilayer-perceptron) and [Bayesian neural networks](https://arxiv.org/abs/1505.05424) on the same 2-4-1 architecture. The regular network (left) learns a single point-estimate value per weight, while the Bayesian network (right) learns a probability distribution over each weight, so its predictions come with uncertainty estimates.

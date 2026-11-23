@@ -1,0 +1,4 @@
+Repository: https://github.com/cphyc/matplotlib-label-lines
+Branch: main
+Commit SHA: beacfc488a098904e617310e0b2cb4202ce0a4e5
+License: MIT

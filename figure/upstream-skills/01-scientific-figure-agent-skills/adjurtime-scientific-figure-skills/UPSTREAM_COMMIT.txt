@@ -1,0 +1,6 @@
+﻿Repository: adjurtime/scientific-figure-skills
+URL: https://github.com/adjurtime/scientific-figure-skills
+Commit: 44896f3c6d579b044a56208124fc0264d9a9f0a9
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

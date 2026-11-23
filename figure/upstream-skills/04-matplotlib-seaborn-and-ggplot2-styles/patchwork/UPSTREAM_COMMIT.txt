@@ -1,0 +1,4 @@
+Repository: https://github.com/thomasp85/patchwork
+Branch: main
+Commit SHA: 6b1d88ce1da1c5cae3818d984edf80dc0bb3de8c
+License: MIT

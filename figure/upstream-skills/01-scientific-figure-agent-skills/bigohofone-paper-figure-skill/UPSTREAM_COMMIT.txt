@@ -1,0 +1,6 @@
+﻿Repository: bigohofone/paper-figure-skill
+URL: https://github.com/bigohofone/paper-figure-skill
+Commit: c814b23db96e8bdbd83b676b04f95fc227083137
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/docs/papers/, /docs/readme/). All checked-out files <=500KB preserved verbatim.

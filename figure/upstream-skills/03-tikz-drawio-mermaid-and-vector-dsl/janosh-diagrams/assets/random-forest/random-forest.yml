@@ -1,0 +1,8 @@
+title: Random Forest
+tags:
+  - machine learning
+  - ensembles
+  - classification
+  - regression
+description: |
+  Diagram of the random forest (RF) algorithm ([Breiman 2001](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf)). RFs are ensemble models of binary decision trees, each trained on a bootstrap sample of the data with a random subset of features considered at every split. The forest predicts the majority vote (mode) of the individual tree predictions in classification or their mean in regression. Every internal node of a decision tree is a condition on a single feature, chosen to split the samples into two sets that are as homogeneous as possible. Red nodes and arrows trace the path one input takes from root to leaf in each tree. RFs are inspectable, invariant to scaling and other feature transformations, robust to inclusion of irrelevant features and can estimate feature importance via mean decrease in impurity (MDI).

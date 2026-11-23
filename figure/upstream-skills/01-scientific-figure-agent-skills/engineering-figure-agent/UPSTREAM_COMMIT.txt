@@ -1,0 +1,6 @@
+﻿Repository: heyu-233/engineering-figure-agent
+URL: https://github.com/heyu-233/engineering-figure-agent
+Commit: a33a553b43f92152fdafcb1c4574d67a4e050cb6
+Branch: main
+License: MIT (see LICENSE)
+Note: Sparse-excluded heavy demo folders/files (/docs/examples/*.png, /docs/examples/*.jpg). All checked-out files <=500KB preserved verbatim.

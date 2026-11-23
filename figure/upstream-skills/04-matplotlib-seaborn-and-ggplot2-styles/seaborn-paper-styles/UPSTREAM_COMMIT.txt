@@ -1,0 +1,4 @@
+Repository: https://github.com/mwaskom/seaborn
+Branch: master
+Commit SHA: c1cb287835852406691aed60ea0c62710f2c6b18
+License: BSD-3-Clause

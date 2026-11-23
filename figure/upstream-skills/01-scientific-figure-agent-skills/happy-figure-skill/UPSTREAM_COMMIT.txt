@@ -1,0 +1,6 @@
+﻿Repository: BAIKEMARK/happy-figure-skill
+URL: https://github.com/BAIKEMARK/happy-figure-skill
+Commit: 6292597250ed874d65756d13a492f6eefe07fb65
+Branch: main
+License: CC-BY-NC-SA-4.0 (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

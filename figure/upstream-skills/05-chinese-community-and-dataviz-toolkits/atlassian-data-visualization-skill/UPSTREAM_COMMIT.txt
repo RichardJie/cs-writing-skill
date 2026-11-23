@@ -1,0 +1,6 @@
+﻿Repository: atlassian-labs/data-visualization-skill
+URL: https://github.com/atlassian-labs/data-visualization-skill
+Commit: d8afff42a2104ae112b05701ed8915522d11be72
+Branch: main
+License: Apache-2.0 (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

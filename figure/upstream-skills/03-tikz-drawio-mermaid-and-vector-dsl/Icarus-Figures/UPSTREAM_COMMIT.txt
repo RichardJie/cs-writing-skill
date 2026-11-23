@@ -1,0 +1,4 @@
+upstream_url: https://github.com/TAO-QKV/Icarus-Figures
+commit_sha: 0bcaa40c07ef0dc6ea1506ab147ce0a4f5a542fd
+license: MIT
+note: Moved 11 binary/heavy file(s) >500KB (11002.5 KB) out of staging. Moved standalone env file(s) (requirements.txt) per global Conda hygiene policy.

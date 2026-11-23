@@ -1,0 +1,4 @@
+Repository: https://github.com/rougier/ten-rules
+Branch: master
+Commit SHA: 75ecbdc2ce197564ed77c21a4492ae89ccab0ca8
+License: BSD-3-Clause (scripts) / CC-BY-4.0 (PLOS Comp Biol 10.1371/journal.pcbi.1003833)

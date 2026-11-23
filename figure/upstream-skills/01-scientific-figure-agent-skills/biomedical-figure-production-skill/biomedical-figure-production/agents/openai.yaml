@@ -1,0 +1,4 @@
+interface:
+  display_name: "Biomedical Figure Production"
+  short_description: "Build and audit biomedical figures"
+  default_prompt: "Use $biomedical-figure-production to create a reproducible, publication-ready biomedical figure package."

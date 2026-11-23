@@ -1,0 +1,11 @@
+{
+  "name": "matplotlib",
+  "description": "Publication-quality matplotlib/seaborn charts with opinionated aesthetics",
+  "version": "1.0.0",
+  "author": {
+    "name": "Tim von Hahn"
+  },
+  "homepage": "https://github.com/tvhahn/matplotlib-skill",
+  "repository": "https://github.com/tvhahn/matplotlib-skill",
+  "license": "MIT"
+}

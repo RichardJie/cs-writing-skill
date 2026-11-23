@@ -1,0 +1,4 @@
+upstream_url: https://github.com/296711867/figcraft-skills
+commit_sha: 529ed60f01d2be91083672562c74787fe76bf381
+license: MIT
+note: Moved 7 binary/heavy file(s) >500KB (12078.9 KB) out of staging.

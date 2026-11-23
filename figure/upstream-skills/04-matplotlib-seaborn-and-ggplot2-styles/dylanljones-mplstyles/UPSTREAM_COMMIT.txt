@@ -1,0 +1,4 @@
+Repository: https://github.com/dylanljones/mplstyles
+Branch: master
+Commit SHA: ca8320f7b4580dc5d2bef56e86777966a1498af8
+License: MIT

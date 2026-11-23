@@ -1,0 +1,4 @@
+upstream_url: https://github.com/ResearAI/AutoFigure-Edit
+commit_sha: 9382aad466eb367aea6dc1c7108ece8c1920cf53
+license: MIT
+note: Sparse-checkout of /LICENSE, /README.md, /README_ZH.md, /CITATION.cff, /CITATION_AND_ATTRIBUTION.md, /TRADEMARK.md, /autofigure2.py, /server.py to exclude heavy binary showcase/asset blobs.

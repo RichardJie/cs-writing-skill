@@ -1,0 +1,3 @@
+upstream_url: https://github.com/cheriftj/c4-model-skill
+commit_sha: 5b24dda00b38a402da59237a8b8685aaa588a07e
+license: MIT

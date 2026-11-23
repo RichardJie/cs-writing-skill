@@ -1,0 +1,6 @@
+﻿Repository: skthewimp/karthik-data-visualization-skill
+URL: https://github.com/skthewimp/karthik-data-visualization-skill
+Commit: 71ebbba1b7b1b4e4ab56540c2b8ac483b802d7df
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

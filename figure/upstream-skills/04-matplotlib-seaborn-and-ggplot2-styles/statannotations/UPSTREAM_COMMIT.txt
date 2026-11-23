@@ -1,0 +1,4 @@
+Repository: https://github.com/trevismd/statannotations
+Branch: master
+Commit SHA: 3f020ae631ca88a091b6ee3e9a9fd32158920879
+License: MIT

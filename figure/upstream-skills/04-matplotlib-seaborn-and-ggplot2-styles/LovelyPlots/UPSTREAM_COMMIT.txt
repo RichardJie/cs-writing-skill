@@ -1,0 +1,4 @@
+Repository: https://github.com/killiansheriff/LovelyPlots
+Branch: master
+Commit SHA: 3cfd78fb4d5a3d8c9f89feb7742f18340ffd2fb7
+License: MIT

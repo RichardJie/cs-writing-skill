@@ -1,0 +1,3 @@
+upstream_url: https://github.com/HarisIqbal88/PlotNeuralNet
+commit_sha: e96bc852189c2089dd500527a0a01a5a36e8977e
+license: MIT

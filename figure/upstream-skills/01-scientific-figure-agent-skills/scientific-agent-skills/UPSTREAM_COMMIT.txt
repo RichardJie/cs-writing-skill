@@ -1,0 +1,6 @@
+﻿Repository: K-Dense-AI/scientific-agent-skills
+URL: https://github.com/K-Dense-AI/scientific-agent-skills
+Commit: c21d13b3cc2894680229ba9959a53281acb9200e
+Branch: main
+License: MIT (see LICENSE.md)
+Note: Sparse-checkout of scientific figure, plotting, schematic, and visualization skills (scientific-visualization, scientific-schematics, matplotlib, seaborn, infographics, geopandas, networkx, etetoolkit, generate-image) + LICENSE.md & README.md.

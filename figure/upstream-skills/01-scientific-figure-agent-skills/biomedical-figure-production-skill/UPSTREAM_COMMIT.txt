@@ -1,0 +1,6 @@
+﻿Repository: wangjinglin0905-gif/biomedical-figure-production-skill
+URL: https://github.com/wangjinglin0905-gif/biomedical-figure-production-skill
+Commit: 3a2a817b050497c3fb1510127e22fedf22b28469
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

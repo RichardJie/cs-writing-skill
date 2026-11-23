@@ -1,0 +1,32 @@
+figure_id: ""
+title: ""
+target_journal: ""
+created_utc: ""
+software:
+  plotting_backend: ""
+  versions: {}
+panels:
+  - id: "a"
+    claim: ""
+    source_data: []
+    unit_of_analysis: ""
+    evidence_class: ""
+    statistics: ""
+generated_components:
+  used: false
+  tool: ""
+  purpose: ""
+  files: []
+  disclosure: ""
+exports:
+  editable: []
+  submission: []
+  preview: []
+quality_checks:
+  visual_readback: false
+  data_reconciled: false
+  statistics_audited: false
+  accessibility_checked: false
+  hashes_file: ""
+limitations: []
+

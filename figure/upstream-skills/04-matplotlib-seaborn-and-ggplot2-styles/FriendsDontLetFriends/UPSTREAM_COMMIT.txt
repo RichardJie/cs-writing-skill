@@ -1,0 +1,4 @@
+Repository: https://github.com/cxli233/FriendsDontLetFriends
+Branch: main
+Commit SHA: ccaafed9d9a93517a839682873b6f8e49b772b78
+License: MIT

@@ -1,0 +1,88 @@
+#import "@preview/cetz:0.5.3": canvas, draw
+#import draw: circle, line, rect
+#set page(width: 660pt, height: auto, margin: 20pt, fill: none)
+#set text(font: "Avenir Next", size: 14pt, fill: rgb("#19324f"))
+#set par(leading: 0.55em)
+#let panel = block.with(
+  width: 100%,
+  inset: 12pt,
+  radius: 7pt,
+  fill: rgb("#cdd3da"),
+  breakable: false,
+)
+
+#let samples = (
+  (4.7, 0.1),
+  (5.2, 0.1),
+  (5.1, -.3),
+  (5.6, -.33),
+  (5.4, -.7),
+  (5.8, -.9),
+  (5.9, -1.3),
+  (6.4, -1.2),
+  (6.9, -1.1),
+  (7.4, -1.3),
+  (7.45, -1.7),
+  (7.8, -1.5),
+  (8.2, -1.4),
+  (8.3, -1.0),
+  (8.6, -1.3),
+  (6.1, .8),
+  (5.7, .9),
+  (5.8, 1.3),
+  (5.4, 1.15),
+  (5, 1.2),
+  (4.8, 1.5),
+  (4.3, 1.6),
+  (4.2, 1.2),
+  (3.8, 1.3),
+  (3.4, 1.3),
+  (3.4, .8),
+  (3.1, 1.1),
+  (2.75, .7),
+  (2.45, .1),
+  (2.35, .45),
+  (1.9, -.04),
+  (1.85, -.5),
+)
+
+#let labeled_samples = (((4.5, .5), rgb("#c42a20")), ((6.5, .5), blue))
+#let example(use_unlabeled: false) = canvas(length: 30pt, {
+  // Shared bounds keep the same samples aligned in both panels.
+  rect((1.2, -2.2), (9.2, 2.2), stroke: none)
+  let boundary_style = (stroke: (paint: rgb("#19324f"), dash: "dashed", thickness: 1.4pt))
+  if use_unlabeled {
+    // Sinusoid threading the low-density gap between the two clusters
+    line(
+      ..range(16).map(idx => (1.5 + idx / 2, calc.sin(calc.pi * (idx - 3) / 6))),
+      ..boundary_style,
+    )
+  } else {
+    let midway_x = labeled_samples.map(((point, _)) => point.at(0)).sum() / 2
+    line((midway_x, 2), (midway_x, -2), ..boundary_style)
+  }
+  for point in samples { circle(point, radius: .15, fill: rgb("#5f6872"), stroke: none) }
+  for (point, color) in labeled_samples { circle(point, radius: .16, fill: color, stroke: none) }
+})
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 12pt,
+  ..(
+    ([1  Labeled data only], false, [Gray samples ignored.]),
+    ([2  Include unlabeled data], true, [Boundary follows the low-density gap.]),
+  ).map(((title, use_unlabeled, caption)) => panel[
+    #text(size: 16pt, weight: "bold", title)
+    #v(10pt)
+    #align(center, example(use_unlabeled: use_unlabeled))
+    #v(8pt)
+    #align(center, caption)
+  ]),
+)
+#v(12pt)
+#block(
+  width: 100%,
+  inset: 10pt,
+  radius: 5pt,
+  fill: rgb("#c6d8d2"),
+  breakable: false,
+)[Red / blue: labeled · Gray: unlabeled · Dashed: boundary\ Assumption: connected clusters tend to share a class.]

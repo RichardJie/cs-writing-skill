@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automatikz"
+description = "Generating scientific vector graphics via TikZ"
+readme = "README.md"
+keywords = [
+  "Deep Learning",
+  "Language Models",
+  "Transformers",
+  "Vector Graphics",
+  "TikZ",
+  "Natural Language Processing",
+  "Natural Language Generation",
+  "Text-to-Image",
+]
+license = {text = "Apache-2.0 License"}
+dependencies = [
+  "torch~=2.0",
+  "transformers~=4.28",
+  "datasets~=2.11",
+  "requests>=2.30.0",
+  "Pillow>=9.5.0",
+  "sentencepiece>=0.1.99",
+  "peft>=0.2.0",
+]
+requires-python = "~=3.10"
+dynamic = ["version"]
+
+[project.urls]
+repository = "https://github.com/potamides/AutomaTikZ"
+
+[project.optional-dependencies]
+evaluate= [
+  "evaluate>=0.4.0",
+  "Pygments>=2.15.1",
+  "crystalbleu>=0.1",
+  "torchmetrics>=0.11.4",
+  "sacremoses>=0.0.53",
+]
+pdf = [
+  "pdfCropMargins~=2.0",
+  "pdf2image~=1.16",
+  "PyMuPDF~=1.22",
+]
+webui = [
+  "gradio~=3.46",
+  "accelerate~=0.23",
+  "automatikz[pdf]"
+]
+examples = [
+  "matplotlib",
+  "tqdm",
+  "automatikz[evaluate,webui]"
+]
+all = [
+  "automatikz[evaluate,pdf,examples]"
+]
+
+[tool.setuptools_scm]
+write_to = "automatikz/_version.py"
+parentdir_prefix_version = "automatikz-"
+
+[tool.setuptools.packages.find]
+include = ["automatikz*"]

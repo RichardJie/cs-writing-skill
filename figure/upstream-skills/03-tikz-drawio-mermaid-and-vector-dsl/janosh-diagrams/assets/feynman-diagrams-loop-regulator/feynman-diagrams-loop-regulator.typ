@@ -1,0 +1,81 @@
+#import "@preview/cetz:0.5.3": canvas, draw
+#import draw: arc, circle, content, group, line, translate
+
+#set page(width: auto, height: auto, margin: 8pt, fill: none)
+#set text(size: 12pt)
+
+#canvas({
+  let radius = 1.5
+  let dark-blue = rgb("#4040d9")
+  let arrow-style = (
+    mark: (end: "stealth", fill: dark-blue, scale: .5),
+    stroke: (paint: dark-blue, thickness: 0.75pt),
+  )
+
+  // One-loop diagram with the regulator on the lower (or upper) propagator and the loop
+  // momentum arrow along the opposite propagator.
+  let draw-diagram(offset: 0, regulator-top: false) = group({
+    translate((offset, 0))
+    circle((0, 0), radius: radius, stroke: 1pt, name: "loop")
+
+    arc(
+      (rel: (.23, 0), to: if regulator-top { "loop.35%" } else { "loop.15%" }),
+      radius: 0.85 * radius,
+      start: if regulator-top { 220deg } else { 140deg },
+      stop: if regulator-top { 320deg } else { 40deg },
+      ..arrow-style,
+      name: "momentum-arrow",
+    )
+    content(
+      "momentum-arrow.mid",
+      text(fill: dark-blue)[$q_0$],
+      anchor: if regulator-top { "south" } else { "north" },
+      padding: 3pt,
+    )
+
+    // Regulator insertion: a circled cross on an opaque gray disc.
+    content(
+      "loop." + if regulator-top { "0%" } else { "50%" },
+      text(size: 16pt, baseline: -0.5pt)[$times.o$],
+      stroke: none,
+      fill: rgb("#cdd3da"),
+      frame: "circle",
+      padding: -2.5pt,
+      name: "regulator",
+    )
+    content(
+      "regulator",
+      [regulator],
+      anchor: if regulator-top { "north" } else { "south" },
+      padding: 9pt,
+    )
+    // Mass labels clear the loop, and the regulator disc on the side where it sits.
+    let gap(regulated) = if regulated { 12pt } else { 7pt }
+    content("loop.north", [mass $m_1^2$, width $gamma_1^2$], anchor: "south", padding: (
+      bottom: gap(regulator-top),
+    ))
+    content("loop.50%", [mass $m_2^2$, width $gamma_2^2$], anchor: "north", padding: (
+      top: gap(not regulator-top),
+    ))
+
+    // External legs with coupling vertices and incoming/outgoing momentum arrows.
+    for side in (-1, 1) {
+      let vertex = (side * radius, 0)
+      circle(vertex, radius: 2pt, fill: black)
+      // name the coupling only on the outer vertices, clear of the plus sign between diagrams
+      let outer = if regulator-top { side > 0 } else { side < 0 }
+      content(
+        (rel: (side * 0.1, -0.1), to: vertex),
+        if outer [coupling $g$] else [$g$],
+        anchor: if side < 0 { "north-east" } else { "north-west" },
+      )
+      line(vertex, (side * 2 * radius, 0), stroke: 1pt, name: "leg")
+      line((rel: (-0.55, 0.15), to: "leg.mid"), (rel: (0.55, 0.15), to: "leg.mid"), ..arrow-style)
+      content((rel: (0, 0.3), to: "leg.mid"), text(fill: dark-blue)[$q_0$], anchor: "south")
+    }
+  })
+
+  draw-diagram()
+  content((4, 0), text(size: 18pt)[$+$])
+  draw-diagram(offset: 8, regulator-top: true)
+})

@@ -1,0 +1,4 @@
+repository: https://github.com/guanyingc/python_plot_utils
+commit_sha: d73b62ba7185db0c86b8ecb0c13fe23a7714cab5
+branch: master
+license: See upstream repository / README

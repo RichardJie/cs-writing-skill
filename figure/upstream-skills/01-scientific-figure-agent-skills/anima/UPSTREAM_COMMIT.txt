@@ -1,0 +1,6 @@
+﻿Repository: Garinmckayl/anima
+URL: https://github.com/Garinmckayl/anima
+Commit: 9b5d2253b842b5a47a3b28b6a77c445f430a0da2
+Branch: main
+License: MIT (see LICENSE)
+Note: Moved >500KB binary files to Desktop\待删除\fig-src-1-heavy-binaries\anima\: assets\anima-launch.mp4 (3985708 bytes); assets\demo.gif (3749964 bytes); assets\demo.mp4 (756045 bytes); assets\social-preview.png (612063 bytes); assets\shorts\bend.mp4 (1992588 bytes); assets\shorts\dopa.mp4 (2536849 bytes); assets\shorts\stim.mp4 (2327145 bytes)

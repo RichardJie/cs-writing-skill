@@ -1,0 +1,6 @@
+﻿Repository: rdoyle99/chart-skills
+URL: https://github.com/rdoyle99/chart-skills
+Commit: 2a0bf9ff13628d8c0a45d55fdaef7be10910786a
+Branch: main
+License: MIT (see LICENSE)
+Note: All upstream files <=500KB preserved verbatim.

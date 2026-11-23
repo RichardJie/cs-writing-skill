@@ -1,0 +1,4 @@
+Repository: https://github.com/garrettj403/SciencePlots
+Branch: master
+Commit SHA: b9b16959570bd2fbc9ff5118bacc423c3bddd592
+License: MIT

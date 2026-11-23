@@ -1,0 +1,252 @@
+---
+myimage: "MapHexbinSmall.png"
+pathSlug: "hexbinmap"
+mytitle: "Hexbin map"
+output:
+  html_document:
+      self_contained: false
+      mathjax: default
+      lib_dir: libs
+      template: template_datatoviz.html
+      theme: "lumen"
+      css: style.css
+      toc: FALSE
+      toc_float: TRUE
+      toc_depth: 2
+      number_section: FALSE
+      df_print: "paged"
+      code_folding: "hide"
+      includes:
+        after_body: footer.html
+---
+
+
+<div class="mycontent">
+
+
+
+
+# Definition {#definition}
+***
+
+The term `hexbin map` refers to two different concepts:
+
+- The first definition is based on an unusual geospatial object where all regions of the map are represented as hexagons. Here is an example representing the US states, each represented as an hexagon. Note that here the data input provides `one value per state` and a `specific shape file` with hexagone boundaries.
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.height=6, fig.width=8}
+# library
+library(tidyverse)
+library(sf)
+library(RColorBrewer)
+
+# Download the Hexagon boundaries at geojson format here: https://team.carto.com/u/andrew/tables/andrew.us_states_hexgrid/public/map.
+
+# Load this file. (Note: I stored in a folder called DATA)
+my_sf <- read_sf("us_states_hexgrid.geojson.json")
+
+# Bit of reformatting
+my_sf <- my_sf %>%
+  mutate(google_name = gsub(" \\(United States\\)", "", google_name))
+
+data <- read.table("https://raw.githubusercontent.com/holtzy/R-graph-gallery/master/DATA/State_mariage_rate.csv",
+  header = T, sep = ",", na.strings = "---"
+)
+
+# Show it
+my_sf_wed <- my_sf %>%
+  left_join(data, by = c("google_name" = "state"))
+
+# Prepare binning
+my_sf_wed$bin <- cut(my_sf_wed$y_2015,
+  breaks = c(seq(5, 10), Inf),
+  labels = c("5-6", "6-7", "7-8", "8-9", "9-10", "10+"),
+  include.lowest = TRUE
+)
+
+# Prepare a color scale coming from the viridis color palette
+library(viridis)
+my_palette <- rev(magma(8))[c(-1, -8)]
+
+# plot
+ggplot(my_sf_wed) +
+  geom_sf(aes(fill = bin), linewidth = 0, alpha = 0.9) +
+  geom_sf_text(aes(label = iso3166_2), color = "white", size = 3, alpha = 0.6) +
+  theme_void() +
+  scale_fill_manual(
+    values = my_palette,
+    name = "Wedding per 1000 people in 2015",
+    guide = guide_legend(
+      keyheight = unit(3, units = "mm"),
+      keywidth = unit(12, units = "mm"),
+      label.position = "bottom", title.position = "top", nrow = 1
+    )
+  ) +
+  ggtitle("A map of marriage rates, state by state") +
+  theme(
+    legend.position = c(0.5, 0.9),
+    text = element_text(color = "#22211d"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(
+      size = 22, hjust = 0.5, color = "#4e4d47",
+      margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")
+    )
+  )
+```
+
+
+<br>
+
+
+
+
+
+- The second definition refers to the utilisation of [2D density](https://www.data-to-viz.com/graph/density2d.html) techniques. Think of a scatterplot where the X axis is the longitude and the Y axis is the latitude. The graphic area is divided in a multitude of hexagones and the number of data point in each is counted and represented using a color gradient. Note that here `no map boundaries is needed`. It requires only a `list of latitude and longitude`.
+</div>
+
+<div class = "row" style="padding-left: 50px; padding-right: 50px; margin-left: auto; margin-right: auto; background-color: #f5f5f2;">
+
+<br>
+
+```{r, warning=FALSE, message=FALSE, fig.align="center", fig.width=9, fig.height=6}
+# Libraries
+library(tidyverse)
+library(viridis)
+library(hrbrthemes)
+library(kableExtra)
+options(knitr.table.format = "html")
+library(mapdata)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/17_ListGPSCoordinates.csv", sep=",", header=T)
+
+# plot
+data %>%
+  filter(homecontinent=='Europe') %>%
+  ggplot( aes(x=homelon, y=homelat)) +
+    geom_hex(bins=59) +
+    ggplot2::annotate("text", x = -27, y = 72, label="Where people tweet about #Surf", colour = "black", size=5, alpha=1, hjust=0) +
+    ggplot2::annotate("segment", x = -27, xend = 10, y = 70, yend = 70, colour = "black", size=0.2, alpha=1) +
+    theme_void() +
+    xlim(-30, 70) +
+    ylim(24, 72) +
+    scale_fill_viridis(
+      trans = "log",
+      breaks = c(1,7,54,403,3000),
+      name="Tweet # recorded in 8 months",
+      guide = guide_legend( keyheight = unit(2.5, units = "mm"), keywidth=unit(10, units = "mm"), label.position = "bottom", title.position = 'top', nrow=1)
+    )  +
+    ggtitle( "" ) +
+    theme(
+      legend.position = c(0.8, 0.09),
+      legend.title=element_text(color="black", size=8),
+      text = element_text(color = "#22211d"),
+      plot.background = element_rect(fill = "#f5f5f2", color = NA),
+      panel.background = element_rect(fill = "#f5f5f2", color = NA),
+      legend.background = element_rect(fill = "#f5f5f2", color = NA),
+      plot.title = element_text(size= 13, hjust=0.1, color = "#4e4d47", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+    )
+```
+
+
+
+<br>
+
+
+</div>
+
+<div class="mycontent">
+
+<br>
+*Note on the first map*: You can learn more about this story [here](https://www.data-to-viz.com/story/RegionWithValue.html). Data comes from [here](https://team.carto.com/u/andrew/tables/andrew.us_states_hexgrid/public/map). Code has been inspired from [this post](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) and [that one](https://rud.is/b/2015/05/15/u-s-drought-monitoring-with-hexbin-state-maps-in-r/).
+
+
+*Note on the second map*: This map shows the geographic position of about 200k tweets containing the hashtags `#surf`, `#windsurf` or `#kitesurf`. Read more about it [here](https://www.data-to-viz.com/story/GPSCoordWithoutValue.html).
+
+
+
+
+# What for
+***
+
+Hexbin or grid map has an `advantage` over usual [choropleth maps](https://www.data-to-viz.com/graph/choropleth.html). In choropleths, a large polygon’s data looks more emphasized just because of its size, what introduces a bias. Here with hexbin, each region is represented equally dismissing the bias.
+
+There’s a `drawback` to this format though. Map readers generally recognize a geographic area by it’s shape and orientation to other areas. For instance, the geography of the US is well known and people easily identify different regions. In hexbin maps, these landmarks do not exist anymore what can confuse the audience. One solution for this is to choose a basemap that uses labels on top of your data layer.
+
+
+
+# Variation {#variation}
+***
+
+Hexbin map uses hexagons to split the area in several parts and attribute a color to it. Note that it is possible to use square instead of hexagones, resulting in a [2D histogram map](https://www.data-to-viz.com/graph/density2d.html).
+
+
+
+
+
+# Common mistakes {#mistake}
+***
+
+- Normalize your variable: you cannot compare raw numbers between regions of distinct size or population.
+- Take a huge care when choosing the continuous color palette.
+- Don't forget the legend.
+
+
+
+
+
+
+
+
+# Related {#related}
+***
+
+<div class="row">
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/choropleth.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/ChoroplethSmall.png">
+  <p class="mytitlerelated">Choropleth</p>
+  <p class="mytextrelated">Display a aggregated value for each region of the map using color gradients.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/cartogram.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/CartogramSmall.png">
+  <p class="mytitlerelated">Cartogram</p>
+  <p class="mytextrelated">A circular version of a Treemap to visualize a hierarchical organization</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/bubblemap.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/BubbleMapSmall.png">
+  <p class="mytitlerelated">Bubble map</p>
+  <p class="mytextrelated">Display bubble on a map background to represent the value of a numeric variable.</p>
+  </a>
+  </div>
+  <div class="col-lg-3 col-md-6 col-sm-6">
+  <a href="https://www.data-to-viz.com/graph/map.html" class="btn btn-primary mybtnrelated" style="margin-bottom:4px;white-space: normal !important;">
+  <img  src="https://github.com/holtzy/data_to_viz/raw/master/img/section/MapSmall.png">
+  <p class="mytitlerelated">Background Map</p>
+  <p class="mytextrelated">The basis for any geographic data visualization is to build a good background map.</p>
+  </a>
+  </div>
+</div>
+
+
+# Build your own {#code}
+***
+
+The [R](https://r-graph-gallery.com/hexbin-map.html), [Python](https:/python-graph-gallery.com/hexbin-map/), [React](https://www.react-graph-gallery.com/hexbin-map) and [D3](https://d3-graph-gallery.com/hexbinmap.html) graph galleries are 4 websites providing hundreds of chart example, always providing the reproducible code. Click the button below to see how to build the chart you need with your favorite programing language.
+
+<p>
+<a href="https://r-graph-gallery.com/hexbin-map.html" class="btn btn-primary">R graph gallery</a>
+<a href="https://python-graph-gallery.com/hexbin-map/" class="btn btn-primary">Python gallery</a>
+<a href="https://www.react-graph-gallery.com/hexbin-map" class="btn btn-primary">React gallery</a>
+<a href="https://d3-graph-gallery.com/hexbinmap.html" class="btn btn-primary">D3 gallery</a>
+</p>
+
+
+
+
+</div>

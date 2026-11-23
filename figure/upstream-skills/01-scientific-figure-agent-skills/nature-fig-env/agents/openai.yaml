@@ -1,0 +1,7 @@
+interface:
+  display_name: "Nature Fig Env"
+  short_description: "Publication-ready environmental science figures"
+  brand_color: "#287D8E"
+  default_prompt: "Use $nature-fig-env to create or revise a publication-ready environmental science figure."
+policy:
+  allow_implicit_invocation: true

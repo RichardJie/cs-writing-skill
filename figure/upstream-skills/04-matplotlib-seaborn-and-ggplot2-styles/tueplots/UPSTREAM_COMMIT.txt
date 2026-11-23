@@ -1,0 +1,4 @@
+Repository: https://github.com/pnkraemer/tueplots
+Branch: main
+Commit SHA: e5ca0aa276fcdadd851729e1a6db6048a243dd9d
+License: MIT

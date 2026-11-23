@@ -1,0 +1,5 @@
+﻿Repository: https://github.com/holtzy/dataviz-skills
+Website: https://www.data-to-viz.com/ai-skills
+Authors: Yan Holtz, Cédric Scherer (ggplot2), Joseph Barbier (matplotlib), Joël Gombin (inspiration)
+Commit SHA: 22daf3642e9301f3a1af982101767ed879b3d33f
+License: MIT License (see LICENSE; roast-my-chart/references/caveats.md under CC BY-NC 4.0 per roast-my-chart/LICENSE.txt)
