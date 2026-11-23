@@ -239,7 +239,7 @@
           "title": "Continuous State Persistence Formulation",
           "bullets": [
             "Core State Recurrence with input-dependent adaptive inertia coefficient alpha_t:",
-            "Equation (1): {{MATH:$S_t$ = \\alpha_t \\odot S_{t-1} + (1 - \\alpha_t) \\odot (W x_t)}}",
+            "Equation (1): {{MATH:S_t = \\alpha_t \\odot S_{t-1} + (1 - \\alpha_t) \\odot (W x_t)}}",
             "Joint Optimization Objective with Hamiltonian Energy Regularization:",
             "Equation (2): {{MATH:\\mathcal{L}_{\\text{total}} = \\mathcal{L}_{\\text{task}} + \\lambda \\sum_{i=1}^N \\| \\nabla_{\\theta_i} \\mathcal{H} \\|_2^2}}"
           ]

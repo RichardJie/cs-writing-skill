@@ -1,6 +1,8 @@
 # Visual Typography & Card Grid Geometry Rules
 
-This specification establishes the geometric, typographic, and visual design standards for the `academic-paper-presentation` generator.
+> **Module Role**: Core 16:9 canvas coordinate math, 3-zone vertical partition, and 7 foundational card grid models for [`cs-report-ppt`](../SKILL.md) and [`resources/template_config.json`](../resources/template_config.json). For Track 1–3 bilingual/CJK typography (`<a:latin>` + `<a:ea>`) see [`languages-and-typography.md`](languages-and-typography.md); for the 6 curated scholarly palettes, Anti-AI-Slop visual laws, and 12 extended coordinate layout recipes see [`palettes-and-layouts.md`](palettes-and-layouts.md).
+
+This specification establishes the geometric, typographic, and visual design standards for the `cs-report-ppt` generator.
 
 Every slide adheres strictly to a **16:9 widescreen coordinate grid**, standard vertical zone partitions, responsive card structures, and a hierarchical typography scale to eliminate empty dead-space ("少留白", 高级简约).
 
